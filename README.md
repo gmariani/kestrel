@@ -18,6 +18,11 @@ php artisan migrate:fresh --seed
 - With buckets set for each user, so each user can login and have access to their specific videos
 
 ## Notes
+TODO: Save TMDB ids for each movie to pull up accurate covers.
+https://developers.themoviedb.org/3/getting-started/images
+https://www.themoviedb.org/documentation/api
+https://developers.themoviedb.org/3/search/search-movies
+
 required settings for a user:
     s3 bucket
     aws key

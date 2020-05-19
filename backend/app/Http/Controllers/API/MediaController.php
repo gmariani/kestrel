@@ -39,7 +39,6 @@ class MediaController extends Controller
 
     public function get($id)
     {
-        //return $media;
         /*if (Media::where('id', $id)->exists()) {
             $media = Media::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
             return response($media, 200);
@@ -51,34 +50,4 @@ class MediaController extends Controller
 
         return Media::findOrFail($id);
     }
-
-    /*public function getImages(Media $media)
-    {
-        return $media;
-    }
-
-    public function getImage(Media $media)
-    {
-        return $media;
-    }
-
-    public function getAudios(Media $media)
-    {
-        return $media;
-    }
-
-    public function getAudio(Media $media)
-    {
-        return $media;
-    }
-
-    public function getVideos(Media $media)
-    {
-        return $media;
-    }
-
-    public function getVideo(Media $media)
-    {
-        return $media;
-    }*/
 }

@@ -17,12 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('v1/media', 'MediaController@index');
 Route::get('v1/media/{media:id}', 'MediaController@get');
-// Route::get('media/images', 'MediaController@getImages');
-// Route::get('media/images/{media}', 'MediaController@getImage');
-// Route::get('media/audios', 'MediaController@getAudios');
-// Route::get('media/audios/{media}', 'MediaController@getAudio');
-// Route::get('media/videos', 'MediaController@getVideos');
-// Route::get('media/videos/{media}', 'MediaController@getVideo');
 
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
