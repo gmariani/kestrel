@@ -13,6 +13,41 @@ php artisan migrate:fresh --seed
 - Install Node JS
 - Install Laravel 7.6+
 
+## Frontend Config
+https://kryogenix.org/code/dont-need-that-js/
+https://medium.com/@Charles_Stover/optimal-file-structure-for-react-applications-f3e35ad0a145
+https://github.com/CharlesStover/optimal-react-file-structure/tree/master/src
+
+### NPM Dependencies
+- @babel/runtime: meant to be used as a runtime dependency along with the Babel
+  plugin @babel/plugin-transform-runtime
+- bootstrap: CSS framework
+- gsap: Used to animate the slides on presenter screen
+- jquery: Used by blueimp, bootstrap, scripts
+
+### NPM Dev Dependencies
+- @babel/core: Converting modern JS to backwards compatible
+  - @babel/plugin-transform-runtime: (dependency to @babel/runtime) Enables the
+    re-use of Babel's injected helper code to save on codesize
+  - @babel/preset-env: (dependency to babel) Preset that allows the latest
+    JavaScript without needing to micromanage which syntax transforms are needed
+  - babel-loader: (dependency to babel) Load JS files into Babel
+- @fortawesome/fontawesome-free: Font icons
+- autoprefixer: Add CSS prefixes automatically
+- clean-webpack-plugin: Clear out an output folder before outputting build files
+- css-loader: Interprets @import and @url() and resolves them. Translates CSS into CommonJS modules
+- eslint: To lint JavaScript code
+- eslint-plugin-import: ??? part of eslint
+- file-loader: Load other misc file types
+- mini-css-extract-plugin: Extracts our CSS out of the JavaScript bundle into a separate file
+- node-sass: Provides binding for Node.js to LibSass, a Sass compiler.
+- postcss-loader: Run postcss actions
+- prettier: Linting
+- sass-loader: Compiles Sass to CSS
+- style-loader: Inject CSS to page
+- webpack: Webpack
+- webpack-cli: Webpack
+
 ## Database
 - Users
 - With buckets set for each user, so each user can login and have access to their specific videos
