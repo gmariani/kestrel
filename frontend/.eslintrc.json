@@ -1,18 +1,17 @@
 {
-    "extends": ["eslint:recommended", "plugin:import/errors", "plugin:import/warnings"],
+    "extends": ["react-app", "plugin:prettier/recommended"],
     "env": {
         "browser": true,
-        "commonjs": true,
-        "node": true,
         "es6": true
     },
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
+            "impliedStrict": true,
             "jsx": true
         },
         "sourceType": "module",
-        "ecmaVersion": 6
+        "ecmaVersion": 2019
     },
     "plugins": [],
     "rules": {

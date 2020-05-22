@@ -6,6 +6,8 @@
         "module": "es6",
         "target": "es5",
         "jsx": "react",
-        "allowJs": true
+        "allowJs": true,
+        "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
+        "baseUrl": "./src" /* Base directory to resolve non-absolute module names. */
     }
 }
