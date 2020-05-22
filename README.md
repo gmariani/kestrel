@@ -45,6 +45,8 @@ https://github.com/CharlesStover/optimal-react-file-structure/tree/master/src
 - prettier: Linting
 - sass-loader: Compiles Sass to CSS
 - style-loader: Inject CSS to page
+- typescript: Typescript
+- ts-loader: Typescript
 - webpack: Webpack
 - webpack-cli: Webpack
 

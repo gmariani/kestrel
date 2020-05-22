@@ -2,25 +2,15 @@ const isDevelopment = process.env.mode === 'development';
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
 //const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 // https://github.com/mishoo/UglifyJS2
 //const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const webpack = require('webpack'); // eslint-disable-line
 
 module.exports = {
-    entry: {
-        /* Webpack v5 supports dependOn */
-        /*viewer: { import: path.resolve(__dirname, 'src/index.js'), dependOn: 'shared' },
-        presenter: { import: path.resolve(__dirname, 'src/presenter.js'), dependOn: 'shared' },
-        shared: 'jquery',*/
-        viewer: path.resolve(__dirname, 'src/js/ViewerPage.js'),
-        presenter_record: path.resolve(__dirname, 'src/js/RecordPage.js'),
-        presenter: path.resolve(__dirname, 'src/js/PresenterPage.js'),
-        presenter_settings: path.resolve(__dirname, 'src/js/SettingsPage.js'),
-        presenter_login: path.resolve(__dirname, 'src/js/LoginPage.js'),
-        presenter_chat: path.resolve(__dirname, 'src/js/ChatPage.js'),
-    },
+    entry: path.resolve(__dirname, 'src/index.ts'),
+    devtool: 'inline-source-map',
     module: {
         rules: [
             {
@@ -33,6 +23,11 @@ module.exports = {
                         plugins: ['@babel/plugin-transform-runtime'],
                     },
                 },
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
             },
             {
                 test: /\.css$/,
@@ -147,13 +142,13 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['*', '.js', '.jsx', '.css', '.scss'],
+        extensions: ['*', '.tsx', '.ts', '.js', '.jsx', '.css', '.scss'],
         alias: {
             'jquery-ui/ui/widget': 'blueimp-file-upload/js/vendor/jquery.ui.widget.js',
         },
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'build'),
         publicPath: process.env.mode === 'production' ? 'https://mariani.life/project/kestrel/' : 'http://localhost/',
         //filename: process.env.mode === 'production' ? '[name].[chunkhash].js' : '[name].[hash].js',
         filename: isDevelopment ? 'js/[name].js' : 'js/[name].[hash].js',
@@ -168,80 +163,9 @@ module.exports = {
             filename: isDevelopment ? 'css/[name].css' : 'css/[name].[hash].css',
             chunkFilename: isDevelopment ? 'css/[id].css' : 'css/[id].[chunkhash].css',
         }),
-        new HtmlWebpackPlugin({
-            chunks: [
-                'viewer',
-                'runtime',
-                'presenter_record~viewer',
-                'vendors~presenter~presenter_chat~presenter_login~presenter_settings~presenter_record~viewer',
-            ],
-            minify: false,
-            inject: true,
-            template: path.resolve(__dirname, 'src/index.php'),
-            filename: path.resolve(__dirname, 'dist/index.php'),
-        }),
-        new HtmlWebpackPlugin({
-            chunks: [
-                'presenter_record',
-                'runtime',
-                'presenter_record~viewer',
-                'vendors~presenter~presenter_chat~presenter_login~presenter_settings~presenter_record~viewer',
-            ],
-            inject: true,
-            template: path.resolve(__dirname, 'src/presenter/record.html'),
-            filename: path.resolve(__dirname, 'dist/presenter/record.html'),
-        }),
-        new HtmlWebpackPlugin({
-            chunks: [
-                'presenter',
-                'runtime',
-                'vendors~presenter',
-                'vendors~presenter~presenter_chat~presenter_login~presenter_settings~presenter_record~viewer',
-            ],
-            minify: false,
-            inject: true,
-            template: path.resolve(__dirname, 'src/presenter/index.php'),
-            filename: path.resolve(__dirname, 'dist/presenter/index.php'),
-        }),
-        new HtmlWebpackPlugin({
-            chunks: [
-                'presenter_settings',
-                'runtime',
-                'vendors~presenter_settings',
-                'vendors~presenter~presenter_chat~presenter_login~presenter_settings~presenter_record~viewer',
-            ],
-            minify: false,
-            inject: true,
-            template: path.resolve(__dirname, 'src/presenter/settings.php'),
-            filename: path.resolve(__dirname, 'dist/presenter/settings.php'),
-        }),
-        new HtmlWebpackPlugin({
-            chunks: [
-                'presenter_login',
-                'runtime',
-                'vendors~presenter~presenter_chat~presenter_login~presenter_settings~presenter_record~viewer',
-            ],
-            minify: false,
-            inject: true,
-            template: path.resolve(__dirname, 'src/presenter/login.php'),
-            filename: path.resolve(__dirname, 'dist/presenter/login.php'),
-        }),
-        new HtmlWebpackPlugin({
-            chunks: [],
-            minify: false,
-            inject: true,
-            template: path.resolve(__dirname, 'src/presenter/logout.php'),
-            filename: path.resolve(__dirname, 'dist/presenter/logout.php'),
-        }),
-        new HtmlWebpackPlugin({
-            chunks: [
-                'presenter_chat',
-                'runtime',
-                'vendors~presenter~presenter_chat~presenter_login~presenter_settings~presenter_record~viewer',
-            ],
-            inject: true,
-            template: path.resolve(__dirname, 'src/presenter/chat.html'),
-            filename: path.resolve(__dirname, 'dist/presenter/chat.html'),
+        new HtmlWebPackPlugin({
+            template: path.resolve(__dirname, 'public/index.html'),
+            filename: path.resolve(__dirname, 'build/index.html'),
         }),
     ],
     // Split vendors into single file
