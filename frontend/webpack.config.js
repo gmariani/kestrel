@@ -66,7 +66,6 @@ module.exports = {
                             sourceMap: isDevelopment,
                         },
                     },
-
                     {
                         loader: 'postcss-loader',
                         options: {

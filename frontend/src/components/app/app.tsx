@@ -8,7 +8,7 @@ import Player from '../../routes/player';
 export default function App() {
     return (
         <Router>
-            <div className='app'>
+            <div className={styles.app}>
                 <nav>
                     <ul>
                         <li>
