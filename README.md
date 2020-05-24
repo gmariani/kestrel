@@ -2,8 +2,11 @@
 Laravel Framework 7.6.2
 JAMStack
 
-## Start Server
-php artisan serve --host=kestrel.test --port=8080
+## Start Backend Server
+php artisan serve --host=kestrel.test --port=8081
+
+## Start Frontend Server
+npm start
 
 ## Seed Database
 php artisan migrate:fresh --seed

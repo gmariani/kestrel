@@ -64,6 +64,7 @@
     "dependencies": {
         "@babel/runtime": "^7.9.6",
         "react": "^16.13.1",
+        "react-async": "^10.0.1",
         "react-dom": "^16.13.1",
         "react-router-dom": "^5.2.0"
     },

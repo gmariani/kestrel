@@ -5,7 +5,7 @@ export default function Home() {
     return (
         <div>
             Hello World
-            <Directory />
+            <Directory source='s3' />
         </div>
     );
 }
