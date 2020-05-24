@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import './app.scss';
-import Home from 'routes/home';
-import About from 'routes/about';
-import Player from 'routes/player';
+import styles from './app.scss';
+import Home from '../../routes/home';
+import About from '../../routes/about';
+import Player from '../../routes/player';
 
 export default function App() {
     return (
