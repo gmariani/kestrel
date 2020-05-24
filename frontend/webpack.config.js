@@ -155,7 +155,8 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'build'),
-        publicPath: process.env.mode === 'production' ? 'https://mariani.life/project/kestrel/' : 'http://localhost/',
+        publicPath:
+            process.env.mode === 'production' ? 'https://mariani.life/project/kestrel/' : 'http://localhost:8080/',
         //filename: process.env.mode === 'production' ? '[name].[chunkhash].js' : '[name].[hash].js',
         filename: isDevelopment ? 'js/[name].js' : 'js/[name].[hash].js',
         chunkFilename: isDevelopment ? 'js/[id].js' : 'js/[id].[chunkhash].js',
