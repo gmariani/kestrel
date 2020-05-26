@@ -1,0 +1,65 @@
+.item {
+    display: block;
+    height: 300px;
+    padding: 0 2px;
+
+    &__content {
+        position: relative;
+        padding-top: 16px;
+    }
+
+    &__title {
+        color: white;
+        font-weight: 400;
+        font-stretch: normal;
+        letter-spacing: -0.5px;
+        font-size: 20px;
+        line-height: 24px;
+        display: inline-block;
+        // color: var(--text--primary);
+        margin: 0 0 8px;
+        transition: opacity 0.3s ease;
+        width: 90%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &__background {
+        background-color: red;
+    }
+
+    &__thumbnail {
+        display: block;
+        position: relative;
+        width: 100%;
+        background: rgba(174, 180, 191, 0.15);
+        padding: 0;
+        border: none;
+    }
+
+    &__image-container {
+        background-color: blue;
+        position: relative;
+        overflow: hidden;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        transition: transform 0.35s 0.2s ease;
+        transform-origin: center bottom;
+        background-color: hsl(var(--thumbnail-hue), 50%, 40%);
+    }
+
+    &__image {
+        width: 100%;
+        height: auto;
+        opacity: 0;
+        transition: 0.2s opacity ease;
+    }
+    &__image--loaded {
+        opacity: 1;
+    }
+}

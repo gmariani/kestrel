@@ -1,0 +1,28 @@
+.component {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    justify-content: center;
+    --MediaList-items: 6;
+    --MediaList-items-margin: 0px;
+
+    margin-top: 40px;
+    margin-bottom: 200px;
+
+    li {
+        list-style-type: none;
+        margin: 0;
+        width: calc(100% / var(--MediaList-items) - var(--MediaList-items-margin));
+        margin-right: calc(var(--MediaList-items-margin) / 2);
+        margin-left: calc(var(--MediaList-items-margin) / 2);
+        white-space: normal;
+        vertical-align: top;
+        transition: 0.5s opacity ease-in;
+    }
+}
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: content-box;
+    width: calc(100% - 96px);
+}

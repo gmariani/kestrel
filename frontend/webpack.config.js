@@ -54,27 +54,33 @@ module.exports = {
             {
                 test: /\.s(a|c)ss$/,
                 loader: [
-                    // to inject the result into the DOM as a style block
+                    // style-loader - Inject CSS into the DOM
+                    // MiniCssExtractPlugin - This plugin extracts CSS into separate files.
                     isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
-                    // to generate a .d.ts module next to the .scss file (also requires a declaration.d.ts with "declare modules '*.scss';" in it to tell TypeScript that "import styles from './styles.scss';" means to load the module "./styles.scss.d.td")
+                    // Emits TypeScript declaration files matching your CSS Modules in the same location as your source files, e.g. src/Component.css will generate src/Component.css.d.ts.
                     { loader: 'css-modules-typescript-loader' },
-                    // to convert the resulting CSS to Javascript to be bundled (modules:true to rename CSS classes in output to cryptic identifiers, except if wrapped in a :global(...) pseudo class)
+                    // Translates CSS into CommonJS
                     {
                         loader: 'css-loader',
                         options: {
-                            modules: true,
+                            modules: {
+                                mode: 'local',
+                                exportGlobals: true,
+                                //localIdentName: isDevelopment ? '[name]__[local]__[hash:base64:5]' : '[hash:base64]',
+                                localIdentName: '[local]__[hash:base64:5]',
+                            },
                             sourceMap: isDevelopment,
                         },
                     },
-                    {
+                    /*{
                         loader: 'postcss-loader',
                         options: {
                             plugins: function () {
                                 return [require('autoprefixer')];
                             },
                         },
-                    },
-                    // to convert SASS to CSS
+                    },*/
+                    // Loads a Sass/SCSS file and compiles it to CSS
                     {
                         loader: 'sass-loader',
                         options: {

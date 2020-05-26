@@ -9,18 +9,26 @@ export default function App() {
     return (
         <Router>
             <div className={styles.app}>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to='/'>Home</Link>
-                        </li>
-                        <li>
-                            <Link to='/about'>About</Link>
-                        </li>
-                        <li>
-                            <Link to='/player'>Player</Link>
-                        </li>
-                    </ul>
+                <nav className={styles.nav}>
+                    <div className={styles.container}>
+                        <ul className={styles.nav__container}>
+                            <li className={styles.nav__item}>
+                                <Link className={styles.nav__link} to='/'>
+                                    Home
+                                </Link>
+                            </li>
+                            <li className={styles.nav__item}>
+                                <Link className={styles.nav__link} to='/about'>
+                                    About
+                                </Link>
+                            </li>
+                            <li className={styles.nav__item}>
+                                <Link className={styles.nav__link} to='/player'>
+                                    Player
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </nav>
 
                 {/* A <Switch> looks through its children <Route>s and

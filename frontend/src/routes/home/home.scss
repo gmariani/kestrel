@@ -1,0 +1,25 @@
+.home {
+    .container {
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: content-box;
+        width: calc(100% - 96px);
+    }
+
+    &__title-container {
+        display: flex;
+        align-items: baseline;
+    }
+
+    &__title {
+        margin-top: 40px;
+        font-weight: 300;
+        line-height: 48px;
+        margin-right: 24px;
+        color: white;
+        letter-spacing: -0.5px;
+        margin-top: 24px;
+        margin-bottom: 0;
+        font-size: 48px;
+    }
+}

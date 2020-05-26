@@ -1,0 +1,40 @@
+:local {
+    @keyframes fadeEffect {
+        0% {
+            opacity: 0.2;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+}
+
+.item-skeleton {
+    display: block;
+    height: 300px;
+    padding: 0 2px;
+
+    &__image-container {
+        background-color: white;
+        animation: fadeEffect 1.2s ease-in-out infinite alternate;
+        opacity: 0.2;
+        height: 153px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    &__content {
+        background-color: white;
+        animation: fadeEffect 1.2s ease-in-out infinite alternate;
+        opacity: 0.2;
+        height: 24px;
+        padding-top: 16px;
+        margin-top: 16px;
+        width: 60%;
+    }
+}
