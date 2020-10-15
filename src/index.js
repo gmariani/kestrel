@@ -1,17 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap-reboot.css';
 import { GlobalStyles } from './global-styles';
 import App from './App';
+import { firebase } from './lib/firebase';
+import { FirebaseContext } from './context/firebase';
 //import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
     <React.StrictMode>
-        <GlobalStyles />
-        <Router>
+        <FirebaseContext.Provider value={{ firebase }}>
+            <GlobalStyles />
             <App />
-        </Router>
+        </FirebaseContext.Provider>
     </React.StrictMode>,
     document.getElementById('root')
 );
