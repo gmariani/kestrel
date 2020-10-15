@@ -1,0 +1,60 @@
+{
+    "extends": ["airbnb", "prettier", "prettier/react"],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "impliedStrict": true,
+            "classes": true
+        },
+        "sourceType": "module",
+        "ecmaVersion": 8
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "jquery": true,
+        "jest": true
+    },
+    "plugins": ["prettier", "react", "react-hooks"],
+    "rules": {
+        "react/prop-types": 0,
+        "react-hooks/rules-of-hooks": "error",
+        "no-debugger": 0,
+        "no-alert": 0,
+        "prefer-const": [
+            "error",
+            {
+                "destructuring": "all"
+            }
+        ],
+        "arrow-body-style": [2, "as-needed"],
+        "no-unused-expressions": [
+            2,
+            {
+                "allowTaggedTemplates": true
+            }
+        ],
+        "no-param-reassign": [
+            2,
+            {
+                "props": false
+            }
+        ],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "linebreak-style": ["error", "unix"],
+        "quotes": [
+            2,
+            "single",
+            {
+                "avoidEscape": true,
+                "allowTemplateLiterals": true
+            }
+        ],
+        "semi": ["error", "always"],
+        "no-console": "off",
+        "no-unused-vars": "warn",
+        "no-trailing-spaces": ["warn", { "skipBlankLines": true }]
+    },
+    "globals": {}
+}
