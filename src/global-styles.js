@@ -5,5 +5,10 @@ Please do not use @import CSS syntax in createGlobalStyle at this time, as the C
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 */
 export const GlobalStyles = createGlobalStyle`
-html, body {}
+html, body,
+#root {
+    height:100%;
+    width: 100%;
+    background-color:#000;
+}
 `;
