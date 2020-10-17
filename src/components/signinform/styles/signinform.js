@@ -1,8 +1,18 @@
 import styled from 'styled-components/macro';
 
-export const LoginForm = styled.form`
+export const Container = styled.form`
     text-align: center;
 `;
+
+export const Error = styled.div`
+    background: #e87c03;
+    border-radius: 4px;
+    font-size: 14px;
+    margin: 0 0 16px;
+    color: white;
+    padding: 15px 20px;
+`;
+
 export const Title = styled.h2`
     font-family: Tw Cen MT;
     font-style: normal;
@@ -19,7 +29,7 @@ export const InputGroup = styled.div`
     column-gap: 10px;
     margin-bottom: 5rem;
 `;
-export const InputLetter = styled.input`
+export const Input = styled.input`
     font-family: Tw Cen MT;
     background-color: transparent;
     border-top: none;
@@ -38,5 +48,6 @@ export const InputLetter = styled.input`
         border-top: none;
         border-right: none;
         border-right: none;
+        outline: none;
     }
 `;

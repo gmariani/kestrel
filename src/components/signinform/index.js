@@ -1,35 +1,57 @@
 import React from 'react';
 import { Button } from '../../components';
-import { LoginForm, InputGroup, InputLetter, Title } from './styles/signinform';
+import { Container, Title, Error, InputGroup, Input } from './styles/signinform';
 
-export default function SignInForm({ ...restProps }) {
-    function onKeyUp(e) {
-        const input = e.currentTarget;
-        input.value = input.value.charAt(0);
-        if (input.nextSibling) input.nextSibling.focus();
+export default function SignInForm({ children, ...restProps }) {
+    return <Container {...restProps}>{children}</Container>;
+}
+
+SignInForm.Error = function FormError({ children, ...restProps }) {
+    return <Error {...restProps}>{children}</Error>;
+};
+
+SignInForm.Title = function FormTitle({ children, ...restProps }) {
+    return <Title {...restProps}>{children}</Title>;
+};
+
+SignInForm.InputGroup = function FormInputGroup({ children, ...restProps }) {
+    return <InputGroup {...restProps}>{children}</InputGroup>;
+};
+
+SignInForm.Input = function FormInput({ children, ...restProps }) {
+    function setHadValue(target) {
+        target.dataset['hadValue'] = target.value.length > 0 ? 1 : 0;
     }
-    const getInputs = (num) => {
-        let content = [];
-        for (let i = 0; i < num; i++) {
-            content.push(
-                <InputLetter
-                    key={i}
-                    onKeyUp={onKeyUp}
-                    pattern='[a-zA-Z0-9]'
-                    max-length='1'
-                    type='text'
-                    name={`letter${i + 1}`}
-                />
-            );
+
+    function onFocus({ target }) {
+        setHadValue(target);
+    }
+
+    function onKeyUp({ target, key }) {
+        // Only move if actual letter/number pressed
+        if (
+            key === 'Backspace' &&
+            target.value.length === 0 &&
+            0 === +target.dataset['hadValue'] &&
+            target.previousSibling
+        ) {
+            target.previousSibling.focus();
         }
-        return content;
-    };
+
+        // Store prev value
+        setHadValue(target);
+
+        if (key.length !== 1) return;
+        if (target.nextSibling) target.nextSibling.focus();
+    }
 
     return (
-        <LoginForm {...restProps} method='POST'>
-            <Title>Passcode</Title>
-            <InputGroup>{getInputs(7)}</InputGroup>
-            <Button btnStyle='primary'>Login</Button>
-        </LoginForm>
+        <Input {...restProps} onFocus={onFocus} onKeyUp={onKeyUp} pattern='[a-zA-Z0-9]' maxlength='1' type='password'>
+            {children}
+        </Input>
     );
-}
+};
+
+SignInForm.Submit = function FormSubmit({ children, ...restProps }) {
+    return <Button {...restProps}>{children}</Button>;
+};
