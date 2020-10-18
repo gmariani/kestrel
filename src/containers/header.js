@@ -3,9 +3,7 @@ import { Header } from '../components';
 import * as ROUTES from '../constants/routes';
 import logo from '../logo.svg';
 
-export function HeaderContainer({ children, categories, selected = '', ...restProps }) {
-    console.log(categories);
-
+export function HeaderContainer({ children, categories, selectedCategory = '', ...restProps }) {
     return (
         <Header>
             <Header.Frame>
@@ -13,10 +11,17 @@ export function HeaderContainer({ children, categories, selected = '', ...restPr
                 {/* <Header.ButtonLink to={ROUTES.SIGN_IN}>Sign In</Header.ButtonLink> */}
             </Header.Frame>
             <Header.Menu>
-                <Header.MenuLink to={ROUTES.HOME}>TV</Header.MenuLink>
-                <Header.MenuLink to={ROUTES.HOME}>Movies</Header.MenuLink>
-                <Header.MenuLink to={ROUTES.HOME}>Animation</Header.MenuLink>
-                <Header.MenuLink to={ROUTES.HOME}>Kids</Header.MenuLink>
+                {categories.map((category, i) => {
+                    console.log(category);
+                    return (
+                        <Header.MenuLink
+                            key={i}
+                            to={`/browse/${category.slug}`}
+                            selected={category.name === selectedCategory ? 1 : 0}>
+                            {category.name}
+                        </Header.MenuLink>
+                    );
+                })}
             </Header.Menu>
             {children}
         </Header>

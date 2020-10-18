@@ -3,29 +3,39 @@ import React from 'react';
 import { Background, Poster } from '../components';
 import { HeaderContainer } from '../containers/header';
 //import * as ROUTES from '../constants/routes';
-import { useCollections } from '../hooks';
-import { useTMDB } from '../hooks';
+import { useContent } from '../hooks';
 
 export default function Browse() {
-    const { categories } = useCollections();
-    const { tmdb } = useTMDB('tv', 1437);
-    const poster_url = tmdb.data ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${tmdb.data.poster_path}` : null;
-    // const backdrop_url = tmdb.data
-    //     ? `https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${tmdb.data.backdrop_path}`
-    //     : null;
+    const { content: categories } = useContent('categories', 'order');
+    const { content: media } = useContent('media');
+    const category = 'TV';
+
+    console.log('categories', categories);
+    console.log('media', media);
+
+    const getPosters = (posters, category) => {
+        const content = [];
+        posters.forEach((poster) => {
+            if (category === poster.category) {
+                content.push(
+                    <Poster
+                        key={poster.docId}
+                        posterPath={poster.posterPath}
+                        title={poster.name}
+                        year={poster.year}
+                        genres={poster.genres}
+                        to={poster.docId}
+                    />
+                );
+            }
+        });
+        return content;
+    };
 
     return (
         <Background.Browse>
-            <HeaderContainer categories={categories} />
-            {tmdb.data && (
-                <Poster
-                    posterPath={poster_url}
-                    title={tmdb.data.name}
-                    firstAirDate={tmdb.data.first_air_date}
-                    genres={tmdb.data.genres}
-                    to={tmdb.data.name.toLowerCase()}
-                />
-            )}
+            <HeaderContainer categories={categories} selectedCategory={category} />
+            <Poster.Group>{media && getPosters(media, category)}</Poster.Group>
         </Background.Browse>
     );
 }

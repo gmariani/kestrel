@@ -17,7 +17,6 @@ export default function useTMDB(type = 'tv', id, season_number = null) {
     };
 
     useEffect(() => {
-        console.log(`Hello ${getTypeURL(type, id, season_number)}?api_key=${api_key}&language=en-US`);
         fetch(`${getTypeURL(type, id, season_number)}?api_key=${api_key}&language=en-US`)
             .then((res) => res.json())
             .then(

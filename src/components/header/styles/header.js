@@ -40,7 +40,7 @@ export const MenuLink = styled(ReachRouterLink)`
     font-style: normal;
     font-weight: normal;
     line-height: 54px;
-    opacity: 0.5;
+    opacity: ${({ selected }) => (selected ? '1' : '0.5')};
     padding: 0.5rem;
     transition: all 0.3s;
 

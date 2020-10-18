@@ -1,12 +1,18 @@
 import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
 
+export const Group = styled.div`
+    display: flex;
+    column-gap: 2rem;
+`;
+
 export const Container = styled(ReachRouterLink)`
     max-width: 466px;
 `;
 export const Image = styled.img`
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));
     border-radius: 20px;
+    margin-bottom: 0.5rem;
 `;
 export const Title = styled.h2`
     font-family: Tw Cen MT;
