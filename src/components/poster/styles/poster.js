@@ -8,6 +8,12 @@ export const Group = styled.div`
 
 export const Container = styled(ReachRouterLink)`
     max-width: 466px;
+    transition: all 0.2s ease-in-out;
+    &:focus,
+    &:hover {
+        text-decoration: none;
+        transform: scale(1.05);
+    }
 `;
 export const Image = styled.img`
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));
