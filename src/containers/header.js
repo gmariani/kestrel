@@ -12,12 +12,11 @@ export function HeaderContainer({ children, categories, selectedCategory = '', .
             </Header.Frame>
             <Header.Menu>
                 {categories.map((category, i) => {
-                    console.log(category);
                     return (
                         <Header.MenuLink
                             key={i}
-                            to={`/browse/${category.slug}`}
-                            selected={category.name === selectedCategory ? 1 : 0}>
+                            to={`${ROUTES.BROWSE}${category.slug}`}
+                            selected={category.slug === selectedCategory ? 1 : 0}>
                             {category.name}
                         </Header.MenuLink>
                     );

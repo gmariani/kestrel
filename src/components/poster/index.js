@@ -6,7 +6,7 @@ export default function Poster({ posterPath, title, year, genres, to, ...restPro
     const genreList = genres.join(', ');
     // const year = new Date(firstAirDate).getFullYear();
     return (
-        <Container to={`/watch/${to}`} {...restProps}>
+        <Container to={to} {...restProps}>
             <Image src={posterPath} height='700' width='466' alt={title} />
             <Title>
                 {title}

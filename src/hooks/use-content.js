@@ -16,7 +16,6 @@ export default function useContent(target, orderBy = 'name') {
                     ...contentObj.data(),
                     docId: contentObj.id,
                 }));
-                console.log('allContent', allContent);
                 setContent(allContent);
             })
             .catch((error) => {
