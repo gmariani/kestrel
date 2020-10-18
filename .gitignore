@@ -2,7 +2,6 @@
 
 # bye
 src/lib/firebase.js
-.env
 
 # dependencies
 /node_modules

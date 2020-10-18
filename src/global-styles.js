@@ -11,4 +11,11 @@ html, body,
     width: 100%;
     background-color:#000;
 }
+#root {
+    align-items: center;
+    justify-content: center;
+    padding: 6.25rem;
+    flex-direction: column;
+    position: relative;
+}
 `;
