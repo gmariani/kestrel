@@ -3,7 +3,7 @@ import { Header } from '../components';
 import * as ROUTES from '../constants/routes';
 import logo from '../logo.svg';
 
-export function HeaderContainer({ children, categories, selectedCategory = '', ...restProps }) {
+export function HeaderContainer({ children, categories = [], selectedCategory = '', ...restProps }) {
     return (
         <Header>
             <Header.Frame>

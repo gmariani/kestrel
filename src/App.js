@@ -18,7 +18,7 @@ export default function App() {
                 <ProtectedRoute user={user} path={ROUTES.BROWSE_ID}>
                     <Browse />
                 </ProtectedRoute>
-                <ProtectedRoute user={user} path={ROUTES.DETAILS}>
+                <ProtectedRoute user={user} path={ROUTES.DETAILS_ID}>
                     <Details />
                 </ProtectedRoute>
                 <IsUserRedirect user={user} loggedInPath={ROUTES.BROWSE} path={ROUTES.HOME}>

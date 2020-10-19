@@ -55,7 +55,7 @@ export default function SignIn() {
     };
 
     return (
-        <Background>
+        <Background hasColor={true} opacity='0.8' startColor='#EE6B4D' endColor='rgba(255, 255, 255, 0)'>
             <SignInForm onSubmit={onSubmit} method='POST'>
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}

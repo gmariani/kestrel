@@ -1,9 +1,9 @@
 export const HOME = '/';
 export const BROWSE = '/browse/';
-export const BROWSE_ID = '/browse/:category?';
+export const BROWSE_ID = '/browse/:categoryId?';
 export const WATCH = '/watch/';
 export const WATCH_ID = '/watch/:id?';
 export const DETAILS = '/details/';
-export const DETAILS_ID = '/details/:id?';
+export const DETAILS_ID = '/details/:mediaId?';
 export const SIGN_UP = '/signup';
 export const SIGN_IN = '/signin';

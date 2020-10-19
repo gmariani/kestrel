@@ -187,6 +187,8 @@ export function seedDatabase(firebase) {
             id: getUUID(),
             name: 'Diebuster',
             category: 'Animation',
+            posterPath: 'https://image.tmdb.org/t/p/original/wKOcAZ4wNiukGkjs8puodg4YibD.jpg',
+            backgroundPath: 'https://mariani-movies.s3.us-east-1.amazonaws.com/diebuster_still.jpg',
             description:
                 "Diebuster follows the story of Nono, a country girl who dreams of becoming a space pilot who, due to a chance encounter with an actual space pilot, finds herself becoming part of the elite Fraternity. Made up of teenage pilots called Topless, and armed with quasi-humanoid weapons called Buster Machines, the Fraternity's mission is to protect the people of the Solar System from attack by swarms of space monsters.",
             genres: ['Animation', 'Sci-Fi & Fantasy', 'Action & Adventure'],
@@ -196,7 +198,10 @@ export function seedDatabase(firebase) {
             imdb: 'tt0856824',
             tmdb: 66931,
             seasons: [
-                (0: {
+                {
+                    seasonNumber: 1,
+                    name: 'Season 1',
+                    episodeCount: 6,
                     episodes: [
                         {
                             name: 'Please Let Me Call You Big Sister!',
@@ -212,9 +217,9 @@ export function seedDatabase(firebase) {
                             name: 'They who move the Stars',
                             filePath: 'Gunbuster 2 - 05 - They who move the Stars.mkv',
                         },
-                        { name: 'The Story of Your Life', filePath: 'Gunbuster 2 - 06 - The Story of Your Life.mkv' }
+                        { name: 'The Story of Your Life', filePath: 'Gunbuster 2 - 06 - The Story of Your Life.mkv' },
                     ],
-                }),
+                },
             ],
         });
 
