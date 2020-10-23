@@ -1,73 +1,38 @@
 import React from 'react';
-import {
-    Container,
-    Seasons,
-    SeasonTitle,
-    SeasonBar,
-    Info,
-    Episodes,
-    ProgressBar,
-    Thumbnail,
-    Episode,
-    EpisodeMeta,
-    EpisodeTitle,
-    EpisodeCounter,
-    EpisodeTimer,
-} from './styles/detail';
+import { Button } from '../../components';
+import { Container, Controls, ProgressBar, Meta, Year, EpisodeCount, Genres, Title } from './styles/detail';
 
 export default function Detail({ children, ...restProps }) {
     return <Container>{children}</Container>;
 }
 
-Detail.Seasons = function DetailSeasons({ children, seasons, ...restProps }) {
-    seasons.push({ name: 'season 2' });
-    return (
-        <Seasons {...restProps}>
-            {seasons.map((season, i) => {
-                return <Detail.SeasonTitle key={i}>{season.name}</Detail.SeasonTitle>;
-            })}
-            <SeasonBar />
-        </Seasons>
-    );
-};
-
-Detail.SeasonTitle = function DetailSeasonTitle({ children, ...restProps }) {
-    return (
-        <SeasonTitle {...restProps}>
-            <div>{children}</div>
-        </SeasonTitle>
-    );
-};
-
-Detail.Episode = function DetailEpisode({ children, data, ...restProps }) {
-    return (
-        <Episode {...restProps}>
-            <Thumbnail />
-            <EpisodeMeta>
-                <EpisodeCounter>Episode 01</EpisodeCounter>
-                <EpisodeTimer>15m left</EpisodeTimer>
-            </EpisodeMeta>
-            <EpisodeTitle>asdf</EpisodeTitle>
-            <ProgressBar />
-        </Episode>
-    );
-};
-
-Detail.Information = function DetailInfo({ children, ...restProps }) {
-    return <Info {...restProps}>{children}</Info>;
+Detail.Meta = function DetailMeta({ children, ...restProps }) {
+    return <Meta {...restProps}>{children}</Meta>;
 };
 Detail.Year = function DetailYear({ children, ...restProps }) {
-    return <div {...restProps}>{children}</div>;
+    return <Year {...restProps}>{children}</Year>;
 };
 Detail.EpisodeCount = function DetailEpisodeCount({ children, ...restProps }) {
-    return <div {...restProps}>{children}</div>;
+    return <EpisodeCount {...restProps}>{children}</EpisodeCount>;
 };
-Detail.EpisodeGenre = function DetailEpisodeGenre({ children, ...restProps }) {
-    return <div {...restProps}>{children}</div>;
+Detail.Genres = function DetailGenres({ children, ...restProps }) {
+    return <Genres {...restProps}>{children}</Genres>;
 };
-Detail.EpisodeTitle = function DetailEpisodeTitle({ children, ...restProps }) {
-    return <div {...restProps}>{children}</div>;
+Detail.Title = function DetailTitle({ children, ...restProps }) {
+    return <Title {...restProps}>{children}</Title>;
 };
-Detail.Episodes = function DetailEpisodes({ children, ...restProps }) {
-    return <Episodes {...restProps}>{children}</Episodes>;
+Detail.ProgressBar = function DetailProgressBar({ children, ...restProps }) {
+    return <ProgressBar {...restProps}>{children}</ProgressBar>;
+};
+Detail.Controls = function DetailControls({ children, ...restProps }) {
+    return <Controls {...restProps}>{children}</Controls>;
+};
+Detail.Continue = function DetailContinue({ children, ...restProps }) {
+    return <Button {...restProps}>{children}</Button>;
+};
+Detail.Restart = function DetailRestart({ children, ...restProps }) {
+    return <Button {...restProps}>{children}</Button>;
+};
+Detail.Play = function DetailPlay({ children, ...restProps }) {
+    return <Button {...restProps}>{children}</Button>;
 };

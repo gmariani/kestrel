@@ -10,6 +10,7 @@ html, body,
     height:100%;
     width: 100%;
     background-color:#000;
+    font-family: Tw Cen MT;
 }
 #root {
     align-items: center;

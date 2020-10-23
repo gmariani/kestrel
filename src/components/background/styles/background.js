@@ -7,6 +7,8 @@ export const Container = styled.div`
     z-index: 10;
     top: 0;
     left: 0;
+    display: flex;
+    flex-direction: column;
 `;
 export const Shadow = styled.div`
     width: 100%;

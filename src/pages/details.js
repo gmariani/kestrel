@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Background, Detail } from '../components';
+import { Background, Row, Detail, Seasons, Episodes } from '../components';
 import { useContent } from '../hooks';
 import { HeaderContainer } from '../containers/header';
 
@@ -12,17 +12,16 @@ export default function Details() {
             return mediaId === poster.docId;
         });
     };
-    const foundMeta = findMeta(media, mediaId);
-    const item = foundMeta.length ? foundMeta[0] : null;
-
-    console.log(item);
-    const currentSeason = 0;
-    const currentEpisode = 1;
-
     const padNumber = function (num) {
-        console.log(num);
         return num.toString().padStart(2, '0');
     };
+
+    const foundMeta = findMeta(media, mediaId);
+    const item = foundMeta.length ? foundMeta[0] : null;
+    const currentSeason = 0;
+    const currentEpisode = 0;
+    const episodes = item ? item.seasons[currentSeason].episodes : [];
+    console.log(episodes);
 
     return !item ? (
         <div>Loading...</div>
@@ -35,18 +34,31 @@ export default function Details() {
             imagePath={item.backgroundPath}
             opacity={1}>
             <HeaderContainer />
-            <Detail>
-                <Detail.Seasons seasons={item.seasons} selected={currentSeason} />
-                <Detail.Information>
-                    <Detail.Year>{item.year}</Detail.Year>
-                    <Detail.EpisodeCount>
-                        {padNumber(currentEpisode)}-{padNumber(item.seasons[currentSeason].episodeCount)}
-                    </Detail.EpisodeCount>
-                    <Detail.EpisodeGenre>{item.genres.join(', ')}</Detail.EpisodeGenre>
-                    <Detail.EpisodeTitle>{item.name}</Detail.EpisodeTitle>
-                </Detail.Information>
-                <Detail.Episodes />
-            </Detail>
+            <Row>
+                <Seasons seasons={item.seasons} selected={currentSeason} />
+                <Detail>
+                    <Detail.Meta>
+                        <Detail.Year>{item.year}</Detail.Year>
+                        <Detail.EpisodeCount>
+                            {padNumber(currentEpisode + 1)} - {padNumber(item.seasons[currentSeason].episodeCount)}
+                        </Detail.EpisodeCount>
+                    </Detail.Meta>
+                    <Detail.Genres>{item.genres.join(', ')}</Detail.Genres>
+                    <Detail.Title>{item.name}</Detail.Title>
+                    <Detail.ProgressBar />
+                    <Detail.Controls>
+                        <Detail.Continue>Continue</Detail.Continue>
+                        <Detail.Restart>Restart</Detail.Restart>
+                    </Detail.Controls>
+                </Detail>
+                <Episodes>
+                    {episodes.map((episode, i) => {
+                        const episodeIndex = padNumber(i + 1);
+                        const isSelected = currentEpisode === i ? 1 : 0;
+                        return <Episodes.Episode key={i} isSelected={isSelected} index={episodeIndex} data={episode} />;
+                    })}
+                </Episodes>
+            </Row>
         </Background>
     );
 }

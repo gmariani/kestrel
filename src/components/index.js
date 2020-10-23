@@ -7,3 +7,6 @@ export { default as Logo } from './logo';
 export { default as Version } from './version';
 export { default as Poster } from './poster';
 export { default as Detail } from './detail';
+export { default as Seasons } from './seasons';
+export { default as Episodes } from './episodes';
+export { default as Row } from './row';
