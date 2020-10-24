@@ -11,9 +11,7 @@ Episodes.Fade = function EpisodeFade({ children, ...restProps }) {
 };
 
 Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', data, ...restProps }) {
-    console.log(isSelected, data);
-
-    const durationToSeconds = (duration) => {
+    const durationToSeconds = (duration = '00:00') => {
         const parts = duration.split(':').map((num) => parseInt(num));
         if (parts.length >= 3) return parts[0] * 60 * 60 + parts[1] * 60 + parts[2];
         if (parts.length === 2) return parts[0] * 60 + parts[1];
@@ -36,7 +34,7 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
             );
         }
 
-        return Number.parseFloat(seconds).toFixed(2) + 's';
+        return Number.parseFloat(seconds) + 's';
     };
     const maybeProgress = (progress = 0) => {
         return progress > 0 ? <ProgressBar value={progress} /> : null;
@@ -45,8 +43,9 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
     const seconds = durationToSeconds(data.duration);
     const hasProgress = Math.random() < 0.5;
     const progress = hasProgress ? Math.random() * 100 : null;
+    const tempDuration = data.duration ? data.duration : '00:00';
     const timer = hasProgress
-        ? Math.floor(Math.random() * parseInt(data.duration.split(':')[1])) + 'm left'
+        ? Math.floor(Math.random() * parseInt(tempDuration.split(':')[1])) + 'm left'
         : secondsToHuman(seconds);
     // data.filePath
 
