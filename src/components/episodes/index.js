@@ -1,20 +1,14 @@
 import React from 'react';
-import {
-    Container,
-    EpisodeContainer,
-    Thumbnail,
-    Meta,
-    Info,
-    Title,
-    Counter,
-    Timer,
-    ProgressTrack,
-    ProgressBar,
-} from './styles/episodes';
+import { Container, Fade, EpisodeContainer, Thumbnail, Meta, Info, Title, Counter, Timer } from './styles/episodes';
+import { ProgressBar } from '../';
 
 export default function Episodes({ children, ...restProps }) {
     return <Container>{children}</Container>;
 }
+
+Episodes.Fade = function EpisodeFade({ children, ...restProps }) {
+    return <Fade></Fade>;
+};
 
 Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', data, ...restProps }) {
     console.log(isSelected, data);
@@ -45,11 +39,7 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
         return Number.parseFloat(seconds).toFixed(2) + 's';
     };
     const maybeProgress = (progress = 0) => {
-        return progress > 0 ? (
-            <ProgressTrack>
-                <ProgressBar value={progress} />
-            </ProgressTrack>
-        ) : null;
+        return progress > 0 ? <ProgressBar value={progress} /> : null;
     };
 
     const seconds = durationToSeconds(data.duration);
@@ -62,13 +52,13 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
 
     return (
         <EpisodeContainer className={isSelected ? 'selected' : ''} {...restProps}>
-            <Thumbnail />
+            <Thumbnail src={data.thumbnail} />
             <Info>
-                <Meta>
+                <Meta className='episode__meta'>
                     <Counter>Episode {index}</Counter>
                     <Timer>{timer}</Timer>
                 </Meta>
-                <Title>{data.name}</Title>
+                <Title className='episode__title'>{data.name}</Title>
                 {maybeProgress(progress)}
             </Info>
         </EpisodeContainer>

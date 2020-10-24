@@ -20,13 +20,8 @@ export const Title = styled.div`
     line-height: 8rem;
     margin-bottom: 1rem;
 `;
-export const ProgressBar = styled.div`
-    height: 5px;
-    background-color: blue;
-    width: 100%;
-    margin-bottom: 1rem;
-`;
 export const Controls = styled.div`
     display: flex;
     column-gap: 2rem;
+    margin-top: 2rem;
 `;

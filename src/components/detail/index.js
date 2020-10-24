@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../../components';
-import { Container, Controls, ProgressBar, Meta, Year, EpisodeCount, Genres, Title } from './styles/detail';
+import { Container, Controls, Meta, Year, EpisodeCount, Genres, Title } from './styles/detail';
 
 export default function Detail({ children, ...restProps }) {
     return <Container>{children}</Container>;
@@ -21,9 +21,7 @@ Detail.Genres = function DetailGenres({ children, ...restProps }) {
 Detail.Title = function DetailTitle({ children, ...restProps }) {
     return <Title {...restProps}>{children}</Title>;
 };
-Detail.ProgressBar = function DetailProgressBar({ children, ...restProps }) {
-    return <ProgressBar {...restProps}>{children}</ProgressBar>;
-};
+
 Detail.Controls = function DetailControls({ children, ...restProps }) {
     return <Controls {...restProps}>{children}</Controls>;
 };

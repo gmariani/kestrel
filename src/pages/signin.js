@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Background, Logo, Version, SignInForm, Footer } from '../components';
+import { Button, Background, Logo, Version, SignInForm, Footer } from '../components';
 import { FirebaseContext } from '../context/firebase';
 import * as ROUTES from '../constants/routes';
 
@@ -60,9 +60,9 @@ export default function SignIn() {
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}
                 <SignInForm.InputGroup>{getInputs(8, password)}</SignInForm.InputGroup>
-                <SignInForm.Submit disabled={isInvalid} type='submit' btnStyle='primary'>
+                <Button disabled={isInvalid} type='submit' btnStyle='primary'>
                     Login
-                </SignInForm.Submit>
+                </Button>
             </SignInForm>
             <Footer>
                 <Logo />

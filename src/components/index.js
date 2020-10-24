@@ -10,3 +10,4 @@ export { default as Detail } from './detail';
 export { default as Seasons } from './seasons';
 export { default as Episodes } from './episodes';
 export { default as Row } from './row';
+export { default as ProgressBar } from './progressbar';

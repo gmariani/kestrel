@@ -8,6 +8,18 @@ export const Container = styled.div`
     overflow: hidden;
     padding-right: 1.5rem;
     padding-left: 1.1rem;
+    position: relative;
+`;
+
+export const Fade = styled.div`
+    height: 200px;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50.25%, #000000 92.79%);
+    position: absolute;
+    z-index: 10;
+    bottom: 0;
+    margin-left: -1.3rem;
+    pointer-events: none;
 `;
 
 export const EpisodeContainer = styled.div`
@@ -18,6 +30,7 @@ export const EpisodeContainer = styled.div`
     opacity: 0.75;
     transform: scale(1);
     transition: all 0.3s;
+    cursor: pointer;
 
     &.selected {
         background-color: white;
@@ -27,24 +40,33 @@ export const EpisodeContainer = styled.div`
 
     &:hover {
         transform: scale(1.05);
+        background-color: white;
+    }
+    &.selected .episode__meta,
+    &:hover .episode__meta {
+        color: rgba(85, 85, 85, 1);
+    }
+    &.selected .episode__title,
+    &:hover .episode__title {
+        color: black;
     }
 `;
 export const Thumbnail = styled.div`
     width: 30%;
     height: 100%;
-    background-color: red;
+    background-color: rgba(0, 0, 0, 0.5);
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
+    background-image: ${({ src }) => `url(${src});`};
+    background-size: cover;
+    background-position: center;
 `;
 export const Meta = styled.div`
     display: flex;
     justify-content: space-between;
     font-size: 1.5rem;
     color: rgba(184, 183, 183, 1);
-
-    .selected > div > & {
-        color: rgba(85, 85, 85, 1);
-    }
+    user-select: none;
 `;
 export const Info = styled.div`
     display: flex;
@@ -52,25 +74,12 @@ export const Info = styled.div`
     padding: 2rem 3rem 2rem 2rem;
     flex: 1;
 `;
-export const ProgressTrack = styled.div`
-    height: 5px;
-    width: 100%;
-    background-color: #c4c4c4;
-`;
-
-export const ProgressBar = styled.div`
-    height: 5px;
-    width: ${({ value }) => `${value}%;`};
-    background: linear-gradient(90deg, #3b79c7 0%, #3d5b81 100.07%);
-`;
 
 export const Title = styled.div`
     font-size: 1.875rem;
     color: white;
     flex-grow: 1;
-    .selected > div > & {
-        color: black;
-    }
+    user-select: none;
 `;
 export const Counter = styled.div``;
 export const Timer = styled.div``;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Background, Row, Detail, Seasons, Episodes } from '../components';
+import { Button, Background, Row, Detail, Seasons, Episodes, ProgressBar } from '../components';
 import { useContent } from '../hooks';
 import { HeaderContainer } from '../containers/header';
 
@@ -45,13 +45,14 @@ export default function Details() {
                     </Detail.Meta>
                     <Detail.Genres>{item.genres.join(', ')}</Detail.Genres>
                     <Detail.Title>{item.name}</Detail.Title>
-                    <Detail.ProgressBar />
+                    <ProgressBar value={50} />
                     <Detail.Controls>
-                        <Detail.Continue>Continue</Detail.Continue>
-                        <Detail.Restart>Restart</Detail.Restart>
+                        <Button btnStyle='blue'>Continue</Button>
+                        <Button btnStyle='secondary'>Restart</Button>
                     </Detail.Controls>
                 </Detail>
                 <Episodes>
+                    <Episodes.Fade />
                     {episodes.map((episode, i) => {
                         const episodeIndex = padNumber(i + 1);
                         const isSelected = currentEpisode === i ? 1 : 0;
