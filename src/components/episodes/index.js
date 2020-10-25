@@ -39,6 +39,9 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
     const maybeProgress = (progress = 0) => {
         return progress > 0 ? <ProgressBar value={progress} /> : null;
     };
+    const maybeThumbnail = (thumbnail) => {
+        return thumbnail ? <Thumbnail src={thumbnail} /> : null;
+    };
 
     const seconds = durationToSeconds(data.duration);
     const hasProgress = Math.random() < 0.5;
@@ -51,7 +54,7 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
 
     return (
         <EpisodeContainer className={isSelected ? 'selected' : ''} {...restProps}>
-            <Thumbnail src={data.thumbnail} />
+            {maybeThumbnail(data.thumbnail)}
             <Info>
                 <Meta className='episode__meta'>
                     <Counter>Episode {index}</Counter>

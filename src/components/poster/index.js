@@ -16,7 +16,6 @@ export default function Poster({ posterPath, title, year, genres, to, ...restPro
         text: title,
     });
 
-    console.log(posterPath);
     return (
         <Container to={to} {...restProps}>
             <Image src={posterPath ?? placeholderPath} height='700' width='466' />

@@ -3,50 +3,58 @@ import styled from 'styled-components/macro';
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 2;
     row-gap: 1.5rem;
     overflow: hidden;
-    padding-right: 1.5rem;
-    padding-left: 1.1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
     position: relative;
 `;
 
 export const Fade = styled.div`
-    height: 200px;
-    width: 100%;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50.25%, #000000 92.79%);
-    position: absolute;
-    z-index: 10;
     bottom: 0;
-    margin-left: -1.3rem;
+    height: 200px;
+    left: 0;
     pointer-events: none;
+    position: absolute;
+    width: 100%;
+    z-index: 10;
 `;
 
-export const EpisodeContainer = styled.div`
-    border-radius: 25px;
-    display: flex;
-    min-height: 185px;
+export const EpisodeContainer = styled.button`
     background-color: black;
+    border-width: 0;
+    border-color: transparent;
+    border-radius: 2rem;
+    cursor: pointer;
+    display: flex;
+    min-height: 175px;
     opacity: 0.75;
+    padding: 0;
+    text-align: left;
     transform: scale(1);
     transition: all 0.3s;
-    cursor: pointer;
 
     &.selected {
-        background-color: white;
         opacity: 1;
-        transform: scale(1.05);
     }
 
+    &.selected,
+    &:focus,
     &:hover {
-        transform: scale(1.05);
+        transform: scale(1.025);
         background-color: white;
     }
+
     &.selected .episode__meta,
+    &:focus .episode__meta,
     &:hover .episode__meta {
         color: rgba(85, 85, 85, 1);
     }
+
     &.selected .episode__title,
+    &:focus .episode__title,
     &:hover .episode__title {
         color: black;
     }
@@ -55,11 +63,13 @@ export const Thumbnail = styled.div`
     width: 30%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
     background-image: ${({ src }) => `url(${src});`};
     background-size: cover;
     background-position: center;
+    /* Fix slight pixel render error */
+    transform: translateX(-1px);
 `;
 export const Meta = styled.div`
     display: flex;

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Button, Background, Row, Detail, Seasons, Episodes, ProgressBar } from '../components';
 import { useContent } from '../hooks';
 import { HeaderContainer } from '../containers/header';
+import { focusNext } from '../utils';
 
 export default function Details() {
     const { content: media } = useContent('media');
@@ -15,14 +16,44 @@ export default function Details() {
     const padNumber = function (num) {
         return num.toString().padStart(2, '0');
     };
+    const onKeyDown = (event) => {
+        console.log('onKeyDown', event);
+        switch (event.key) {
+            case 'Down': // IE/Edge specific value
+            case 'ArrowDown':
+                //
+                break;
+            case 'Up': // IE/Edge specific value
+            case 'ArrowUp':
+                // Do something for "up arrow" key press.
+                break;
+            case 'Left': // IE/Edge specific value
+            case 'ArrowLeft':
+                // Do something for "left arrow" key press.
+                break;
+            case 'Right': // IE/Edge specific value
+            case 'ArrowRight':
+                // Do something for "right arrow" key press.
+                focusNext();
+                break;
+            case 'Enter':
+                // Do something for "enter" or "return" key press.
+                break;
+            case 'Esc': // IE/Edge specific value
+            case 'Escape':
+                // Do something for "esc" key press.
+                break;
+            default:
+                return; // Quit when this doesn't handle the key event.
+        }
+    };
 
     const foundMeta = findMeta(media, mediaId);
     const item = foundMeta.length ? foundMeta[0] : null;
     const currentSeason = 0;
     const currentEpisode = 0;
     const episodes = item ? item.seasons[currentSeason].episodes : [];
-    console.log(episodes);
-
+    console.log(item);
     return !item ? (
         <div>Loading...</div>
     ) : (
@@ -32,22 +63,20 @@ export default function Details() {
             hasColor={false}
             hasImage={true}
             imagePath={item.backgroundPath}
-            opacity={1}>
+            opacity={1}
+            onKeyDown={onKeyDown.bind(this)}>
             <HeaderContainer />
             <Row>
                 <Seasons seasons={item.seasons} selected={currentSeason} />
                 <Detail>
                     <Detail.Meta>
-                        <Detail.Year>{item.year}</Detail.Year>
-                        <Detail.EpisodeCount>
-                            {padNumber(currentEpisode + 1)} - {padNumber(item.seasons[currentSeason].episodeCount)}
-                        </Detail.EpisodeCount>
+                        {item.year} · {item.genres.join(', ')}
                     </Detail.Meta>
-                    <Detail.Genres>{item.genres.join(', ')}</Detail.Genres>
                     <Detail.Title>{item.name}</Detail.Title>
+                    <Detail.Description>{item.description}</Detail.Description>
                     <ProgressBar value={50} />
                     <Detail.Controls>
-                        <Button btnStyle='blue'>Continue</Button>
+                        <Button btnStyle='primary'>Watch</Button>
                         <Button btnStyle='secondary'>Restart</Button>
                     </Detail.Controls>
                 </Detail>
