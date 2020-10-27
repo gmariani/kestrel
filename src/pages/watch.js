@@ -11,10 +11,9 @@ export default function Watch() {
     const [currentProgress, setCurrentProgress] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
-    const [playing, setPlaying] = useState(false);
-    const playerRef = (instance) => {
-        player = instance;
-    };
+    const [playing, setPlaying] = useState(true);
+    const [buffering, setBuffering] = useState(false);
+    const playerRef = (instance) => (player = instance);
     let player = null;
     let fadeTimeout = null;
 
@@ -24,48 +23,54 @@ export default function Watch() {
         });
     };
 
-    const findEpisode = (episodes, episodeSlug) => {
-        const foundEpisode = episodes.filter((episode) => {
-            return episodeSlug === toSlug(episode.name);
-        });
-        return foundEpisode.length ? foundEpisode[0] : null;
-    };
-
-    const updateTimer = (progress) => {
-        /*
-        loaded: 0.07357217853599066
-        loadedSeconds: 120.411955
-        played: 0
-        playedSeconds: 0
-        */
-        setCurrentProgress(progress.played * 100);
-        setCurrentTime(progress.playedSeconds);
-    };
-
+    // React Player Handlers //
     const onReady = (event) => {
         console.log('onReady', event);
     };
-    const onStart = (event) => {
-        console.log('onStart', event);
+    const onStart = () => {
+        console.log('onStart');
     };
-    const onPlay = (event) => {
-        console.log('onPlay', event);
+    const onPlay = () => {
+        console.log('onPlay');
         setPlaying(true);
     };
-    const onPause = (event) => {
-        console.log('onPause', event);
-        setPlaying(false);
+    const onProgress = ({ played, playedSeconds, loaded, loadedSeconds }) => {
+        setCurrentProgress(played * 100);
+        setCurrentTime(playedSeconds);
     };
-    const togglePlayState = (event) => {
-        event.target.blur();
-        setPlaying(!playing);
-    };
-
     const onDuration = (duration) => {
         setTotalTime(duration);
     };
+    const onPause = () => {
+        console.log('onPause');
+        setPlaying(false);
+    };
+    const onBuffer = (event) => {
+        console.log('onBuffer', event);
+        setBuffering(true);
+    };
+    const onBufferEnd = (event) => {
+        console.log('onBufferEnd', event);
+        setBuffering(false);
+    };
+    // Called when media seeks with seconds parameter
+    const onSeek = (seconds) => {
+        console.log('onSeek', seconds);
+    };
+    const onEnded = (event) => {
+        console.log('onEnded', event);
+    };
+    const onError = (event) => {
+        console.log('onError', event);
+    };
+    // End React Player //
 
-    const onSeek = (event) => {
+    const onTogglePlaying = (event) => {
+        event.target.blur();
+        if (!buffering) setPlaying(!playing);
+    };
+
+    const onSeekTo = (event) => {
         const rect = event.target.getBoundingClientRect();
         const seekX = event.pageX - rect.x;
         const trackWidth = rect.width;
@@ -92,7 +97,6 @@ export default function Watch() {
     const item = foundMeta.length ? foundMeta[0] : null;
     const episodes = item ? item.seasons[season].episodes : [];
     const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
-    //const episode = findEpisode(episodes, episodeSlug);
     const episode = episodes[episodeIndex];
 
     return !episode ? (
@@ -103,25 +107,36 @@ export default function Watch() {
                 {padNumber(episodeIndex + 1)} - {episode.name}
             </Player.Header>
             <Player.Footer>
-                <Player.PlayPause playing={playing} onClick={togglePlayState.bind(this)} />
-                <ProgressBar width={50} height='10px' value={currentProgress} onClick={onSeek} />
+                <Player.PlayPause
+                    playing={playing}
+                    style={{ opacity: buffering ? 0.5 : 1 }}
+                    onClick={onTogglePlaying.bind(this)}
+                />
+                <ProgressBar width={50} height='10px' value={currentProgress} onClick={onSeekTo} />
                 <Player.Timer>
                     {secondsToDuration(currentTime)}/{secondsToDuration(totalTime)}
                 </Player.Timer>
             </Player.Footer>
+            <Player.Buffer visible={buffering} />
             <ReactPlayer
                 ref={playerRef}
+                style={{ overflow: 'hidden' }}
                 playing={playing}
                 // controls={true}
                 url={episode.filePath}
                 width='100%'
                 height='100%'
+                onBuffer={onBuffer.bind(this)}
+                onBufferEnd={onBufferEnd.bind(this)}
                 onReady={onReady.bind(this)}
                 onStart={onStart.bind(this)}
                 onPlay={onPlay.bind(this)}
                 onPause={onPause.bind(this)}
                 onDuration={onDuration.bind(this)}
-                onProgress={updateTimer.bind(this)}
+                onProgress={onProgress.bind(this)}
+                onEnded={onEnded.bind(this)}
+                onError={onError.bind(this)}
+                onSeek={onSeek.bind(this)}
                 config={{
                     file: {
                         attributes: {
