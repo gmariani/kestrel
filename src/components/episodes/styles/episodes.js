@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+import { Link as ReachRouterLink } from 'react-router-dom';
 
 export const Container = styled.div`
     display: flex;
@@ -22,7 +23,7 @@ export const Fade = styled.div`
     z-index: 10;
 `;
 
-export const EpisodeContainer = styled.button`
+export const EpisodeContainer = styled(ReachRouterLink)`
     background-color: black;
     border-width: 0;
     border-color: transparent;
@@ -35,6 +36,10 @@ export const EpisodeContainer = styled.button`
     text-align: left;
     transform: scale(1);
     transition: all 0.3s;
+    text-decoration: none;
+    &:hover {
+        text-decoration: none;
+    }
 
     &.selected {
         opacity: 1;

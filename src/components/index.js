@@ -11,3 +11,4 @@ export { default as Seasons } from './seasons';
 export { default as Episodes } from './episodes';
 export { default as Row } from './row';
 export { default as ProgressBar } from './progressbar';
+export { default as Player } from './player';

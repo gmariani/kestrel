@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router } from 'react-router-dom';
 // eslint-disable-next-line
-import { SignIn, Home, Browse, Details } from './pages';
+import { SignIn, Home, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
 import { IsUserRedirect, ProtectedRoute } from './helpers/routes';
 import { useAuthListener } from './hooks';
@@ -20,6 +20,9 @@ export default function App() {
                 </ProtectedRoute>
                 <ProtectedRoute user={user} path={ROUTES.DETAILS_ID}>
                     <Details />
+                </ProtectedRoute>
+                <ProtectedRoute user={user} path={ROUTES.WATCH_ID}>
+                    <Watch />
                 </ProtectedRoute>
                 <IsUserRedirect user={user} loggedInPath={ROUTES.BROWSE} path={ROUTES.HOME}>
                     {/* <Home /> */}

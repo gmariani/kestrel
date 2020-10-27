@@ -2,20 +2,21 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Background, Row, Detail, Seasons, Episodes, ProgressBar } from '../components';
 import { useContent } from '../hooks';
+import * as ROUTES from '../constants/routes';
 import { HeaderContainer } from '../containers/header';
-import { focusNext } from '../utils';
+import { focusNext, toSlug, padNumber } from '../utils';
 
 export default function Details() {
     const { content: media } = useContent('media');
     const { mediaId } = useParams();
+
     const findMeta = (media, mediaId) => {
         return media.filter((poster) => {
             return mediaId === poster.docId;
         });
     };
-    const padNumber = function (num) {
-        return num.toString().padStart(2, '0');
-    };
+
+    // TODO
     const onKeyDown = (event) => {
         console.log('onKeyDown', event);
         switch (event.key) {
@@ -53,7 +54,8 @@ export default function Details() {
     const currentSeason = 0;
     const currentEpisode = 0;
     const episodes = item ? item.seasons[currentSeason].episodes : [];
-    console.log(item);
+
+    // TODO clean up loading
     return !item ? (
         <div>Loading...</div>
     ) : (
@@ -83,9 +85,18 @@ export default function Details() {
                 <Episodes>
                     <Episodes.Fade />
                     {episodes.map((episode, i) => {
+                        console.log(episode);
                         const episodeIndex = padNumber(i + 1);
                         const isSelected = currentEpisode === i ? 1 : 0;
-                        return <Episodes.Episode key={i} isSelected={isSelected} index={episodeIndex} data={episode} />;
+                        return (
+                            <Episodes.Episode
+                                key={i}
+                                isSelected={isSelected}
+                                index={episodeIndex}
+                                data={episode}
+                                to={`${ROUTES.WATCH}${mediaId}/${currentSeason}/${toSlug(episode.name)}`}
+                            />
+                        );
                     })}
                 </Episodes>
             </Row>

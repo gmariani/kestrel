@@ -20,6 +20,10 @@ export const StyledButton = styled.button`
     padding: 1rem 6rem;
     transition: all 0.3s;
 
+    &.player {
+        height: 100%;
+    }
+
     &:active,
     &:focus,
     &:hover {

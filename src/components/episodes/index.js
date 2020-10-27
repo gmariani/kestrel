@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Fade, EpisodeContainer, Thumbnail, Meta, Info, Title, Counter, Timer } from './styles/episodes';
 import { ProgressBar } from '../';
+import { durationToSeconds, secondsToHuman } from '../../utils';
 
 export default function Episodes({ children, ...restProps }) {
     return <Container>{children}</Container>;
@@ -11,31 +12,6 @@ Episodes.Fade = function EpisodeFade({ children, ...restProps }) {
 };
 
 Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', data, ...restProps }) {
-    const durationToSeconds = (duration = '00:00') => {
-        const parts = duration.split(':').map((num) => parseInt(num));
-        if (parts.length >= 3) return parts[0] * 60 * 60 + parts[1] * 60 + parts[2];
-        if (parts.length === 2) return parts[0] * 60 + parts[1];
-        return parts[0];
-    };
-    const secondsToHuman = (duration) => {
-        let temp = duration;
-        const years = Math.floor(temp / 31536000),
-            days = Math.floor((temp %= 31536000) / 86400),
-            hours = Math.floor((temp %= 86400) / 3600),
-            minutes = Math.floor((temp %= 3600) / 60),
-            seconds = temp % 60;
-
-        if (days || hours || minutes) {
-            return (
-                (years ? years + 'y ' : '') +
-                (days ? days + 'd ' : '') +
-                (hours ? hours + 'h ' : '') +
-                (minutes ? minutes + 'm ' : '')
-            );
-        }
-
-        return Number.parseFloat(seconds) + 's';
-    };
     const maybeProgress = (progress = 0) => {
         return progress > 0 ? <ProgressBar value={progress} /> : null;
     };
