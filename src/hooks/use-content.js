@@ -23,5 +23,5 @@ export default function useContent(target, orderBy = 'name') {
             });
     }, [firebase, target, orderBy]);
 
-    return { content };
+    return { content, loaded: content.length > 0 };
 }

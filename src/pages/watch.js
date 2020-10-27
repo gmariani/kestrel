@@ -5,60 +5,82 @@ import { useContent } from '../hooks';
 import { toSlug, secondsToDuration, padNumber } from '../utils';
 import ReactPlayer from 'react-player/file';
 
+// TODO get tokenized s3 links
+
 export default function Watch() {
-    const { content: media } = useContent('media');
+    const findMetadata = (media, mediaId) => {
+        const foundMetadata = media.filter((metadata) => {
+            return mediaId === metadata.docId;
+        });
+        return foundMetadata.length ? foundMetadata[0] : null;
+    };
+
+    // Start Hooks //
+    const { content: media, loaded } = useContent('media');
     const { mediaId, season, episodeSlug } = useParams();
-    const [currentProgress, setCurrentProgress] = useState(0);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [totalTime, setTotalTime] = useState(0);
-    const [playing, setPlaying] = useState(true);
-    const [buffering, setBuffering] = useState(false);
+
+    const metadata = findMetadata(media, mediaId);
+    const episodes = metadata ? metadata.seasons[season].episodes : [];
+    const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
+    const episode = episodes[episodeIndex];
+    const episodeUUID = episode ? `${mediaId}_${season}_${toSlug(episode.name)}` : '';
     const playerRef = (instance) => (player = instance);
     let player = null;
     let fadeTimeout = null;
 
-    const findMeta = (media, mediaId) => {
-        return media.filter((poster) => {
-            return mediaId === poster.docId;
-        });
-    };
+    const [currentProgress, setCurrentProgress] = useState(0);
+    const [totalTime, setTotalTime] = useState(0);
+    const [playing, setPlaying] = useState(true);
+    const [buffering, setBuffering] = useState(false);
+    const [ended, setEnded] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    // End Hooks //
+
+    // Wait until firebase replies with episode data
+    if (!loaded) return <Player.Buffer visible={true} />;
 
     // React Player Handlers //
     const onReady = (event) => {
-        console.log('onReady', event);
+        console.log('onReady');
     };
     const onStart = () => {
         console.log('onStart');
+        const storedTime = localStorage.getItem(episodeUUID);
+        console.log('resume', currentTime, storedTime);
+        player.seekTo(storedTime, 'seconds');
     };
     const onPlay = () => {
-        console.log('onPlay');
+        // console.log('onPlay');
         setPlaying(true);
     };
     const onProgress = ({ played, playedSeconds, loaded, loadedSeconds }) => {
         setCurrentProgress(played * 100);
         setCurrentTime(playedSeconds);
+        localStorage.setItem(episodeUUID, playedSeconds);
     };
     const onDuration = (duration) => {
         setTotalTime(duration);
     };
     const onPause = () => {
-        console.log('onPause');
+        // console.log('onPause');
         setPlaying(false);
     };
     const onBuffer = (event) => {
-        console.log('onBuffer', event);
+        // console.log('onBuffer', event);
         setBuffering(true);
     };
     const onBufferEnd = (event) => {
-        console.log('onBufferEnd', event);
+        // console.log('onBufferEnd', event);
         setBuffering(false);
     };
     // Called when media seeks with seconds parameter
     const onSeek = (seconds) => {
+        //localStorage.setItem(episodeUUID, seconds - 2);
         console.log('onSeek', seconds);
     };
     const onEnded = (event) => {
         console.log('onEnded', event);
+        setEnded(true);
     };
     const onError = (event) => {
         console.log('onError', event);
@@ -71,10 +93,11 @@ export default function Watch() {
     };
 
     const onSeekTo = (event) => {
-        const rect = event.target.getBoundingClientRect();
+        const rect = event.currentTarget.getBoundingClientRect();
         const seekX = event.pageX - rect.x;
         const trackWidth = rect.width;
         const seekPercent = seekX / trackWidth;
+        console.log('onSeekTo', seekPercent);
         player.seekTo(seekPercent);
     };
 
@@ -92,15 +115,8 @@ export default function Watch() {
         return this === toSlug(episode.name);
     }
 
-    // TODO get tokenized s3 links
-    const foundMeta = findMeta(media, mediaId);
-    const item = foundMeta.length ? foundMeta[0] : null;
-    const episodes = item ? item.seasons[season].episodes : [];
-    const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
-    const episode = episodes[episodeIndex];
-
-    return !episode ? (
-        <div>Loading...</div>
+    return ended ? (
+        <div>Ended</div>
     ) : (
         <Player onMouseMove={onActivity}>
             <Player.Header>
