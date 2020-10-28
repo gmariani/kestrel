@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledButton } from './styles/button';
+import { StyledButton, StyledLink } from './styles/button';
 
 export default function Button({ children, btnStyle = 'default', ...restProps }) {
     return (
@@ -8,3 +8,11 @@ export default function Button({ children, btnStyle = 'default', ...restProps })
         </StyledButton>
     );
 }
+
+Button.Link = function ButtonLink({ children, btnStyle = 'default', ...restProps }) {
+    return (
+        <StyledLink className={btnStyle} {...restProps}>
+            {children}
+        </StyledLink>
+    );
+};

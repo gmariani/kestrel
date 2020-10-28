@@ -12,13 +12,6 @@ Episodes.Fade = function EpisodeFade({ children, ...restProps }) {
 };
 
 Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', data, ...restProps }) {
-    const maybeProgress = (progress = 0) => {
-        return progress > 0 ? <ProgressBar value={progress} /> : null;
-    };
-    const maybeThumbnail = (thumbnail) => {
-        return thumbnail ? <Thumbnail src={thumbnail} /> : null;
-    };
-
     const seconds = durationToSeconds(data.duration);
     const hasProgress = Math.random() < 0.5;
     const progress = hasProgress ? Math.random() * 100 : null;
@@ -30,14 +23,14 @@ Episodes.Episode = function Episode({ children, isSelected = 0, index = '01', da
 
     return (
         <EpisodeContainer className={isSelected ? 'selected' : ''} {...restProps}>
-            {maybeThumbnail(data.thumbnail)}
+            {data.thumbnail ? <Thumbnail src={data.thumbnail} /> : null}
             <Info>
                 <Meta className='episode__meta'>
                     <Counter>Episode {index}</Counter>
                     <Timer>{timer}</Timer>
                 </Meta>
                 <Title className='episode__title'>{data.name}</Title>
-                {maybeProgress(progress)}
+                {progress > 0 ? <ProgressBar value={progress} /> : null}
             </Info>
         </EpisodeContainer>
     );

@@ -1,6 +1,22 @@
 import React from 'react';
 import { Button } from '../';
-import { Container, Header, Footer, BufferContainer, Buffer, Timer, Icon } from './styles/player';
+import {
+    Container,
+    Header,
+    Footer,
+    BufferContainer,
+    Buffer,
+    Timer,
+    Icon,
+    Preview,
+    PreviewThumbnail,
+    PreviewTitle,
+    EndContainer,
+    EndDetails,
+    EndTitle,
+    EndSubTitle,
+} from './styles/player';
+import { padNumber } from '../../utils';
 
 export default function Player({ children, ...restProps }) {
     return <Container {...restProps}>{children}</Container>;
@@ -171,4 +187,31 @@ Player.PlayPause = function PlayerPlayPause({ playing = false, style, onClick })
 };
 Player.Timer = function PlayerTimer({ children, ...restProps }) {
     return <Timer {...restProps}>{children}</Timer>;
+};
+Player.End = function PlayerEnd({ children, ...restProps }) {
+    return <EndContainer {...restProps}>{children}</EndContainer>;
+};
+Player.EndDetails = function PlayerEndDetails({ children, ...restProps }) {
+    return <EndDetails {...restProps}>{children}</EndDetails>;
+};
+Player.EndTitle = function PlayerEndTitle({ children, ...restProps }) {
+    return <EndTitle>{children}</EndTitle>;
+};
+Player.EndSubTitle = function PlayerEndSubTitle({ children, episodeIndex = 0, episode = null, ...restProps }) {
+    return episode ? (
+        <EndSubTitle>
+            {padNumber(episodeIndex + 1)} - {episode.name}
+        </EndSubTitle>
+    ) : null;
+};
+
+Player.Preview = function PlayerPreview({ children, episodeIndex = 0, nextEpisode = null, ...restProps }) {
+    return nextEpisode ? (
+        <Preview {...restProps}>
+            <PreviewThumbnail src={nextEpisode.thumbnail} />
+            <PreviewTitle>
+                Next: {padNumber(episodeIndex + 2)} - {nextEpisode.name}
+            </PreviewTitle>
+        </Preview>
+    ) : null;
 };

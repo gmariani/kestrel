@@ -68,7 +68,7 @@ export default function Details() {
             opacity={1}
             onKeyDown={onKeyDown.bind(this)}>
             <HeaderContainer />
-            <Row>
+            <Row height='100%'>
                 <Seasons seasons={item.seasons} selected={currentSeason} />
                 <Detail>
                     <Detail.Meta>

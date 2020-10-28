@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Player, ProgressBar } from '../components';
+import { Player, ProgressBar, Button, Row } from '../components';
 import { useContent } from '../hooks';
 import { toSlug, secondsToDuration, padNumber } from '../utils';
 import ReactPlayer from 'react-player/file';
+import * as ROUTES from '../constants/routes';
 
 // TODO get tokenized s3 links
 
@@ -19,14 +20,14 @@ export default function Watch() {
     const { content: media, loaded } = useContent('media');
     const { mediaId, season, episodeSlug } = useParams();
 
-    const metadata = findMetadata(media, mediaId);
-    const episodes = metadata ? metadata.seasons[season].episodes : [];
+    const series = findMetadata(media, mediaId);
+    const episodes = series ? series.seasons[season].episodes : [];
     const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
     const episode = episodes[episodeIndex];
+    const nextEpisode = episodes[episodeIndex + 1] ? episodes[episodeIndex + 1] : null;
     const episodeUUID = episode ? `${mediaId}_${season}_${toSlug(episode.name)}` : '';
     const playerRef = (instance) => (player = instance);
     let player = null;
-    let fadeTimeout = null;
 
     const [currentProgress, setCurrentProgress] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
@@ -34,6 +35,7 @@ export default function Watch() {
     const [buffering, setBuffering] = useState(false);
     const [ended, setEnded] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
+    const [timeoutID, setTimeoutID] = useState(null);
     // End Hooks //
 
     // Wait until firebase replies with episode data
@@ -45,9 +47,11 @@ export default function Watch() {
     };
     const onStart = () => {
         console.log('onStart');
-        const storedTime = localStorage.getItem(episodeUUID);
+        const storedTime = localStorage.getItem(episodeUUID) || 0;
         console.log('resume', currentTime, storedTime);
-        player.seekTo(storedTime, 'seconds');
+        if (storedTime > 10) {
+            player.seekTo(storedTime, 'seconds');
+        }
     };
     const onPlay = () => {
         // console.log('onPlay');
@@ -75,11 +79,11 @@ export default function Watch() {
     };
     // Called when media seeks with seconds parameter
     const onSeek = (seconds) => {
-        //localStorage.setItem(episodeUUID, seconds - 2);
-        console.log('onSeek', seconds);
+        // console.log('onSeek', seconds);
     };
     const onEnded = (event) => {
         console.log('onEnded', event);
+        localStorage.removeItem(episodeUUID);
         setEnded(true);
     };
     const onError = (event) => {
@@ -107,8 +111,8 @@ export default function Watch() {
 
     const onActivity = ({ target, currentTarget }) => {
         currentTarget.classList.add('show');
-        clearTimeout(fadeTimeout);
-        fadeTimeout = setTimeout(onInactivity, 3000, currentTarget);
+        clearTimeout(timeoutID);
+        setTimeoutID(setTimeout(onInactivity, 3000, currentTarget));
     };
 
     function isCurrentEpisode(episode) {
@@ -116,7 +120,29 @@ export default function Watch() {
     }
 
     return ended ? (
-        <div>Ended</div>
+        <Player.End>
+            <Player.EndDetails>
+                <Player.EndTitle>{series.name}</Player.EndTitle>
+                <Player.EndSubTitle episodeIndex={episodeIndex} episode={episode} />
+                <Row>
+                    <Button.Link
+                        btnStyle={nextEpisode ? 'secondary' : 'primary'}
+                        onClick={(e) => setEnded(false)}
+                        to={`${ROUTES.DETAILS}${mediaId}`}>
+                        Back
+                    </Button.Link>
+                    {nextEpisode ? (
+                        <Button.Link
+                            btnStyle='primary'
+                            onClick={(e) => setEnded(false)}
+                            to={`${ROUTES.WATCH}${mediaId}/${season}/${toSlug(nextEpisode.name)}`}>
+                            Next
+                        </Button.Link>
+                    ) : null}
+                </Row>
+            </Player.EndDetails>
+            <Player.Preview episodeIndex={episodeIndex} nextEpisode={nextEpisode} />
+        </Player.End>
     ) : (
         <Player onMouseMove={onActivity}>
             <Player.Header>
