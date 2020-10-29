@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Player, ProgressBar, Button, Row } from '../components';
 import { useContent } from '../hooks';
-import { toSlug, secondsToDuration, padNumber } from '../utils';
+import { getUUID, toSlug, secondsToDuration, padNumber } from '../utils';
 import ReactPlayer from 'react-player/file';
 import * as ROUTES from '../constants/routes';
 
 // TODO get tokenized s3 links
 
 export default function Watch() {
-    const findMetadata = (media, mediaId) => {
+    const getSeries = (media, mediaId) => {
         const foundMetadata = media.filter((metadata) => {
             return mediaId === metadata.docId;
         });
@@ -18,14 +18,14 @@ export default function Watch() {
 
     // Start Hooks //
     const { content: media, loaded } = useContent('media');
-    const { mediaId, season, episodeSlug } = useParams();
+    const { mediaId, season: seasonIndex, episodeSlug } = useParams();
 
-    const series = findMetadata(media, mediaId);
-    const episodes = series ? series.seasons[season].episodes : [];
+    const series = getSeries(media, mediaId);
+    const episodes = series ? series.seasons[seasonIndex].episodes : [];
     const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
     const episode = episodes[episodeIndex];
     const nextEpisode = episodes[episodeIndex + 1] ? episodes[episodeIndex + 1] : null;
-    const episodeUUID = episode ? `${mediaId}_${season}_${toSlug(episode.name)}` : '';
+    const episodeUUID = getUUID(mediaId, seasonIndex, episodeSlug);
     const playerRef = (instance) => (player = instance);
     let player = null;
 
@@ -126,16 +126,16 @@ export default function Watch() {
                 <Player.EndSubTitle episodeIndex={episodeIndex} episode={episode} />
                 <Row>
                     <Button.Link
-                        btnStyle={nextEpisode ? 'secondary' : 'primary'}
+                        theme={nextEpisode ? 'secondary' : 'primary'}
                         onClick={(e) => setEnded(false)}
                         to={`${ROUTES.DETAILS}${mediaId}`}>
                         Back
                     </Button.Link>
                     {nextEpisode ? (
                         <Button.Link
-                            btnStyle='primary'
+                            theme='primary'
                             onClick={(e) => setEnded(false)}
-                            to={`${ROUTES.WATCH}${mediaId}/${season}/${toSlug(nextEpisode.name)}`}>
+                            to={`${ROUTES.WATCH}${mediaId}/${seasonIndex}/${toSlug(nextEpisode.name)}`}>
                             Next
                         </Button.Link>
                     ) : null}

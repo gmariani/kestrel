@@ -1,17 +1,17 @@
 import React from 'react';
 import { StyledButton, StyledLink } from './styles/button';
 
-export default function Button({ children, btnStyle = 'default', ...restProps }) {
+export default function Button({ children, theme = 'default', ...restProps }) {
     return (
-        <StyledButton btnStyle={btnStyle} {...restProps}>
+        <StyledButton theme={theme} {...restProps}>
             {children}
         </StyledButton>
     );
 }
 
-Button.Link = function ButtonLink({ children, btnStyle = 'default', ...restProps }) {
+Button.Link = function ButtonLink({ children, theme = 'default', ...restProps }) {
     return (
-        <StyledLink className={btnStyle} {...restProps}>
+        <StyledLink className={theme} {...restProps}>
             {children}
         </StyledLink>
     );

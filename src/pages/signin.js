@@ -60,7 +60,7 @@ export default function SignIn() {
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}
                 <SignInForm.InputGroup>{getInputs(8, password)}</SignInForm.InputGroup>
-                <Button disabled={isInvalid} type='submit' btnStyle='primary'>
+                <Button disabled={isInvalid} type='submit' theme='primary'>
                     Login
                 </Button>
             </SignInForm>
