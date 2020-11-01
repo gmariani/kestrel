@@ -4,7 +4,7 @@ import { Link as ReachRouterLink } from 'react-router-dom';
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-    flex: 2;
+    flex: 1;
     row-gap: 1.5rem;
     overflow: hidden;
     padding-right: 1rem;
@@ -30,7 +30,7 @@ export const EpisodeContainer = styled(ReachRouterLink)`
     border-radius: 2rem;
     cursor: pointer;
     display: flex;
-    min-height: 175px;
+    height: 155px;
     opacity: 0.75;
     padding: 0;
     text-align: left;

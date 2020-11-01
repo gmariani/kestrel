@@ -18,14 +18,15 @@ export default function Watch() {
 
     // Start Hooks //
     const { content: media, loaded } = useContent('media');
-    const { mediaId, season: seasonIndex, episodeSlug } = useParams();
+    const { mediaId, season: selectedSeason, episodeSlug } = useParams();
 
     const series = getSeries(media, mediaId);
-    const episodes = series ? series.seasons[seasonIndex].episodes : [];
-    const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
-    const episode = episodes[episodeIndex];
-    const nextEpisode = episodes[episodeIndex + 1] ? episodes[episodeIndex + 1] : null;
-    const episodeUUID = getUUID(mediaId, seasonIndex, episodeSlug);
+    const seasonUUID = getUUID(mediaId, selectedSeason);
+    const episodes = series ? series.seasons[selectedSeason].episodes : [];
+    const selectedEpisode = episodes.findIndex(isCurrentEpisode, episodeSlug);
+    const episode = episodes[selectedEpisode];
+    const nextEpisode = episodes[selectedEpisode + 1] ? episodes[selectedEpisode + 1] : null;
+    const episodeUUID = getUUID(mediaId, selectedSeason, episodeSlug);
     const playerRef = (instance) => (player = instance);
     let player = null;
 
@@ -123,7 +124,7 @@ export default function Watch() {
         <Player.End>
             <Player.EndDetails>
                 <Player.EndTitle>{series.name}</Player.EndTitle>
-                <Player.EndSubTitle episodeIndex={episodeIndex} episode={episode} />
+                <Player.EndSubTitle episodeIndex={selectedEpisode} episode={episode} />
                 <Row>
                     <Button.Link
                         theme={nextEpisode ? 'secondary' : 'primary'}
@@ -134,19 +135,22 @@ export default function Watch() {
                     {nextEpisode ? (
                         <Button.Link
                             theme='primary'
-                            onClick={(e) => setEnded(false)}
-                            to={`${ROUTES.WATCH}${mediaId}/${seasonIndex}/${toSlug(nextEpisode.name)}`}>
+                            onClick={(e) => {
+                                localStorage.setItem(seasonUUID, selectedEpisode);
+                                setEnded(false);
+                            }}
+                            to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${toSlug(nextEpisode.name)}`}>
                             Next
                         </Button.Link>
                     ) : null}
                 </Row>
             </Player.EndDetails>
-            <Player.Preview episodeIndex={episodeIndex} nextEpisode={nextEpisode} />
+            <Player.Preview episodeIndex={selectedEpisode} nextEpisode={nextEpisode} />
         </Player.End>
     ) : (
         <Player onMouseMove={onActivity}>
             <Player.Header>
-                {padNumber(episodeIndex + 1)} - {episode.name}
+                {padNumber(selectedEpisode + 1)} - {episode.name}
             </Player.Header>
             <Player.Footer>
                 <Player.PlayPause

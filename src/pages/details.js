@@ -4,7 +4,7 @@ import { Button, Background, Row, Detail, Seasons, Episodes, ProgressBar } from 
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
 import { HeaderContainer } from '../containers/header';
-import { focusNext, getUUID, toSlug, padNumber, durationToSeconds, secondsToHuman } from '../utils';
+import { focusNext, getEpisodeProgress, getUUID, toSlug } from '../utils';
 
 export default function Details() {
     const { content: media } = useContent('media');
@@ -15,13 +15,6 @@ export default function Details() {
             return mediaId === metadata.docId;
         });
         return foundMetadata.length ? foundMetadata[0] : null;
-    };
-
-    const getEpisodeProgress = (uuid, duration = '00:00') => {
-        const currentSeconds = +(localStorage.getItem(uuid) || 0);
-        const totalSeconds = durationToSeconds(duration);
-        const progress = Math.floor(totalSeconds > 0 && currentSeconds > 0 ? (currentSeconds / totalSeconds) * 100 : 0);
-        return { percent: progress, currentSeconds, totalSeconds };
     };
 
     // TODO
@@ -61,16 +54,16 @@ export default function Details() {
     if (!series) return <div>Loading...</div>;
 
     // TODO make these dynamic
-    const seasonIndex = 0;
-    const selectedEpisodeIndex = 0;
-    const episodes = series ? series.seasons[seasonIndex].episodes : [];
+    const selectedSeason = 0;
+    const seasonUUID = getUUID(mediaId, selectedSeason);
+    const selectedEpisode = +(localStorage.getItem(seasonUUID) || 0);
+    const episodes = series ? series.seasons[selectedSeason].episodes : [];
+    const episode = episodes[selectedEpisode];
+    const episodeSlug = toSlug(episode.name);
+    const episodeUUID = getUUID(mediaId, selectedSeason, episodeSlug);
+    const episodeProgress = getEpisodeProgress(episodeUUID, episode.duration);
+    const hasProgress = episodeProgress.percent > 0;
 
-    const selectedEpisode = episodes[selectedEpisodeIndex];
-    const selectedEpisodeSlug = toSlug(selectedEpisode.name);
-    const selectedEpisodeUUID = getUUID(mediaId, seasonIndex, selectedEpisodeSlug);
-    const selectedProgress = getEpisodeProgress(selectedEpisodeUUID, selectedEpisode.duration);
-
-    // TODO clean up loading
     return (
         <Background
             hasShadow={true}
@@ -82,56 +75,35 @@ export default function Details() {
             onKeyDown={onKeyDown.bind(this)}>
             <HeaderContainer />
             <Row height='100%'>
-                <Seasons seasons={series.seasons} selected={seasonIndex} />
+                <Seasons seasons={series.seasons} selected={selectedSeason} />
                 <Detail>
-                    <Detail.Meta>
-                        {series.year} · {series.genres.join(', ')}
-                    </Detail.Meta>
-                    <Detail.Title>{series.name}</Detail.Title>
-                    <Detail.Description>{series.description}</Detail.Description>
-                    <ProgressBar value={selectedProgress.percent} />
+                    <Detail.Info series={series} />
+                    {hasProgress ? <ProgressBar value={episodeProgress.percent} /> : null}
                     <Detail.Controls>
-                        <Button.Link
-                            theme='primary'
-                            to={`${ROUTES.WATCH}${mediaId}/${seasonIndex}/${selectedEpisodeSlug}`}>
-                            Watch
+                        <Button.Link theme='primary' to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}>
+                            {hasProgress ? 'Continue' : 'Watch'}
                         </Button.Link>
-                        <Button.Link
-                            theme='secondary'
-                            onClick={(e) => {
-                                localStorage.removeItem(selectedEpisodeUUID);
-                            }}
-                            to={`${ROUTES.WATCH}${mediaId}/${seasonIndex}/${selectedEpisodeSlug}`}>
-                            Restart
-                        </Button.Link>
+                        {hasProgress ? (
+                            <Button.Link
+                                theme='secondary'
+                                onClick={(e) => {
+                                    localStorage.removeItem(episodeUUID);
+                                }}
+                                to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}>
+                                Restart
+                            </Button.Link>
+                        ) : null}
                     </Detail.Controls>
                 </Detail>
-                <Episodes>
-                    <Episodes.Fade />
-                    {episodes.map((episode, i) => {
-                        // console.log(episode);
-                        const episodeIndex = padNumber(i + 1);
-                        const episodeSlug = toSlug(episode.name);
-                        const isSelected = selectedEpisodeIndex === i ? 1 : 0;
-                        const episodeUUID = getUUID(mediaId, seasonIndex, episodeSlug);
-                        const progress = getEpisodeProgress(episodeUUID, episode.duration);
-                        const timer =
-                            progress.percent > 0
-                                ? secondsToHuman(progress.totalSeconds - progress.currentSeconds) + ' left'
-                                : secondsToHuman(progress.totalSeconds);
-                        return (
-                            <Episodes.Episode
-                                key={i}
-                                isSelected={isSelected}
-                                index={episodeIndex}
-                                data={episode}
-                                timer={timer}
-                                progressPercent={progress.percent}
-                                to={`${ROUTES.WATCH}${mediaId}/${seasonIndex}/${episodeSlug}`}
-                            />
-                        );
-                    })}
-                </Episodes>
+                <Episodes
+                    episodes={episodes}
+                    selectedSeries={mediaId}
+                    selectedSeason={selectedSeason}
+                    selectedEpisode={selectedEpisode}
+                    onClickEpisode={(episodeIndex) => {
+                        localStorage.setItem(seasonUUID, episodeIndex);
+                    }}
+                />
             </Row>
         </Background>
     );
