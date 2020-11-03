@@ -5,6 +5,8 @@ import * as ROUTES from '../../constants/routes';
 import { getEpisodeProgress, toSlug, padNumber, secondsToHuman } from '../../utils';
 
 export default function Episodes({
+    focusId,
+    focusTarget,
     episodes,
     selectedSeries,
     selectedSeason = 0,
@@ -13,6 +15,7 @@ export default function Episodes({
     onClickEpisode,
     ...restProps
 }) {
+    const hasFocus = focusId === focusTarget;
     const containerRef = React.createRef();
     console.log('progress', progress);
     useEffect(() => {
@@ -31,7 +34,9 @@ export default function Episodes({
                     const episodeNumber = padNumber(i + 1);
                     const episodeSlug = toSlug(episode.name);
                     const episodeProgress = getEpisodeProgress(progress?.[selectedSeason]?.[i], episode.duration);
-                    const isSelected = selectedEpisode === i ? 1 : 0;
+                    const isSelected = i === selectedEpisode;
+                    const classSelected = isSelected ? 'selected' : '';
+                    const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const timer =
                         episodeProgress.percent > 0
                             ? secondsToHuman(episodeProgress.totalSeconds - episodeProgress.currentSeconds) + ' left'
@@ -46,6 +51,7 @@ export default function Episodes({
                             onClick={(e) => {
                                 onClickEpisode(i);
                             }}
+                            className={`${classSelected} ${classFocused}`}
                             progressPercent={episodeProgress.percent}
                             to={`${ROUTES.WATCH}${selectedSeries}/${selectedSeason}/${episodeSlug}`}
                         />

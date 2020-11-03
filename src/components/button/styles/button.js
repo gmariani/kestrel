@@ -28,6 +28,7 @@ export const StyledButton = styled.button`
 
     &:active,
     &:focus,
+    &.focused,
     &:hover {
         color: black;
         background-color: white;
@@ -62,6 +63,7 @@ export const StyledLink = styled(ReachRouterLink)`
 
     &:active,
     &:focus,
+    &.focused,
     &:hover {
         color: black;
         background-color: white;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Background, Row, Detail, Seasons, Episodes, ProgressBar } from '../components';
+import { Background, Row, Detail, Seasons, Episodes } from '../components';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
 import { HeaderContainer } from '../containers/header';
@@ -32,7 +32,9 @@ export default function Details() {
 
     // TODO
     const onKeyDown = (event) => {
-        console.log('onKeyDown', event);
+        // event.stopPropagation();
+        event.preventDefault();
+        console.log('onKeyDown Row - current focus', focusItems[focus]);
         switch (event.key) {
             case 'Left': // IE/Edge specific value
             case 'ArrowLeft':
@@ -41,6 +43,31 @@ export default function Details() {
             case 'Right': // IE/Edge specific value
             case 'ArrowRight':
                 setFocus((focus + 1) % focusItems.length);
+                break;
+
+            case 'Down': // IE/Edge specific value
+            case 'ArrowDown':
+                if ('seasons' === focusItems[focus]) {
+                    setSelectedEpisode(0);
+                    setSelectedSeason((selectedSeason + 1) % series.seasons.length);
+                }
+                if ('episodes' === focusItems[focus]) {
+                    setSelectedEpisode((selectedEpisode + 1) % episodes.length);
+                }
+                break;
+            case 'Up': // IE/Edge specific value
+            case 'ArrowUp':
+                if ('seasons' === focusItems[focus]) {
+                    const newSeason = (selectedSeason - 1 + series.seasons.length) % series.seasons.length;
+                    console.log('set season to ', newSeason);
+                    setSelectedEpisode(0);
+                    setSelectedSeason(newSeason);
+                }
+                if ('episodes' === focusItems[focus]) {
+                    const newEpisode = (selectedEpisode - 1 + episodes.length) % episodes.length;
+                    console.log('set episode to ', newEpisode);
+                    setSelectedEpisode(newEpisode);
+                }
                 break;
             case 'Enter':
                 // Do something for "enter" or "return" key press.
@@ -61,11 +88,9 @@ export default function Details() {
             hasColor={false}
             hasImage={true}
             imagePath={series.backgroundPath}
-            opacity={1}
-            tabIndex='0'
-            onKeyDown={(e) => console.log(e)}>
+            opacity={1}>
             <HeaderContainer />
-            <Row height='100%'>
+            <Row height='100%' onKeyDown={(e) => onKeyDown(e)} tabIndex='0'>
                 <Seasons
                     seasons={series.seasons}
                     selected={selectedSeason}
@@ -78,32 +103,25 @@ export default function Details() {
                         setSelectedSeason(seasonIndex);
                     }}
                 />
-                <Detail focusId={1} focusTarget={focus}>
-                    <Detail.Info series={series} />
-                    {hasProgress ? <ProgressBar value={episodeProgress.percent} /> : null}
-                    <Detail.Controls>
-                        <Button.Link theme='primary' to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}>
-                            {hasProgress ? 'Continue' : 'Watch'}
-                        </Button.Link>
-                        {hasProgress ? (
-                            <Button.Link
-                                theme='secondary'
-                                onClick={(e) => {
-                                    const tempProgress = [...progress];
-                                    if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
-                                    tempProgress[selectedSeason][selectedEpisode] = 0;
-                                    localStorage.setItem(
-                                        mediaId,
-                                        JSON.stringify({ progress: tempProgress, selectedSeason, selectedEpisode })
-                                    );
-                                    setProgress(tempProgress);
-                                }}
-                                to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}>
-                                Restart
-                            </Button.Link>
-                        ) : null}
-                    </Detail.Controls>
-                </Detail>
+                <Detail
+                    focusId={1}
+                    focusTarget={focus}
+                    series={series}
+                    episodeProgress={hasProgress ? episodeProgress : null}
+                    episodeRoute={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}
+                    onClickRestart={() => {
+                        // Reset episode progress
+                        const tempProgress = [...progress];
+                        if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
+                        tempProgress[selectedSeason][selectedEpisode] = 0;
+                        localStorage.setItem(
+                            mediaId,
+                            JSON.stringify({ progress: tempProgress, selectedSeason, selectedEpisode })
+                        );
+                        // Save progress
+                        setProgress(tempProgress);
+                    }}
+                />
                 <Episodes
                     focusId={2}
                     episodes={episodes}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Title, SubTitle } from './styles/seasons';
 
 export default function Seasons({ focusId, focusTarget, seasons, selected = 0, onClickSeason, ...restProps }) {
@@ -7,39 +7,18 @@ export default function Seasons({ focusId, focusTarget, seasons, selected = 0, o
     };
 
     const hasFocus = focusId === focusTarget;
-    const [focus, setFocus] = useState(selected);
-    const onKeyDown = (event) => {
-        // Only take action if we have focus
-        if (!hasFocus) return;
-
-        console.log('onKeyDown Seasons', event);
-        switch (event.key) {
-            case 'Down': // IE/Edge specific value
-            case 'ArrowDown':
-                setFocus((focus + 1) % seasons.length);
-                break;
-            case 'Up': // IE/Edge specific value
-            case 'ArrowUp':
-                setFocus((focus - 1 + seasons.length) % seasons.length);
-                break;
-            default:
-                return; // Quit when this doesn't handle the key event.
-        }
-    };
 
     return (
-        <Container onKeyDown={onKeyDown.bind(this)} {...restProps}>
+        <Container {...restProps}>
             {seasons.map((season, i) => {
                 const episodeLabel = season.episodeCount > 1 ? 'Episodes' : 'Episode';
+                const isSelected = i === selected;
+                const classSelected = isSelected ? 'selected' : '';
+                const classFocused = isSelected && hasFocus ? 'focused' : '';
                 return (
-                    <Title
-                        key={i}
-                        className={focus === i ? 'selected' : ''}
-                        onClick={(e) => {
-                            onClickSeason(i);
-                        }}>
+                    <Title key={i} className={`${classSelected} ${classFocused}`} onClick={(e) => onClickSeason(i)}>
                         {capitalize(season.name)}
-                        <SubTitle isSelected={focus === i}>
+                        <SubTitle isSelected={isSelected}>
                             {season.episodeCount} {episodeLabel}
                         </SubTitle>
                     </Title>

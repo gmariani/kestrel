@@ -23,7 +23,8 @@ export const Title = styled.button`
     user-select: none;
 
     &:hover,
-    &:focus {
+    &:focus,
+    &.focused {
         border: 2px solid white;
     }
 `;
