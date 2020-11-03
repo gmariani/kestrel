@@ -1,42 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Background, Row, Detail, Seasons, Episodes, ProgressBar } from '../components';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
 import { HeaderContainer } from '../containers/header';
-import { focusNext, getEpisodeProgress, getUUID, toSlug } from '../utils';
+import { getEpisodeProgress, toSlug, getSeries } from '../utils';
 
 export default function Details() {
     const { content: media } = useContent('media');
     const { mediaId } = useParams();
+    const savedData = JSON.parse(localStorage.getItem(mediaId));
+    const [progress, setProgress] = useState(savedData?.progress ?? []);
+    const [selectedSeason, setSelectedSeason] = useState(savedData?.selectedSeason ?? 0);
+    const [selectedEpisode, setSelectedEpisode] = useState(savedData?.selectedEpisode ?? 0);
+    const [focus, setFocus] = useState(2);
+    const series = getSeries(media, mediaId);
 
-    const getSeries = (media, mediaId) => {
-        const foundMetadata = media.filter((metadata) => {
-            return mediaId === metadata.docId;
-        });
-        return foundMetadata.length ? foundMetadata[0] : null;
-    };
+    console.log('savedData', mediaId, savedData);
+    console.log(progress, selectedSeason, selectedEpisode);
+
+    // Firebase hasn't replied yet...
+    if (!series) return <div>Loading...</div>;
+    // if (!loaded) return <Player.Buffer visible={true} />;
+
+    const episodes = series.seasons[selectedSeason].episodes;
+    const episode = episodes[selectedEpisode];
+    const episodeSlug = toSlug(episode.name);
+    const episodeProgress = getEpisodeProgress(progress?.[selectedSeason]?.[selectedEpisode], episode.duration);
+    const hasProgress = episodeProgress.percent > 0;
+    const focusItems = ['seasons', 'detail', 'episodes'];
 
     // TODO
     const onKeyDown = (event) => {
         console.log('onKeyDown', event);
         switch (event.key) {
-            case 'Down': // IE/Edge specific value
-            case 'ArrowDown':
-                //
-                break;
-            case 'Up': // IE/Edge specific value
-            case 'ArrowUp':
-                // Do something for "up arrow" key press.
-                break;
             case 'Left': // IE/Edge specific value
             case 'ArrowLeft':
-                // Do something for "left arrow" key press.
+                setFocus((focus - 1 + focusItems.length) % focusItems.length);
                 break;
             case 'Right': // IE/Edge specific value
             case 'ArrowRight':
-                // Do something for "right arrow" key press.
-                focusNext();
+                setFocus((focus + 1) % focusItems.length);
                 break;
             case 'Enter':
                 // Do something for "enter" or "return" key press.
@@ -50,20 +54,6 @@ export default function Details() {
         }
     };
 
-    const series = getSeries(media, mediaId);
-    if (!series) return <div>Loading...</div>;
-
-    // TODO make these dynamic
-    const selectedSeason = 0;
-    const seasonUUID = getUUID(mediaId, selectedSeason);
-    const selectedEpisode = +(localStorage.getItem(seasonUUID) || 0);
-    const episodes = series ? series.seasons[selectedSeason].episodes : [];
-    const episode = episodes[selectedEpisode];
-    const episodeSlug = toSlug(episode.name);
-    const episodeUUID = getUUID(mediaId, selectedSeason, episodeSlug);
-    const episodeProgress = getEpisodeProgress(episodeUUID, episode.duration);
-    const hasProgress = episodeProgress.percent > 0;
-
     return (
         <Background
             hasShadow={true}
@@ -72,11 +62,23 @@ export default function Details() {
             hasImage={true}
             imagePath={series.backgroundPath}
             opacity={1}
-            onKeyDown={onKeyDown.bind(this)}>
+            tabIndex='0'
+            onKeyDown={(e) => console.log(e)}>
             <HeaderContainer />
             <Row height='100%'>
-                <Seasons seasons={series.seasons} selected={selectedSeason} />
-                <Detail>
+                <Seasons
+                    seasons={series.seasons}
+                    selected={selectedSeason}
+                    focusId={0}
+                    focusTarget={focus}
+                    onClickSeason={(seasonIndex) => {
+                        // Only update season when playing an episode
+                        // localStorage.setItem(mediaId, JSON.stringify({ progress, seasonIndex, selectedEpisode }));
+                        setSelectedEpisode(0);
+                        setSelectedSeason(seasonIndex);
+                    }}
+                />
+                <Detail focusId={1} focusTarget={focus}>
                     <Detail.Info series={series} />
                     {hasProgress ? <ProgressBar value={episodeProgress.percent} /> : null}
                     <Detail.Controls>
@@ -87,7 +89,14 @@ export default function Details() {
                             <Button.Link
                                 theme='secondary'
                                 onClick={(e) => {
-                                    localStorage.removeItem(episodeUUID);
+                                    const tempProgress = [...progress];
+                                    if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
+                                    tempProgress[selectedSeason][selectedEpisode] = 0;
+                                    localStorage.setItem(
+                                        mediaId,
+                                        JSON.stringify({ progress: tempProgress, selectedSeason, selectedEpisode })
+                                    );
+                                    setProgress(tempProgress);
                                 }}
                                 to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}>
                                 Restart
@@ -96,12 +105,16 @@ export default function Details() {
                     </Detail.Controls>
                 </Detail>
                 <Episodes
+                    focusId={2}
                     episodes={episodes}
                     selectedSeries={mediaId}
                     selectedSeason={selectedSeason}
                     selectedEpisode={selectedEpisode}
+                    progress={progress}
+                    focusTarget={focus}
                     onClickEpisode={(episodeIndex) => {
-                        localStorage.setItem(seasonUUID, episodeIndex);
+                        localStorage.setItem(mediaId, JSON.stringify({ progress, selectedSeason, episodeIndex }));
+                        setSelectedEpisode(episodeIndex);
                     }}
                 />
             </Row>

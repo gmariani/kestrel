@@ -16,10 +16,10 @@ export const Fade = styled.div`
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50.25%, #000000 92.79%);
     bottom: 0;
     height: 200px;
-    left: 0;
+    right: 0;
     pointer-events: none;
     position: absolute;
-    width: 100%;
+    width: 50%;
     z-index: 10;
 `;
 
@@ -30,7 +30,11 @@ export const EpisodeContainer = styled(ReachRouterLink)`
     border-radius: 2rem;
     cursor: pointer;
     display: flex;
-    height: 155px;
+    /* height: auto;
+     min-height: 145px;
+     flex-basis: 200px;
+     flex-grow: 1;
+     flex-shrink: 1;*/
     opacity: 0.75;
     padding: 0;
     text-align: left;

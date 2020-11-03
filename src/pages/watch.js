@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Player, ProgressBar, Button, Row } from '../components';
 import { useContent } from '../hooks';
-import { getUUID, toSlug, secondsToDuration, padNumber } from '../utils';
+import { toSlug, secondsToDuration, padNumber } from '../utils';
 import ReactPlayer from 'react-player/file';
 import * as ROUTES from '../constants/routes';
 
@@ -19,14 +19,15 @@ export default function Watch() {
     // Start Hooks //
     const { content: media, loaded } = useContent('media');
     const { mediaId, season: selectedSeason, episodeSlug } = useParams();
+    const savedData = JSON.parse(localStorage.getItem(mediaId));
+    console.log('savedData', mediaId, savedData);
+    const [progress, setProgress] = useState(savedData?.progress ?? []);
 
     const series = getSeries(media, mediaId);
-    const seasonUUID = getUUID(mediaId, selectedSeason);
-    const episodes = series ? series.seasons[selectedSeason].episodes : [];
+    const episodes = series ? series.seasons[+selectedSeason].episodes : [];
     const selectedEpisode = episodes.findIndex(isCurrentEpisode, episodeSlug);
     const episode = episodes[selectedEpisode];
     const nextEpisode = episodes[selectedEpisode + 1] ? episodes[selectedEpisode + 1] : null;
-    const episodeUUID = getUUID(mediaId, selectedSeason, episodeSlug);
     const playerRef = (instance) => (player = instance);
     let player = null;
 
@@ -48,7 +49,8 @@ export default function Watch() {
     };
     const onStart = () => {
         console.log('onStart');
-        const storedTime = localStorage.getItem(episodeUUID) || 0;
+        // const storedTime = localStorage.getItem(episodeUUID) || 0;
+        const storedTime = progress?.[+selectedSeason]?.[selectedEpisode] ?? 0;
         console.log('resume', currentTime, storedTime);
         if (storedTime > 10) {
             player.seekTo(storedTime, 'seconds');
@@ -59,9 +61,17 @@ export default function Watch() {
         setPlaying(true);
     };
     const onProgress = ({ played, playedSeconds, loaded, loadedSeconds }) => {
+        const tempProgress = [...progress];
+        if (!tempProgress[+selectedSeason]) tempProgress[selectedSeason] = [];
+        tempProgress[+selectedSeason][selectedEpisode] = playedSeconds;
+        localStorage.setItem(
+            mediaId,
+            JSON.stringify({ progress: tempProgress, selectedSeason: +selectedSeason, selectedEpisode })
+        );
+
+        setProgress(tempProgress);
         setCurrentProgress(played * 100);
         setCurrentTime(playedSeconds);
-        localStorage.setItem(episodeUUID, playedSeconds);
     };
     const onDuration = (duration) => {
         setTotalTime(duration);
@@ -84,7 +94,15 @@ export default function Watch() {
     };
     const onEnded = (event) => {
         console.log('onEnded', event);
-        localStorage.removeItem(episodeUUID);
+
+        const tempProgress = [...progress];
+        if (!tempProgress[+selectedSeason]) tempProgress[+selectedSeason] = [];
+        tempProgress[+selectedSeason][selectedEpisode] = 0;
+        localStorage.setItem(
+            mediaId,
+            JSON.stringify({ tempProgress, selectedSeason: +selectedSeason, selectedEpisode })
+        );
+
         setEnded(true);
     };
     const onError = (event) => {
@@ -102,7 +120,6 @@ export default function Watch() {
         const seekX = event.pageX - rect.x;
         const trackWidth = rect.width;
         const seekPercent = seekX / trackWidth;
-        console.log('onSeekTo', seekPercent);
         player.seekTo(seekPercent);
     };
 
@@ -136,7 +153,16 @@ export default function Watch() {
                         <Button.Link
                             theme='primary'
                             onClick={(e) => {
-                                localStorage.setItem(seasonUUID, selectedEpisode);
+                                console.log('save selectedEpisode', selectedEpisode + 1);
+                                localStorage.setItem(
+                                    mediaId,
+                                    JSON.stringify({
+                                        progress,
+                                        selectedSeason: +selectedSeason,
+                                        selectedEpisode: selectedEpisode + 1,
+                                    })
+                                );
+
                                 setEnded(false);
                             }}
                             to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${toSlug(nextEpisode.name)}`}>
