@@ -17,7 +17,7 @@ export default function Details() {
     const series = getSeries(media, mediaId);
 
     console.log('savedData', mediaId, savedData);
-    console.log(progress, selectedSeason, selectedEpisode);
+    // console.log('progress', progress, selectedSeason, selectedEpisode);
 
     // Firebase hasn't replied yet...
     if (!series) return <div>Loading...</div>;

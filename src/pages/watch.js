@@ -153,7 +153,7 @@ export default function Watch() {
                         <Button.Link
                             theme='primary'
                             onClick={(e) => {
-                                console.log('save selectedEpisode', selectedEpisode + 1);
+                                // console.log('save selectedEpisode', selectedEpisode + 1);
                                 localStorage.setItem(
                                     mediaId,
                                     JSON.stringify({

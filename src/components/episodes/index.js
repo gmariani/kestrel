@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Container, Fade, EpisodeContainer, Thumbnail, Meta, Info, Title, Counter, Timer } from './styles/episodes';
 import { ProgressBar } from '../';
 import * as ROUTES from '../../constants/routes';
@@ -16,21 +16,28 @@ export default function Episodes({
     ...restProps
 }) {
     const hasFocus = focusId === focusTarget;
-    const containerRef = React.createRef();
-    console.log('progress', progress);
+    const activeEpisodeRef = useRef(null);
+    const firstRenderRef = useRef(true);
+
     useEffect(() => {
-        const episodeNodes = containerRef.current.querySelectorAll('a');
-        const selectedEpisodeNode = episodeNodes[selectedEpisode];
-        containerRef.current.scrollTop = selectedEpisodeNode.offsetTop;
-        return;
-    }, [containerRef, selectedEpisode]);
+        // After render, don't do anything, just remember we've seen the render
+        if (firstRenderRef.current) {
+            firstRenderRef.current = false;
+        } else if (activeEpisodeRef.current) {
+            activeEpisodeRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'nearest',
+            });
+        }
+    }, [selectedEpisode]);
 
     return (
         <>
             <Fade />
-            <Container ref={containerRef} {...restProps}>
+            <Container {...restProps}>
                 {episodes.map((episode, i) => {
-                    console.log('selectedSeason', selectedSeason, 'selectedEpisode', selectedEpisode, i);
+                    // console.log('selectedSeason', selectedSeason, 'selectedEpisode', selectedEpisode, i);
                     const episodeNumber = padNumber(i + 1);
                     const episodeSlug = toSlug(episode.name);
                     const episodeProgress = getEpisodeProgress(progress?.[selectedSeason]?.[i], episode.duration);
@@ -42,48 +49,29 @@ export default function Episodes({
                             ? secondsToHuman(episodeProgress.totalSeconds - episodeProgress.currentSeconds) + ' left'
                             : secondsToHuman(episodeProgress.totalSeconds);
                     return (
-                        <Episodes.Episode
+                        <EpisodeContainer
                             key={i}
-                            isSelected={isSelected}
-                            count={episodeNumber}
-                            data={episode}
-                            timer={timer}
+                            ref={isSelected ? activeEpisodeRef : null}
                             onClick={(e) => {
                                 onClickEpisode(i);
                             }}
-                            className={`${classSelected} ${classFocused}`}
-                            progressPercent={episodeProgress.percent}
                             to={`${ROUTES.WATCH}${selectedSeries}/${selectedSeason}/${episodeSlug}`}
-                        />
+                            className={`${classSelected} ${classFocused}`}>
+                            {episode.thumbnail ? <Thumbnail src={episode.thumbnail} /> : null}
+                            <Info>
+                                <Meta className='episode__meta'>
+                                    <Counter>Episode {episodeNumber}</Counter>
+                                    <Timer>{timer}</Timer>
+                                </Meta>
+                                <Title className='episode__title'>{episode.name}</Title>
+                                {episodeProgress.percent > 0 ? (
+                                    <ProgressBar value={episodeProgress.percent} theme='dark' />
+                                ) : null}
+                            </Info>
+                        </EpisodeContainer>
                     );
                 })}
             </Container>
         </>
     );
 }
-
-Episodes.Episode = function Episode({
-    children,
-    isSelected = 0,
-    count = '01',
-    data,
-    timer = '00:00',
-    progressPercent = 0,
-    ...restProps
-}) {
-    // data.filePath
-
-    return (
-        <EpisodeContainer className={isSelected ? 'selected' : ''} {...restProps}>
-            {data.thumbnail ? <Thumbnail src={data.thumbnail} /> : null}
-            <Info>
-                <Meta className='episode__meta'>
-                    <Counter>Episode {count}</Counter>
-                    <Timer>{timer}</Timer>
-                </Meta>
-                <Title className='episode__title'>{data.name}</Title>
-                {progressPercent > 0 ? <ProgressBar value={progressPercent} theme='dark' /> : null}
-            </Info>
-        </EpisodeContainer>
-    );
-};
