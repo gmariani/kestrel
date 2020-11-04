@@ -17,17 +17,14 @@ export default function Background({
     opacity = '0.8',
     ...restProps
 }) {
-    const shadow = hasShadow && <Shadow opacity={opacityShadow} />;
-    const gradient = hasColor && (
-        <Gradient blendMode={blendMode} opacity={opacity} startColor={startColor} endColor={endColor} />
-    );
-    const image = hasImage && <Image blendMode={blendMode} opacity={opacity} src={imagePath} />;
     return (
         <>
-            <Container>{children}</Container>
-            {shadow}
-            {gradient}
-            {image}
+            <Container {...restProps}>{children}</Container>
+            {hasShadow ? <Shadow opacity={opacityShadow} /> : null}
+            {hasColor ? (
+                <Gradient blendMode={blendMode} opacity={opacity} startColor={startColor} endColor={endColor} />
+            ) : null}
+            {hasImage ? <Image blendMode={blendMode} opacity={opacity} src={imagePath} /> : null}
         </>
     );
 }

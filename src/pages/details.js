@@ -11,12 +11,12 @@ export default function Details() {
     const { mediaId } = useParams();
     const savedData = JSON.parse(localStorage.getItem(mediaId));
     const [progress, setProgress] = useState(savedData?.progress ?? []);
-    const [selectedSeason, setSelectedSeason] = useState(savedData?.selectedSeason ?? 0);
-    const [selectedEpisode, setSelectedEpisode] = useState(savedData?.selectedEpisode ?? 0);
+    const [selectedSeason, setSelectedSeason] = useState(savedData?.lastPlayedSeason ?? 0);
+    const [selectedEpisode, setSelectedEpisode] = useState(savedData?.lastPlayedEpisode ?? 0);
     const [focus, setFocus] = useState(2);
     const series = getSeries(media, mediaId);
 
-    console.log('savedData', mediaId, savedData);
+    // console.log('savedData', mediaId, savedData);
     // console.log('progress', progress, selectedSeason, selectedEpisode);
 
     // Firebase hasn't replied yet...
@@ -30,23 +30,25 @@ export default function Details() {
     const hasProgress = episodeProgress.percent > 0;
     const focusItems = ['seasons', 'detail', 'episodes'];
 
-    // TODO
     const onKeyDown = (event) => {
         // event.stopPropagation();
-        event.preventDefault();
+
         console.log('onKeyDown Row - current focus', focusItems[focus]);
         switch (event.key) {
             case 'Left': // IE/Edge specific value
             case 'ArrowLeft':
+                event.preventDefault();
                 setFocus((focus - 1 + focusItems.length) % focusItems.length);
                 break;
             case 'Right': // IE/Edge specific value
             case 'ArrowRight':
+                event.preventDefault();
                 setFocus((focus + 1) % focusItems.length);
                 break;
 
             case 'Down': // IE/Edge specific value
             case 'ArrowDown':
+                event.preventDefault();
                 if ('seasons' === focusItems[focus]) {
                     setSelectedEpisode(0);
                     setSelectedSeason((selectedSeason + 1) % series.seasons.length);
@@ -57,6 +59,7 @@ export default function Details() {
                 break;
             case 'Up': // IE/Edge specific value
             case 'ArrowUp':
+                event.preventDefault();
                 if ('seasons' === focusItems[focus]) {
                     const newSeason = (selectedSeason - 1 + series.seasons.length) % series.seasons.length;
                     console.log('set season to ', newSeason);
@@ -83,6 +86,8 @@ export default function Details() {
 
     return (
         <Background
+            onKeyDown={(e) => onKeyDown(e)}
+            tabIndex='0'
             hasShadow={true}
             opacityShadow={0.9}
             hasColor={false}
@@ -90,7 +95,7 @@ export default function Details() {
             imagePath={series.backgroundPath}
             opacity={1}>
             <HeaderContainer />
-            <Row height='100%' onKeyDown={(e) => onKeyDown(e)} tabIndex='0'>
+            <Row height='100%'>
                 <Seasons
                     seasons={series.seasons}
                     selected={selectedSeason}
@@ -98,7 +103,6 @@ export default function Details() {
                     focusTarget={focus}
                     onClickSeason={(seasonIndex) => {
                         // Only update season when playing an episode
-                        // localStorage.setItem(mediaId, JSON.stringify({ progress, seasonIndex, selectedEpisode }));
                         setSelectedEpisode(0);
                         setSelectedSeason(seasonIndex);
                     }}
@@ -116,7 +120,11 @@ export default function Details() {
                         tempProgress[selectedSeason][selectedEpisode] = 0;
                         localStorage.setItem(
                             mediaId,
-                            JSON.stringify({ progress: tempProgress, selectedSeason, selectedEpisode })
+                            JSON.stringify({
+                                progress: tempProgress,
+                                lastPlayedSeason: selectedSeason,
+                                lastPlayedEpisode: selectedEpisode,
+                            })
                         );
                         // Save progress
                         setProgress(tempProgress);
@@ -131,7 +139,15 @@ export default function Details() {
                     progress={progress}
                     focusTarget={focus}
                     onClickEpisode={(episodeIndex) => {
-                        localStorage.setItem(mediaId, JSON.stringify({ progress, selectedSeason, episodeIndex }));
+                        // Update last played episode
+                        localStorage.setItem(
+                            mediaId,
+                            JSON.stringify({
+                                progress,
+                                lastPlayedSeason: selectedSeason,
+                                lastPlayedEpisode: episodeIndex,
+                            })
+                        );
                         setSelectedEpisode(episodeIndex);
                     }}
                 />

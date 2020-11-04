@@ -45,24 +45,34 @@ export const EpisodeContainer = styled(ReachRouterLink)`
         text-decoration: none;
     }
 
-    &.selected {
+    &.focused,
+    &:focus,
+    &:hover {
         opacity: 1;
     }
 
-    &.selected,
+    &.focused,
     &:focus,
     &:hover {
         transform: scale(1.025);
+    }
+
+    &.selected,
+    &.focused,
+    &:focus,
+    &:hover {
         background-color: white;
     }
 
     &.selected .episode__meta,
+    &.focused .episode__meta,
     &:focus .episode__meta,
     &:hover .episode__meta {
         color: rgba(85, 85, 85, 1);
     }
 
     &.selected .episode__title,
+    &.focused .episode__title,
     &:focus .episode__title,
     &:hover .episode__title {
         color: black;

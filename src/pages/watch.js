@@ -18,13 +18,15 @@ export default function Watch() {
 
     // Start Hooks //
     const { content: media, loaded } = useContent('media');
-    const { mediaId, season: selectedSeason, episodeSlug } = useParams();
+    const { mediaId, season, episodeSlug } = useParams();
+    // Convert string to number for season
+    const selectedSeason = +season;
     const savedData = JSON.parse(localStorage.getItem(mediaId));
-    console.log('savedData', mediaId, savedData);
+    // console.log('savedData', mediaId, savedData);
     const [progress, setProgress] = useState(savedData?.progress ?? []);
 
     const series = getSeries(media, mediaId);
-    const episodes = series ? series.seasons[+selectedSeason].episodes : [];
+    const episodes = series ? series.seasons[selectedSeason].episodes : [];
     const selectedEpisode = episodes.findIndex(isCurrentEpisode, episodeSlug);
     const episode = episodes[selectedEpisode];
     const nextEpisode = episodes[selectedEpisode + 1] ? episodes[selectedEpisode + 1] : null;
@@ -49,9 +51,9 @@ export default function Watch() {
     };
     const onStart = () => {
         console.log('onStart');
-        // const storedTime = localStorage.getItem(episodeUUID) || 0;
-        const storedTime = progress?.[+selectedSeason]?.[selectedEpisode] ?? 0;
+        const storedTime = progress?.[selectedSeason]?.[selectedEpisode] ?? 0;
         console.log('resume', currentTime, storedTime);
+        // Only resume time if more than 10 seconds into the video
         if (storedTime > 10) {
             player.seekTo(storedTime, 'seconds');
         }
@@ -61,12 +63,17 @@ export default function Watch() {
         setPlaying(true);
     };
     const onProgress = ({ played, playedSeconds, loaded, loadedSeconds }) => {
+        // Update progress
         const tempProgress = [...progress];
-        if (!tempProgress[+selectedSeason]) tempProgress[selectedSeason] = [];
-        tempProgress[+selectedSeason][selectedEpisode] = playedSeconds;
+        if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
+        tempProgress[selectedSeason][selectedEpisode] = playedSeconds;
         localStorage.setItem(
             mediaId,
-            JSON.stringify({ progress: tempProgress, selectedSeason: +selectedSeason, selectedEpisode })
+            JSON.stringify({
+                progress: tempProgress,
+                lastPlayedSeason: selectedSeason,
+                lastPlayedEpisode: selectedEpisode,
+            })
         );
 
         setProgress(tempProgress);
@@ -94,13 +101,19 @@ export default function Watch() {
     };
     const onEnded = (event) => {
         console.log('onEnded', event);
+        // console.log('save selectedEpisode', selectedEpisode + 1);
 
+        // Reset episode progress and increment to next episode
         const tempProgress = [...progress];
-        if (!tempProgress[+selectedSeason]) tempProgress[+selectedSeason] = [];
-        tempProgress[+selectedSeason][selectedEpisode] = 0;
+        if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
+        tempProgress[selectedSeason][selectedEpisode] = 0;
         localStorage.setItem(
             mediaId,
-            JSON.stringify({ tempProgress, selectedSeason: +selectedSeason, selectedEpisode })
+            JSON.stringify({
+                tempProgress,
+                lastPlayedSeason: selectedSeason,
+                lastPlayedEpisode: nextEpisode ? selectedEpisode + 1 : 0,
+            })
         );
 
         setEnded(true);
@@ -133,6 +146,57 @@ export default function Watch() {
         setTimeoutID(setTimeout(onInactivity, 3000, currentTarget));
     };
 
+    const onKeyDown = (event) => {
+        switch (event.key) {
+            case 'Spacebar':
+            case ' ':
+                event.preventDefault();
+                // toggle play/pause
+                console.log('toggle onTogglePlaying');
+                if (!buffering) setPlaying(!playing);
+                break;
+
+            case 'Left':
+            case 'ArrowLeft':
+                event.preventDefault();
+                // rewind 10 seconds
+                break;
+            case 'Right':
+            case 'ArrowRight':
+                event.preventDefault();
+                // skip ahead 10 seconds
+                break;
+
+            case 'Down':
+            case 'ArrowDown':
+                //
+                break;
+            case 'Up':
+            case 'ArrowUp':
+                //
+                break;
+
+            case 'f':
+                // toggle full screen
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                }
+                break;
+
+            case 'Enter':
+                //
+                break;
+            case 'Esc':
+            case 'Escape':
+                //
+                break;
+            default:
+                return; // Quit when this doesn't handle the key event.
+        }
+    };
+
     function isCurrentEpisode(episode) {
         return this === toSlug(episode.name);
     }
@@ -153,16 +217,6 @@ export default function Watch() {
                         <Button.Link
                             theme='primary'
                             onClick={(e) => {
-                                // console.log('save selectedEpisode', selectedEpisode + 1);
-                                localStorage.setItem(
-                                    mediaId,
-                                    JSON.stringify({
-                                        progress,
-                                        selectedSeason: +selectedSeason,
-                                        selectedEpisode: selectedEpisode + 1,
-                                    })
-                                );
-
                                 setEnded(false);
                             }}
                             to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${toSlug(nextEpisode.name)}`}>
@@ -174,7 +228,7 @@ export default function Watch() {
             <Player.Preview episodeIndex={selectedEpisode} nextEpisode={nextEpisode} />
         </Player.End>
     ) : (
-        <Player onMouseMove={onActivity}>
+        <Player onMouseMove={onActivity} onKeyDown={(e) => onKeyDown(e)} tabIndex='0'>
             <Player.Header>
                 {padNumber(selectedEpisode + 1)} - {episode.name}
             </Player.Header>
