@@ -26,10 +26,14 @@ export const StyledButton = styled.button`
         height: 100%;
     }
 
-    &:active,
-    &:focus,
-    &.focused,
-    &:hover {
+    &:disabled {
+        background-color: transparent;
+    }
+
+    &:not([disabled]):active,
+    &:not([disabled]):focus,
+    &:not([disabled]).focused,
+    &:not([disabled]):hover {
         color: black;
         background-color: white;
     }

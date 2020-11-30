@@ -11,31 +11,11 @@ export default function SignIn() {
     // const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const isInvalid = password === '' || emailAddress === '';
+    const isInvalid = password.length < 8 || emailAddress === '';
 
-    const onChange = ({ target }) => {
-        const letters = document.querySelectorAll('input.letter');
-        const pass = [];
-        letters.forEach((letter) => {
-            pass.push(letter.value.charAt(0));
-        });
-        setPassword(pass.join(''));
-    };
-
-    const getInputs = (num, password) => {
-        const content = [];
-        for (let i = 0; i < num; i++) {
-            content.push(
-                <SignInForm.Input
-                    key={i}
-                    className='letter'
-                    name={`letter${i + 1}`}
-                    onChange={onChange}
-                    value={password.charAt(i)}
-                />
-            );
-        }
-        return content;
+    const onChange = (code) => {
+        console.log('onChange', code);
+        setPassword(code);
     };
 
     const onSubmit = (event) => {
@@ -59,8 +39,8 @@ export default function SignIn() {
             <SignInForm onSubmit={onSubmit} method='POST'>
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}
-                <SignInForm.InputGroup>{getInputs(8, password)}</SignInForm.InputGroup>
-                <Button disabled={isInvalid} type='submit' theme='primary'>
+                <SignInForm.InputGroup code={password} length={8} onChange={onChange} />
+                <Button disabled={isInvalid} type='submit' theme='primary' width='280px'>
                     Login
                 </Button>
             </SignInForm>

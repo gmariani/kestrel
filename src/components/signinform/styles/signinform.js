@@ -2,6 +2,12 @@ import styled from 'styled-components/macro';
 
 export const Container = styled.form`
     text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    direction: ltr;
 `;
 
 export const Error = styled.div`
@@ -28,6 +34,7 @@ export const InputGroup = styled.div`
     display: flex;
     column-gap: 10px;
     margin-bottom: 5rem;
+    justify-content: center;
 `;
 export const Input = styled.input`
     font-family: Tw Cen MT;

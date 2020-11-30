@@ -11,6 +11,7 @@ html, body,
     width: 100%;
     background-color:#000;
     font-family: Tw Cen MT;
+    text-rendering: optimizeLegibility;
 }
 #root {
     align-items: center;

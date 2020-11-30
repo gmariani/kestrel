@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Background, Row, Detail, Seasons, Episodes } from '../components';
 import { useContent } from '../hooks';
@@ -11,10 +11,18 @@ export default function Details() {
     const { mediaId } = useParams();
     const savedData = JSON.parse(localStorage.getItem(mediaId));
     const [progress, setProgress] = useState(savedData?.progress ?? []);
-    const [selectedSeason, setSelectedSeason] = useState(savedData?.lastPlayedSeason ?? 0);
-    const [selectedEpisode, setSelectedEpisode] = useState(savedData?.lastPlayedEpisode ?? 0);
+    const lastPlayedSeason = savedData?.lastPlayedSeason ?? 0;
+    const lastPlayedEpisode = savedData?.lastPlayedEpisode ?? 0;
+    const [selectedSeason, setSelectedSeason] = useState(lastPlayedSeason);
+    const [selectedEpisode, setSelectedEpisode] = useState(lastPlayedEpisode);
     const [focus, setFocus] = useState(2);
     const series = getSeries(media, mediaId);
+
+    const backgroundRef = useRef();
+    useEffect(() => {
+        // Once loaded, set focus
+        if (backgroundRef.current) backgroundRef.current.focus();
+    }, [series, backgroundRef]);
 
     // console.log('savedData', mediaId, savedData);
     // console.log('progress', progress, selectedSeason, selectedEpisode);
@@ -24,11 +32,13 @@ export default function Details() {
     // if (!loaded) return <Player.Buffer visible={true} />;
 
     const episodes = series.seasons[selectedSeason].episodes;
-    const episode = episodes[selectedEpisode];
+    const episode = episodes[lastPlayedEpisode];
     const episodeSlug = toSlug(episode.name);
-    const episodeProgress = getEpisodeProgress(progress?.[selectedSeason]?.[selectedEpisode], episode.duration);
+    const episodeProgress = getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration);
     const hasProgress = episodeProgress.percent > 0;
-    const focusItems = ['seasons', 'detail', 'episodes'];
+    const focusItems = hasProgress
+        ? ['seasons', 'detail-continue', 'detail-restart', 'episodes']
+        : ['seasons', 'detail-continue', 'episodes'];
 
     const onKeyDown = (event) => {
         // event.stopPropagation();
@@ -86,6 +96,8 @@ export default function Details() {
 
     return (
         <Background
+            ref={backgroundRef}
+            onLoad={(e) => e.target.focus()}
             onKeyDown={(e) => onKeyDown(e)}
             tabIndex='0'
             hasShadow={true}
@@ -108,22 +120,22 @@ export default function Details() {
                     }}
                 />
                 <Detail
-                    focusId={1}
+                    focusId={hasProgress ? [1, 2] : 1}
                     focusTarget={focus}
                     series={series}
                     episodeProgress={hasProgress ? episodeProgress : null}
-                    episodeRoute={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${episodeSlug}`}
+                    episodeRoute={`${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${episodeSlug}`}
                     onClickRestart={() => {
                         // Reset episode progress
                         const tempProgress = [...progress];
-                        if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
-                        tempProgress[selectedSeason][selectedEpisode] = 0;
+                        if (!tempProgress[lastPlayedSeason]) tempProgress[lastPlayedSeason] = [];
+                        tempProgress[lastPlayedSeason][lastPlayedEpisode] = 0;
                         localStorage.setItem(
                             mediaId,
                             JSON.stringify({
                                 progress: tempProgress,
-                                lastPlayedSeason: selectedSeason,
-                                lastPlayedEpisode: selectedEpisode,
+                                lastPlayedSeason: lastPlayedSeason,
+                                lastPlayedEpisode: lastPlayedEpisode,
                             })
                         );
                         // Save progress
@@ -131,7 +143,7 @@ export default function Details() {
                     }}
                 />
                 <Episodes
-                    focusId={2}
+                    focusId={hasProgress ? 3 : 2}
                     episodes={episodes}
                     selectedSeries={mediaId}
                     selectedSeason={selectedSeason}
