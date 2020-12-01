@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Background, Poster } from '../components';
+import { HeaderContainer } from '../containers/header';
 import * as ROUTES from '../constants/routes';
 import { useContent } from '../hooks';
 import { toSlug } from '../utils';
