@@ -38,24 +38,34 @@ export const Menu = styled.nav`
 `;
 
 export const MenuLink = styled(ReachRouterLink)`
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.5);
+    background-color: transparent;
     font-family: Tw Cen MT;
-    font-size: 3.125rem;
+    font-size: 2rem;
     font-style: normal;
     font-weight: normal;
-    line-height: 54px;
-    opacity: ${({ selected }) => (selected ? '1' : '0.5')};
+    line-height: 2rem;
     padding: 0.5rem;
     transition: all 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
 
-    &:active,
-    &:hover,
-    &:focus {
-        color: #fff;
-        opacity: 1;
+    &.selected {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    &:not([disabled]):active,
+    &:not([disabled]):focus,
+    &:not([disabled]).focused,
+    &:not([disabled]):hover {
+        color: black;
+        background-color: white;
         text-decoration: none;
     }
-    &:focus {
+
+    &:not([disabled]):focus,
+    &:not([disabled]).focused {
         outline: 2px solid white;
     }
 `;

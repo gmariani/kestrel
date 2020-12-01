@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Background, Poster } from '../components';
 import { HeaderContainer } from '../containers/header';
@@ -24,6 +24,26 @@ export default function Browse() {
 
     const themeColor = getColor();
 
+    const focusElements = ['header', 'posters'];
+    const [focus, setFocus] = useState(0);
+    const onKeyDown = (event) => {
+        console.log('Browse.onKeyDown');
+        const keyCode = event.which || event.keyCode;
+        if (keyCode >= 37 && keyCode <= 41) {
+            // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
+            if (37 === keyCode) {
+                //
+            } else if (38 === keyCode) {
+                setFocus((focus - 1) % focusElements.length);
+            } else if (39 === keyCode) {
+                //
+            } else if (40 === keyCode) {
+                setFocus((focus + 1) % focusElements.length);
+            }
+            event.preventDefault();
+        }
+    };
+
     return (
         <Background
             hasShadow={true}
@@ -31,9 +51,14 @@ export default function Browse() {
             blendMode='lighten'
             opacity={0.5}
             startColor={themeColor[0]}
-            endColor={themeColor[1]}>
-            <HeaderContainer categories={categories} selectedCategory={category} />
-            <Poster.Group>
+            endColor={themeColor[1]}
+            onKeyDown={onKeyDown}>
+            <HeaderContainer
+                hasFocus={'header' === focusElements[focus]}
+                categories={categories}
+                selectedCategory={category}
+            />
+            <Poster.Group hasFocus={'posters' === focusElements[focus]}>
                 {media.map((poster, i) => {
                     return category === toSlug(poster.category) ? (
                         <Poster
