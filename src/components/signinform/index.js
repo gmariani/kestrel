@@ -1,5 +1,5 @@
 import React, { useState, createRef } from 'react';
-import { Button } from '../../components';
+import Button from '../button';
 import { Container, Title, Error, InputGroup, Input } from './styles/signinform';
 
 export default function SignInForm({ children, ...restProps }) {
@@ -24,6 +24,31 @@ SignInForm.InputGroup = function FormInputGroup({
     const [code, setCode] = useState('');
     const groupRef = createRef();
 
+    const updateCode = () => {
+        // console.log('updateCode', groupRef.current);
+        const parentNode = groupRef.current;
+        const charFields = parentNode.querySelectorAll('.char-field');
+
+        // Convert NodeList to Array in order to map
+        // Trim and join into string
+        const updatedCode = [...charFields].map((charField) => charField.value.trim() || '').join('');
+
+        setCode(updatedCode);
+        return updatedCode;
+    };
+
+    const selectNext = (element) => {
+        if (element.nextSibling) {
+            element.nextSibling.focus();
+        } else {
+            element.select();
+        }
+    };
+
+    const selectPrevious = (element) => {
+        if (element.previousSibling) element.previousSibling.focus();
+    };
+
     // const clearCode = () => {
     //     const parentNode = groupRef.current;
     //     parentNode.querySelectorAll('.char-field').map((charField) => {
@@ -38,12 +63,12 @@ SignInForm.InputGroup = function FormInputGroup({
         // console.log('getIndex', targetIndex);
         const parentNode = groupRef.current;
         const charFields = parentNode.querySelectorAll('.char-field');
-        if (targetIndex < 0) targetIndex = 0;
-        if (targetIndex >= charFields.length) targetIndex = charFields.length - 1;
+        if (targetIndex < 0) return charFields[0];
+        if (targetIndex >= charFields.length) return charFields[charFields.length - 1];
         return charFields[targetIndex];
     };
 
-    const onBlur = (event) => {
+    const onBlur = () => {
         // console.log('onBlur');
     };
 
@@ -68,9 +93,7 @@ SignInForm.InputGroup = function FormInputGroup({
             }
 
             if (onComplete) onComplete(updatedCode);
-        } else {
-            if ('' !== event.target.value) selectNext(event.target);
-        }
+        } else if (event.target.value !== '') selectNext(event.target);
     };
 
     const onFocus = (event) => {
@@ -82,8 +105,8 @@ SignInForm.InputGroup = function FormInputGroup({
         // console.log('onKeyDown');
         const keyCode = event.which || event.keyCode;
         // (8) Backspace
-        if (8 === keyCode) {
-            if ('' === event.target.value) {
+        if (keyCode === 8) {
+            if (event.target.value === '') {
                 selectPrevious(event.target);
             } else {
                 // Prevents backspace from navigating away
@@ -92,9 +115,9 @@ SignInForm.InputGroup = function FormInputGroup({
             }
         } else if (keyCode >= 37 && keyCode <= 41) {
             // (37) Left Arrow, (39) Right Arrow
-            if (37 === keyCode) {
+            if (keyCode === 37) {
                 selectPrevious(event.target);
-            } else if (39 === keyCode) {
+            } else if (keyCode === 39) {
                 selectNext(event.target);
             }
             event.preventDefault();
@@ -105,11 +128,12 @@ SignInForm.InputGroup = function FormInputGroup({
         // console.log('onPaste');
         const parentNode = groupRef.current;
         const charFields = parentNode.querySelectorAll('.char-field');
-        const pasteCharIndex = parseInt(event.target.name.split('_')[1]); // char_1
+        const pasteCharIndex = parseInt(event.target.name.split('_')[1], 10); // char_1
 
-        let charIndex,
-            input = '';
+        let charIndex;
+        let input = '';
         // inputtedLength = 0;
+        /* eslint-disable indent */
         for (
             event.clipboardData && event.clipboardData.getData
                 ? (input = event.clipboardData.getData('Text'))
@@ -119,11 +143,12 @@ SignInForm.InputGroup = function FormInputGroup({
                 input = input.substr(0, charFields.length - pasteCharIndex).split(''),
                 charIndex = 0;
             charIndex < input.length;
-            charIndex++
+            charIndex += 1
         ) {
             // inputtedLength++;
             charFields[charIndex + pasteCharIndex].value = input[charIndex];
         }
+        /* eslint-disable indent */
 
         const updatedCode = updateCode();
 
@@ -147,38 +172,9 @@ SignInForm.InputGroup = function FormInputGroup({
         event.preventDefault();
     };
 
-    const updateCode = () => {
-        // console.log('updateCode', groupRef.current);
-        const parentNode = groupRef.current;
-        const charFields = parentNode.querySelectorAll('.char-field');
-
-        // Convert NodeList to Array in order to map
-        // Trim and join into string
-        const updatedCode = [...charFields]
-            .map(function (charField) {
-                return charField.value.trim() || '';
-            })
-            .join('');
-
-        setCode(updatedCode);
-        return updatedCode;
-    };
-
-    const selectNext = (element) => {
-        if (element.nextSibling) {
-            element.nextSibling.focus();
-        } else {
-            element.select();
-        }
-    };
-
-    const selectPrevious = (element) => {
-        if (element.previousSibling) element.previousSibling.focus();
-    };
-
     return (
         <InputGroup ref={groupRef} {...restProps}>
-            {Array.apply(null, { length: length }).map((item, index) => (
+            {Array.from(Array(length)).map((item, index) => (
                 <Input
                     key={index}
                     name={`char_${index}`}

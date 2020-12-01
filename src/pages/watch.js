@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ReactPlayer from 'react-player/file';
 import { Player, ProgressBar, Button, Row } from '../components';
 import { useContent } from '../hooks';
 import { toSlug, secondsToDuration, padNumber } from '../utils';
-import ReactPlayer from 'react-player/file';
 import * as ROUTES from '../constants/routes';
 
 // TODO get tokenized s3 links
 
 export default function Watch() {
     const getSeries = (media, mediaId) => {
-        const foundMetadata = media.filter((metadata) => {
-            return mediaId === metadata.docId;
-        });
+        const foundMetadata = media.filter((metadata) => mediaId === metadata.docId);
         return foundMetadata.length ? foundMetadata[0] : null;
     };
+
+    function isCurrentEpisode(episode) {
+        return this === toSlug(episode.name);
+    }
 
     // Start Hooks //
     const { content: media, loaded } = useContent('media');
@@ -30,8 +32,10 @@ export default function Watch() {
     const selectedEpisode = episodes.findIndex(isCurrentEpisode, episodeSlug);
     const episode = episodes[selectedEpisode];
     const nextEpisode = episodes[selectedEpisode + 1] ? episodes[selectedEpisode + 1] : null;
-    const playerRef = (instance) => (player = instance);
     let player = null;
+    const playerRef = (instance) => {
+        player = instance;
+    };
 
     const [currentProgress, setCurrentProgress] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
@@ -46,7 +50,7 @@ export default function Watch() {
     if (!loaded) return <Player.Buffer visible={true} />;
 
     // React Player Handlers //
-    const onReady = (event) => {
+    const onReady = () => {
         console.log('onReady');
     };
     const onStart = () => {
@@ -62,7 +66,7 @@ export default function Watch() {
         // console.log('onPlay');
         setPlaying(true);
     };
-    const onProgress = ({ played, playedSeconds, loaded, loadedSeconds }) => {
+    const onProgress = ({ played, playedSeconds }) => {
         // Update progress
         const tempProgress = [...progress];
         if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
@@ -87,16 +91,16 @@ export default function Watch() {
         // console.log('onPause');
         setPlaying(false);
     };
-    const onBuffer = (event) => {
+    const onBuffer = () => {
         // console.log('onBuffer', event);
         setBuffering(true);
     };
-    const onBufferEnd = (event) => {
+    const onBufferEnd = () => {
         // console.log('onBufferEnd', event);
         setBuffering(false);
     };
     // Called when media seeks with seconds parameter
-    const onSeek = (seconds) => {
+    const onSeek = () => {
         // console.log('onSeek', seconds);
     };
     const onEnded = (event) => {
@@ -140,7 +144,7 @@ export default function Watch() {
         currentTarget.classList.remove('show');
     };
 
-    const onActivity = ({ target, currentTarget }) => {
+    const onActivity = ({ currentTarget }) => {
         currentTarget.classList.add('show');
         clearTimeout(timeoutID);
         setTimeoutID(setTimeout(onInactivity, 3000, currentTarget));
@@ -180,9 +184,7 @@ export default function Watch() {
                 // toggle full screen
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen();
-                } else {
-                    if (document.exitFullscreen) document.exitFullscreen();
-                }
+                } else if (document.exitFullscreen) document.exitFullscreen();
                 break;
 
             case 'Enter':
@@ -193,13 +195,9 @@ export default function Watch() {
                 //
                 break;
             default:
-                return; // Quit when this doesn't handle the key event.
+            // Quit when this doesn't handle the key event.
         }
     };
-
-    function isCurrentEpisode(episode) {
-        return this === toSlug(episode.name);
-    }
 
     return ended ? (
         <Player.End>
@@ -209,14 +207,14 @@ export default function Watch() {
                 <Row>
                     <Button.Link
                         theme={nextEpisode ? 'secondary' : 'primary'}
-                        onClick={(e) => setEnded(false)}
+                        onClick={() => setEnded(false)}
                         to={`${ROUTES.DETAILS}${mediaId}`}>
                         Back
                     </Button.Link>
                     {nextEpisode ? (
                         <Button.Link
                             theme='primary'
-                            onClick={(e) => {
+                            onClick={() => {
                                 setEnded(false);
                             }}
                             to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${toSlug(nextEpisode.name)}`}>

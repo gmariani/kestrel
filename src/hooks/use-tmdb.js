@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 
-export default function useTMDB(type = 'tv', id, season_number = null) {
+export default function useTMDB(type = 'tv', id, seasonNumber = null) {
     const [tmdb, setTMDB] = useState([]);
-    const api_key = process.env.REACT_APP_TMDB_KEY;
+    const apiKey = process.env.REACT_APP_TMDB_KEY;
 
-    const getTypeURL = (type, id, season_number = null) => {
+    const getTypeURL = () => {
         switch (type) {
             case 'movie':
                 return `https://api.themoviedb.org/3/movie/${id}`;
             case 'season':
-                return `https://api.themoviedb.org/3/tv/${id}/season/${season_number}`;
+                return `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}`;
             case 'tv':
             default:
                 return `https://api.themoviedb.org/3/tv/${id}`;
@@ -17,7 +17,7 @@ export default function useTMDB(type = 'tv', id, season_number = null) {
     };
 
     useEffect(() => {
-        fetch(`${getTypeURL(type, id, season_number)}?api_key=${api_key}&language=en-US`)
+        fetch(`${getTypeURL()}?api_key=${apiKey}&language=en-US`)
             .then((res) => res.json())
             .then(
                 (result) => {
@@ -36,7 +36,7 @@ export default function useTMDB(type = 'tv', id, season_number = null) {
                     });
                 }
             );
-    }, [api_key, type, id, season_number]);
+    }, [apiKey, type, id, seasonNumber]);
 
     return { tmdb };
 }

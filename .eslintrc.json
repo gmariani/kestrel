@@ -1,5 +1,5 @@
 {
-    "extends": ["airbnb", "prettier", "prettier/react"],
+    "extends": ["airbnb-base", "plugin:prettier/recommended"],
     "parser": "babel-eslint",
     "parserOptions": {
         "ecmaFeatures": {
@@ -54,7 +54,9 @@
         "semi": ["error", "always"],
         "no-console": "off",
         "no-unused-vars": "warn",
-        "no-trailing-spaces": ["warn", { "skipBlankLines": true }]
+        "no-trailing-spaces": ["warn", { "skipBlankLines": true }],
+        "import/prefer-default-export": 0,
+        "import/named" : "off"
     },
     "globals": {}
 }

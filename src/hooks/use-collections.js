@@ -7,7 +7,7 @@ export default function useCollections() {
     const { firebase } = useContext(FirebaseContext);
 
     useEffect(() => {
-        //console.log(firebase.firestore());
+        // console.log(firebase.firestore());
         //     firebase
         //         .firestore()
         //         .collection(target)
@@ -24,5 +24,5 @@ export default function useCollections() {
         //         });
     }, [firebase]);
 
-    return { collections: collections };
+    return { collections };
 }

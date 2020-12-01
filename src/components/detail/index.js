@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Controls, Meta, Title, Description } from './styles/detail';
-import { Button, ProgressBar } from '../';
+import Button from '../button';
+import ProgressBar from '../progressbar';
 
 export default function Detail({
     focusId,
@@ -32,7 +33,7 @@ export default function Detail({
                     <Button.Link
                         theme='secondary'
                         className={hasFocus2 ? 'focused' : ''}
-                        onClick={(e) => onClickRestart()}
+                        onClick={() => onClickRestart()}
                         to={episodeRoute}>
                         Restart
                     </Button.Link>

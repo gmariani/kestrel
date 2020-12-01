@@ -1,4 +1,4 @@
-import { toSlug } from './';
+import toSlug from './to-slug';
 
 export default function getUUID(mediaId: String, seasonIndex: Number, episode = null) {
     if (!episode) {

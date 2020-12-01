@@ -31,7 +31,7 @@ export default function Details() {
     if (!series) return <div>Loading...</div>;
     // if (!loaded) return <Player.Buffer visible={true} />;
 
-    const episodes = series.seasons[selectedSeason].episodes;
+    const { episodes } = series.seasons[selectedSeason];
     const episode = episodes[lastPlayedEpisode];
     const episodeSlug = toSlug(episode.name);
     const episodeProgress = getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration);
@@ -59,24 +59,24 @@ export default function Details() {
             case 'Down': // IE/Edge specific value
             case 'ArrowDown':
                 event.preventDefault();
-                if ('seasons' === focusItems[focus]) {
+                if (focusItems[focus] === 'seasons') {
                     setSelectedEpisode(0);
                     setSelectedSeason((selectedSeason + 1) % series.seasons.length);
                 }
-                if ('episodes' === focusItems[focus]) {
+                if (focusItems[focus] === 'episodes') {
                     setSelectedEpisode((selectedEpisode + 1) % episodes.length);
                 }
                 break;
             case 'Up': // IE/Edge specific value
             case 'ArrowUp':
                 event.preventDefault();
-                if ('seasons' === focusItems[focus]) {
+                if (focusItems[focus] === 'seasons') {
                     const newSeason = (selectedSeason - 1 + series.seasons.length) % series.seasons.length;
                     console.log('set season to ', newSeason);
                     setSelectedEpisode(0);
                     setSelectedSeason(newSeason);
                 }
-                if ('episodes' === focusItems[focus]) {
+                if (focusItems[focus] === 'episodes') {
                     const newEpisode = (selectedEpisode - 1 + episodes.length) % episodes.length;
                     console.log('set episode to ', newEpisode);
                     setSelectedEpisode(newEpisode);
@@ -90,7 +90,7 @@ export default function Details() {
                 // Do something for "esc" key press.
                 break;
             default:
-                return; // Quit when this doesn't handle the key event.
+            // Quit when this doesn't handle the key event.
         }
     };
 
@@ -134,8 +134,8 @@ export default function Details() {
                             mediaId,
                             JSON.stringify({
                                 progress: tempProgress,
-                                lastPlayedSeason: lastPlayedSeason,
-                                lastPlayedEpisode: lastPlayedEpisode,
+                                lastPlayedSeason,
+                                lastPlayedEpisode,
                             })
                         );
                         // Save progress

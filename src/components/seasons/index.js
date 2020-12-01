@@ -2,10 +2,7 @@ import React from 'react';
 import { Container, Title, SubTitle } from './styles/seasons';
 
 export default function Seasons({ focusId, focusTarget, seasons, selected = 0, onClickSeason, ...restProps }) {
-    const capitalize = (str) => {
-        return str.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
-    };
-
+    const capitalize = (str) => str.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
     const hasFocus = focusId === focusTarget;
 
     return (
@@ -16,7 +13,7 @@ export default function Seasons({ focusId, focusTarget, seasons, selected = 0, o
                 const classSelected = isSelected ? 'selected' : '';
                 const classFocused = isSelected && hasFocus ? 'focused' : '';
                 return (
-                    <Title key={i} className={`${classSelected} ${classFocused}`} onClick={(e) => onClickSeason(i)}>
+                    <Title key={i} className={`${classSelected} ${classFocused}`} onClick={() => onClickSeason(i)}>
                         {capitalize(season.name)}
                         <SubTitle isSelected={isSelected}>
                             {season.episodeCount} {episodeLabel}

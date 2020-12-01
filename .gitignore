@@ -2,6 +2,7 @@
 
 # bye
 src/lib/firebase.js
+.eslintcache
 
 # dependencies
 /node_modules

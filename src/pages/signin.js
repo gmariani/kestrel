@@ -27,11 +27,11 @@ export default function SignIn() {
             .then(() => {
                 history.push(ROUTES.BROWSE);
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((err) => {
+                console.error(err);
                 // setEmailAddress('');
                 setPassword('');
-                setError(error.message);
+                setError(err.message);
             });
     };
 

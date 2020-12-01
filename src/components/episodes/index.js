@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Container, Fade, EpisodeContainer, Thumbnail, Meta, Info, Title, Counter, Timer } from './styles/episodes';
-import { ProgressBar } from '../';
+import ProgressBar from '../progressbar';
 import * as ROUTES from '../../constants/routes';
 import { getEpisodeProgress, toSlug, padNumber, secondsToHuman } from '../../utils';
 
@@ -46,13 +46,13 @@ export default function Episodes({
                     const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const timer =
                         episodeProgress.percent > 0
-                            ? secondsToHuman(episodeProgress.totalSeconds - episodeProgress.currentSeconds) + ' left'
+                            ? `${secondsToHuman(episodeProgress.totalSeconds - episodeProgress.currentSeconds)} left`
                             : secondsToHuman(episodeProgress.totalSeconds);
                     return (
                         <EpisodeContainer
                             key={i}
                             ref={isSelected ? activeEpisodeRef : null}
-                            onClick={(e) => {
+                            onClick={() => {
                                 onClickEpisode(i);
                             }}
                             to={`${ROUTES.WATCH}${selectedSeries}/${selectedSeason}/${episodeSlug}`}

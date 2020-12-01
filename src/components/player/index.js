@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../';
+import Button from '../button';
 import {
     Container,
     Header,
@@ -195,11 +195,11 @@ Player.EndDetails = function PlayerEndDetails({ children, ...restProps }) {
     return <EndDetails {...restProps}>{children}</EndDetails>;
 };
 Player.EndTitle = function PlayerEndTitle({ children, ...restProps }) {
-    return <EndTitle>{children}</EndTitle>;
+    return <EndTitle {...restProps}>{children}</EndTitle>;
 };
 Player.EndSubTitle = function PlayerEndSubTitle({ children, episodeIndex = 0, episode = null, ...restProps }) {
     return episode ? (
-        <EndSubTitle>
+        <EndSubTitle {...restProps}>
             {padNumber(episodeIndex + 1)} - {episode.name}
         </EndSubTitle>
     ) : null;

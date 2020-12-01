@@ -5,10 +5,8 @@ export default function focusNext() {
     if (document.activeElement && document.activeElement.form) {
         const focussable = Array.prototype.filter.call(
             document.activeElement.form.querySelectorAll(focussableElements),
-            function (element) {
-                // check for visibility while always include the current activeElement
-                return element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement;
-            }
+            // check for visibility while always include the current activeElement
+            (element) => element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement
         );
         console.log('focussable', focussable);
         const index = focussable.indexOf(document.activeElement);
