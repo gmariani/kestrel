@@ -28,6 +28,7 @@ export default function SignIn() {
                 history.push(ROUTES.BROWSE);
             })
             .catch((error) => {
+                console.error(error);
                 // setEmailAddress('');
                 setPassword('');
                 setError(error.message);

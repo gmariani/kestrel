@@ -48,7 +48,7 @@ SignInForm.InputGroup = function FormInputGroup({
     };
 
     const onInput = (event) => {
-        console.log('onInput', event.target.value);
+        // console.log('onInput', event.target.value);
 
         // If more than one character entered, grab just the first character
         const val = event.target.value;
@@ -57,10 +57,7 @@ SignInForm.InputGroup = function FormInputGroup({
         // Update the complete code
         const updatedCode = updateCode();
 
-        if (onChange) {
-            console.log('dispatch onChange', updatedCode);
-            onChange(updatedCode);
-        }
+        if (onChange) onChange(updatedCode);
 
         // If we have entered enough, complete
         if (updatedCode.length === length) {
@@ -70,10 +67,7 @@ SignInForm.InputGroup = function FormInputGroup({
                 selectNext(event.target);
             }
 
-            if (onComplete) {
-                console.log('dispatch onComplete', updatedCode);
-                onComplete(updatedCode);
-            }
+            if (onComplete) onComplete(updatedCode);
         } else {
             if ('' !== event.target.value) selectNext(event.target);
         }
@@ -108,14 +102,14 @@ SignInForm.InputGroup = function FormInputGroup({
     };
 
     const onPaste = (event) => {
-        console.log('onPaste');
+        // console.log('onPaste');
         const parentNode = groupRef.current;
         const charFields = parentNode.querySelectorAll('.char-field');
         const pasteCharIndex = parseInt(event.target.name.split('_')[1]); // char_1
 
         let charIndex,
-            input = '',
-            inputtedLength = 0;
+            input = '';
+        // inputtedLength = 0;
         for (
             event.clipboardData && event.clipboardData.getData
                 ? (input = event.clipboardData.getData('Text'))
@@ -127,16 +121,13 @@ SignInForm.InputGroup = function FormInputGroup({
             charIndex < input.length;
             charIndex++
         ) {
-            inputtedLength++;
+            // inputtedLength++;
             charFields[charIndex + pasteCharIndex].value = input[charIndex];
         }
 
         const updatedCode = updateCode();
 
-        if (onChange) {
-            console.log('dispatch onChange', updatedCode);
-            onChange(updatedCode);
-        }
+        if (onChange) onChange(updatedCode);
 
         // setTimeout(function () {
         if (updatedCode.length === length) {
@@ -146,10 +137,7 @@ SignInForm.InputGroup = function FormInputGroup({
                 getIndex(updatedCode.length - 1).focus();
             }
 
-            if (onComplete) {
-                console.log('dispatch onComplete', updatedCode);
-                onComplete(updatedCode);
-            }
+            if (onComplete) onComplete(updatedCode);
         } else {
             // getIndex(pasteCharIndex + inputtedLength).focus();
             getIndex(updatedCode.length - 1).focus();
@@ -188,7 +176,6 @@ SignInForm.InputGroup = function FormInputGroup({
         if (element.previousSibling) element.previousSibling.focus();
     };
 
-    // TODO: onChange/dispatch
     return (
         <InputGroup ref={groupRef} {...restProps}>
             {Array.apply(null, { length: length }).map((item, index) => (

@@ -1,33 +1,43 @@
 import React from 'react';
-import { Switch, BrowserRouter as Router } from 'react-router-dom';
+import { Switch, BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 // eslint-disable-next-line
 import { SignIn, Home, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
-import { IsUserRedirect, ProtectedRoute } from './helpers/routes';
+// import { ProtectedRoute } from './helpers/routes';
 import { useAuthListener } from './hooks';
 
 export default function App() {
     const { user } = useAuthListener();
-    return (
+    return user ? (
         <Router>
             <Switch>
-                {/* <IsUserRedirect user={user} loggedInPath={ROUTES.BROWSE} path={ROUTES.SIGN_IN}>
-                    <SignIn />
-                </IsUserRedirect> */}
+                <Redirect from={ROUTES.SIGN_IN} to={ROUTES.BROWSE} />
 
-                <ProtectedRoute user={user} path={ROUTES.BROWSE_ID}>
+                <Route path={ROUTES.BROWSE_ID}>
                     <Browse />
-                </ProtectedRoute>
-                <ProtectedRoute user={user} path={ROUTES.DETAILS_ID}>
+                </Route>
+
+                <Route path={ROUTES.DETAILS_ID}>
                     <Details />
-                </ProtectedRoute>
-                <ProtectedRoute user={user} path={ROUTES.WATCH_ID}>
+                </Route>
+
+                <Route path={ROUTES.WATCH_ID}>
                     <Watch />
-                </ProtectedRoute>
-                <IsUserRedirect user={user} loggedInPath={ROUTES.BROWSE} path={ROUTES.HOME}>
-                    {/* <Home /> */}
+                </Route>
+
+                <Route exact path={ROUTES.HOME}>
+                    <Redirect to={ROUTES.BROWSE} />
+                </Route>
+            </Switch>
+        </Router>
+    ) : (
+        <Router>
+            <Switch>
+                <Redirect from={ROUTES.SIGN_IN} to={ROUTES.HOME} />
+
+                <Route exact path={ROUTES.HOME}>
                     <SignIn />
-                </IsUserRedirect>
+                </Route>
             </Switch>
         </Router>
     );

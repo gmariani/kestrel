@@ -28,6 +28,7 @@ export const StyledButton = styled.button`
 
     &:disabled {
         background-color: transparent;
+        color: rgba(255, 255, 255, 0.25);
     }
 
     &:not([disabled]):active,

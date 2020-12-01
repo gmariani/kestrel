@@ -11,9 +11,9 @@ export const Container = styled.form`
 `;
 
 export const Error = styled.div`
-    background: #e87c03;
+    background: #e82e03;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 1.25rem;
     margin: 0 0 16px;
     color: white;
     padding: 15px 20px;
