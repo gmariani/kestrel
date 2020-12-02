@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Background, Poster } from '../components';
-import { HeaderContainer } from '../containers/header';
+import HeaderContainer from '../containers/header';
 import * as ROUTES from '../constants/routes';
 import { useContent } from '../hooks';
 import { toSlug } from '../utils';
@@ -57,8 +57,8 @@ export default function Browse() {
 
     return (
         <Background
-            hasShadow={true}
-            hasColor={true}
+            hasShadow
+            hasColor
             blendMode='lighten'
             opacity={0.5}
             startColor={themeColor[0]}

@@ -47,7 +47,7 @@ export default function Watch() {
     // End Hooks //
 
     // Wait until firebase replies with episode data
-    if (!loaded) return <Player.Buffer visible={true} />;
+    if (!loaded) return <Player.Buffer visible />;
 
     // React Player Handlers //
     const onReady = () => {
@@ -234,7 +234,7 @@ export default function Watch() {
                 <Player.PlayPause
                     playing={playing}
                     style={{ opacity: buffering ? 0.5 : 1 }}
-                    onClick={onTogglePlaying.bind(this)}
+                    onClick={onTogglePlaying}
                 />
                 <ProgressBar width={50} height='10px' value={currentProgress} onClick={onSeekTo} />
                 <Player.Timer>
@@ -250,17 +250,17 @@ export default function Watch() {
                 url={episode.filePath}
                 width='100%'
                 height='100%'
-                onBuffer={onBuffer.bind(this)}
-                onBufferEnd={onBufferEnd.bind(this)}
-                onReady={onReady.bind(this)}
-                onStart={onStart.bind(this)}
-                onPlay={onPlay.bind(this)}
-                onPause={onPause.bind(this)}
-                onDuration={onDuration.bind(this)}
-                onProgress={onProgress.bind(this)}
-                onEnded={onEnded.bind(this)}
-                onError={onError.bind(this)}
-                onSeek={onSeek.bind(this)}
+                onBuffer={onBuffer}
+                onBufferEnd={onBufferEnd}
+                onReady={onReady}
+                onStart={onStart}
+                onPlay={onPlay}
+                onPause={onPause}
+                onDuration={onDuration}
+                onProgress={onProgress}
+                onEnded={onEnded}
+                onError={onError}
+                onSeek={onSeek}
                 config={{
                     file: {
                         attributes: {

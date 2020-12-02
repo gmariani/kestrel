@@ -1,10 +1,24 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { Header } from '../components';
 import * as ROUTES from '../constants/routes';
-import logo from '../logo.svg';
 
-export function HeaderContainer({ children, hasFocus = false, categories = [], selectedCategory = '', ...restProps }) {
+const propTypes = {
+    children: PropTypes.node,
+    hasFocus: PropTypes.bool,
+    categories: PropTypes.arrayOf(PropTypes.object),
+    selectedCategory: PropTypes.string,
+};
+
+const defaultProps = {
+    children: null,
+    hasFocus: false,
+    categories: [],
+    selectedCategory: '',
+};
+
+function HeaderContainer({ children, hasFocus, categories, selectedCategory }) {
     const history = useHistory();
     const onKeyDown = (event) => {
         if (!hasFocus) return;
@@ -35,15 +49,15 @@ export function HeaderContainer({ children, hasFocus = false, categories = [], s
         }
     };
     return (
-        <Header onKeyDown={onKeyDown} {...restProps}>
+        <Header onKeyDown={onKeyDown}>
             <Header.Frame>
-                <Header.Logo to={ROUTES.HOME} src={logo} alt='Kestrel' width='200' height='45' />
+                <Header.Logo to={ROUTES.HOME} />
                 {/* <Header.ButtonLink to={ROUTES.SIGN_IN}>Sign In</Header.ButtonLink> */}
             </Header.Frame>
             <Header.Menu>
                 {categories.map((category, i) => (
                     <Header.MenuLink
-                        key={i}
+                        key={category.slug}
                         to={`${ROUTES.BROWSE}${category.slug}`}
                         className={category.slug === selectedCategory ? 'selected' : ''}>
                         {category.name}
@@ -54,3 +68,6 @@ export function HeaderContainer({ children, hasFocus = false, categories = [], s
         </Header>
     );
 }
+HeaderContainer.propTypes = propTypes;
+HeaderContainer.defaultProps = defaultProps;
+export default HeaderContainer;

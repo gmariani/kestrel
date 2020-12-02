@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap-reboot.css';
-import { GlobalStyles } from './global-styles';
+import GlobalStyles from './global-styles';
 import App from './App';
 import { firebase } from './lib/firebase';
 import { FirebaseContext } from './context/firebase';

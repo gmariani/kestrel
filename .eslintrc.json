@@ -1,62 +1,25 @@
 {
-    "extends": ["airbnb-base", "plugin:prettier/recommended"],
+    "extends": ["react-app", "airbnb", "airbnb/hooks", "prettier", "prettier/react"],
     "parser": "babel-eslint",
     "parserOptions": {
         "ecmaFeatures": {
-            "experimentalObjectRestSpread": true,
-            "impliedStrict": true,
-            "classes": true
+            "jsx": true
         },
         "sourceType": "module",
-        "ecmaVersion": 8
+        "ecmaVersion": 2020
     },
     "env": {
         "browser": true,
         "node": true,
-        "jquery": true,
         "jest": true
     },
-    "plugins": ["prettier", "react", "react-hooks"],
+    "plugins": ["jsx-a11y", "prettier", "react", "react-hooks"],
     "rules": {
-        "react/prop-types": 0,
-        "react-hooks/rules-of-hooks": "error",
-        "no-debugger": 0,
-        "no-alert": 0,
-        "prefer-const": [
-            "error",
-            {
-                "destructuring": "all"
-            }
-        ],
-        "arrow-body-style": [2, "as-needed"],
-        "no-unused-expressions": [
-            2,
-            {
-                "allowTaggedTemplates": true
-            }
-        ],
-        "no-param-reassign": [
-            2,
-            {
-                "props": false
-            }
-        ],
+        "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
         "indent": ["error", 4, { "SwitchCase": 1 }],
-        "linebreak-style": ["error", "unix"],
-        "quotes": [
-            2,
-            "single",
-            {
-                "avoidEscape": true,
-                "allowTemplateLiterals": true
-            }
-        ],
-        "semi": ["error", "always"],
-        "no-console": "off",
+        "no-console": "warn",
         "no-unused-vars": "warn",
-        "no-trailing-spaces": ["warn", { "skipBlankLines": true }],
-        "import/prefer-default-export": 0,
-        "import/named" : "off"
+        "prettier/prettier": ["error"]
     },
     "globals": {}
 }

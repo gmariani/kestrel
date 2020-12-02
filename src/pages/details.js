@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Background, Row, Detail, Seasons, Episodes } from '../components';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
-import { HeaderContainer } from '../containers/header';
+import HeaderContainer from '../containers/header';
 import { getEpisodeProgress, toSlug, getSeries } from '../utils';
 
 export default function Details() {
@@ -100,10 +100,10 @@ export default function Details() {
             onLoad={(e) => e.target.focus()}
             onKeyDown={(e) => onKeyDown(e)}
             tabIndex='0'
-            hasShadow={true}
+            hasShadow
             opacityShadow={0.9}
             hasColor={false}
-            hasImage={true}
+            hasImage
             imagePath={series.backgroundPath}
             opacity={1}>
             <HeaderContainer />
