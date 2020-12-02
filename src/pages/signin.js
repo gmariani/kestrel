@@ -40,7 +40,7 @@ export default function SignIn() {
             <SignInForm onSubmit={onSubmit} method='POST'>
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}
-                <SignInForm.InputGroup code={password} length={8} onChange={onChange} />
+                <SignInForm.InputGroup length={8} onChange={onChange} />
                 <Button disabled={isInvalid} type='submit' theme='primary' width='280px'>
                     Login
                 </Button>

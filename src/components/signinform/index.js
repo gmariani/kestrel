@@ -1,26 +1,34 @@
 import React, { useState, createRef } from 'react';
-import Button from '../button';
+import PropTypes from 'prop-types';
 import { Container, Title, Error, InputGroup, Input } from './styles/signinform';
 
-export default function SignInForm({ children, ...restProps }) {
-    return <Container {...restProps}>{children}</Container>;
+function SignInForm({ children, onSubmit }) {
+    return (
+        <Container onSubmit={onSubmit} method='POST'>
+            {children}
+        </Container>
+    );
 }
-
-SignInForm.Error = function FormError({ children, ...restProps }) {
-    return <Error {...restProps}>{children}</Error>;
+SignInForm.propTypes = {
+    children: PropTypes.node.isRequired,
+    onSubmit: PropTypes.func.isRequired,
 };
 
-SignInForm.Title = function FormTitle({ children, ...restProps }) {
-    return <Title {...restProps}>{children}</Title>;
+SignInForm.Error = function FormError({ children }) {
+    return <Error>{children}</Error>;
+};
+SignInForm.Error.propTypes = {
+    children: PropTypes.node.isRequired,
 };
 
-SignInForm.InputGroup = function FormInputGroup({
-    length,
-    blurOnComplete = true,
-    onChange = null,
-    onComplete = null,
-    ...restProps
-}) {
+SignInForm.Title = function FormTitle({ children }) {
+    return <Title>{children}</Title>;
+};
+SignInForm.Title.propTypes = {
+    children: PropTypes.node.isRequired,
+};
+
+SignInForm.InputGroup = function FormInputGroup({ length, blurOnComplete, onChange, onComplete }) {
     const [code, setCode] = useState('');
     const groupRef = createRef();
 
@@ -76,8 +84,9 @@ SignInForm.InputGroup = function FormInputGroup({
         // console.log('onInput', event.target.value);
 
         // If more than one character entered, grab just the first character
-        const val = event.target.value;
-        if (val.length > 1) event.target.value = val.slice(-1);
+        const { target } = event;
+        const val = target.value;
+        if (val.length > 1) target.value = val.slice(-1);
 
         // Update the complete code
         const updatedCode = updateCode();
@@ -87,13 +96,13 @@ SignInForm.InputGroup = function FormInputGroup({
         // If we have entered enough, complete
         if (updatedCode.length === length) {
             if (blurOnComplete) {
-                event.target.blur();
+                target.blur();
             } else {
-                selectNext(event.target);
+                selectNext(target);
             }
 
             if (onComplete) onComplete(updatedCode);
-        } else if (event.target.value !== '') selectNext(event.target);
+        } else if (target.value !== '') selectNext(target);
     };
 
     const onFocus = (event) => {
@@ -173,9 +182,10 @@ SignInForm.InputGroup = function FormInputGroup({
     };
 
     return (
-        <InputGroup ref={groupRef} {...restProps}>
+        <InputGroup ref={groupRef}>
             {Array.from(Array(length)).map((item, index) => (
                 <Input
+                    // eslint-disable-next-line react/no-array-index-key
                     key={index}
                     name={`char_${index}`}
                     className='char-field'
@@ -192,12 +202,23 @@ SignInForm.InputGroup = function FormInputGroup({
                     autocapitalize='none'
                     spellcheck='false'
                     aria-label={index > 0 ? `Letter ${index + 1}` : `Enter password letter ${index + 1}`}
-                    type='password'></Input>
+                    type='password'
+                />
             ))}
         </InputGroup>
     );
 };
-
-SignInForm.Submit = function FormSubmit({ children, ...restProps }) {
-    return <Button {...restProps}>{children}</Button>;
+SignInForm.InputGroup.propTypes = {
+    length: PropTypes.number,
+    blurOnComplete: PropTypes.bool,
+    onChange: PropTypes.func,
+    onComplete: PropTypes.func,
 };
+SignInForm.InputGroup.defaultProps = {
+    length: 8,
+    blurOnComplete: true,
+    onChange: null,
+    onComplete: null,
+};
+
+export default SignInForm;

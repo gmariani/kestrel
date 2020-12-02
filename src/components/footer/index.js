@@ -1,6 +1,14 @@
 import React from 'react';
-import { Container } from './styles/footer';
+import PropTypes from 'prop-types';
+import Container from './styles/footer';
 
-export default function Footer({ children, ...restProps }) {
-    return <Container {...restProps}>{children}</Container>;
+const propTypes = {
+    children: PropTypes.node.isRequired,
+};
+
+function Footer({ children }) {
+    return <Container>{children}</Container>;
 }
+
+Footer.propTypes = propTypes;
+export default Footer;
