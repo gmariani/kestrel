@@ -19,7 +19,7 @@ export default function useContent(target, orderBy = 'name') {
                 setContent(allContent);
             })
             .catch((error) => {
-                console.log(error.message);
+                console.log(error);
             });
     }, [firebase, target, orderBy]);
 

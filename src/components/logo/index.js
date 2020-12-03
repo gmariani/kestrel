@@ -1,23 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, Link, LogoText } from './styles/logo';
+import { Image, Link } from './styles/logo';
 import svgLogo from '../../logo.svg';
 
-export default function Logo() {
-    // return <LogoText {...restProps}>Kestrel</LogoText>;
-    return <Image src={svgLogo} alt='Kestrel' width='200' height='45' />;
-}
-
-Logo.Link = function LogoLink({ to }) {
-    return (
-        <Link to={to}>
-            <Logo src={svgLogo} alt='Kestrel' width='200' height='45' />
-        </Link>
-    );
-};
-Logo.Link.propTypes = {
+const propTypes = {
     to: PropTypes.string,
 };
-Logo.Link.defaultProps = {
-    to: '/',
-};
+
+function Logo({ to = '' }) {
+    const image = <Image src={svgLogo} alt='Kestrel' width='200' height='45' />;
+    if (to !== '') return <Link to={to}>{image}</Link>;
+    return image;
+}
+
+Logo.propTypes = propTypes;
+export default Logo;

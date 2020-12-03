@@ -10,15 +10,7 @@ const propTypes = {
     onClick: PropTypes.func,
 };
 
-const defaultProps = {
-    width: '100%',
-    height: '5px',
-    value: 0,
-    theme: 'light',
-    onClick: null,
-};
-
-function ProgressBar({ width, height, value, theme, onClick }) {
+function ProgressBar({ width = '100%', height = '5px', value = 0, theme = 'light', onClick }) {
     return (
         <Track width={width} height={height} theme={theme} onClick={onClick}>
             <Bar value={value} height={height} theme={theme} />
@@ -27,5 +19,4 @@ function ProgressBar({ width, height, value, theme, onClick }) {
 }
 
 ProgressBar.propTypes = propTypes;
-ProgressBar.defaultProps = defaultProps;
 export default ProgressBar;

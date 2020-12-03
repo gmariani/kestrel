@@ -11,6 +11,7 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
 `;
+
 export const Shadow = styled.div`
     width: 100%;
     height: 100%;

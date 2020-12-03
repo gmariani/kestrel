@@ -17,20 +17,6 @@ export const Container = styled.div`
     align-items: end;
 `;
 
-export const Logo = styled.img``;
-
-export const LogoLink = styled(ReachRouterLink)`
-    margin-top: -2.5rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    border: 2px solid transparent;
-    transition: all 0.3s;
-    &:focus {
-        border-radius: 0.5rem;
-        border-color: white;
-    }
-`;
-
 export const Menu = styled.nav`
     column-gap: 2rem;
     display: flex;

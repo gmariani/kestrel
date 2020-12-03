@@ -28,7 +28,7 @@ SignInForm.Title.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-SignInForm.InputGroup = function FormInputGroup({ length, blurOnComplete, onChange, onComplete }) {
+SignInForm.InputGroup = function FormInputGroup({ length = 8, blurOnComplete = true, onChange, onComplete }) {
     const [code, setCode] = useState('');
     const groupRef = createRef();
 
@@ -213,12 +213,6 @@ SignInForm.InputGroup.propTypes = {
     blurOnComplete: PropTypes.bool,
     onChange: PropTypes.func,
     onComplete: PropTypes.func,
-};
-SignInForm.InputGroup.defaultProps = {
-    length: 8,
-    blurOnComplete: true,
-    onChange: null,
-    onComplete: null,
 };
 
 export default SignInForm;

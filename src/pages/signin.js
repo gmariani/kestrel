@@ -14,7 +14,7 @@ export default function SignIn() {
     const isInvalid = password.length < 8 || emailAddress === '';
 
     const onChange = (code) => {
-        console.log('onChange', code);
+        // console.log('onChange', code);
         setPassword(code);
     };
 

@@ -11,14 +11,7 @@ const propTypes = {
     to: PropTypes.string.isRequired,
 };
 
-const defaultProps = {
-    posterPath: null,
-    title: 'No Title',
-    year: 0,
-    genres: [],
-};
-
-function Poster({ posterPath, title, year, genres, to }) {
+function Poster({ posterPath, title = 'No Title', year = 1900, genres = [], to }) {
     // const genreList = genres.map((genre) => genre.name).join(', ');
     const genreList = genres.join(', ');
     // const year = new Date(firstAirDate).getFullYear();
@@ -44,7 +37,7 @@ function Poster({ posterPath, title, year, genres, to }) {
     );
 }
 
-Poster.Group = function PosterGroup({ hasFocus, children }) {
+Poster.Group = function PosterGroup({ hasFocus = false, children }) {
     return <Group hasFocus={hasFocus}>{children}</Group>;
 };
 Poster.Group.propTypes = {
@@ -52,11 +45,5 @@ Poster.Group.propTypes = {
     children: PropTypes.node,
 };
 
-Poster.Group.defaultProps = {
-    hasFocus: false,
-    children: null,
-};
-
 Poster.propTypes = propTypes;
-Poster.defaultProps = defaultProps;
 export default Poster;

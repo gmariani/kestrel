@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyledButton, StyledLink } from './styles/button';
 
-function Button({ children, theme, className, type, disabled }) {
+function Button({ children, theme = 'default', className = '', type = 'button', disabled = false }) {
     return (
         <StyledButton theme={theme} type={type} className={className} disabled={disabled}>
             {children}
@@ -16,15 +16,8 @@ Button.propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool,
 };
-Button.defaultProps = {
-    children: null,
-    theme: 'default',
-    type: 'button',
-    className: '',
-    disabled: false,
-};
 
-Button.Link = function ButtonLink({ children, theme, className, to }) {
+Button.Link = function ButtonLink({ children, theme = 'default', className = '', to = '/' }) {
     return (
         <StyledLink className={`${theme} ${className}`} to={to}>
             {children}
@@ -36,12 +29,6 @@ Button.Link.propTypes = {
     theme: PropTypes.string,
     className: PropTypes.string,
     to: PropTypes.string,
-};
-Button.Link.defaultProps = {
-    children: null,
-    theme: 'default',
-    className: '',
-    to: '/',
 };
 
 export default Button;

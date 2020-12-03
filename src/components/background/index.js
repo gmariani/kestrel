@@ -18,22 +18,6 @@ const propTypes = {
     tabIndex: PropTypes.string,
 };
 
-const defaultProps = {
-    children: null,
-    hasShadow: false,
-    hasColor: false,
-    hasImage: false,
-    opacityShadow: 0.75,
-    opacity: 0.8,
-    startColor: '#EE6B4D',
-    endColor: '#FF3000',
-    imagePath: '',
-    blendMode: 'normal',
-    onKeyDown: null,
-    onLoad: null,
-    tabIndex: null,
-};
-
 const Background = forwardRef(
     (
         {
@@ -72,5 +56,4 @@ const Background = forwardRef(
 );
 
 Background.propTypes = propTypes;
-Background.defaultProps = defaultProps;
 export default Background;

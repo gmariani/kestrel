@@ -32,21 +32,12 @@ Player.propTypes = {
     tabIndex: PropTypes.string,
     children: PropTypes.node,
 };
-Player.defaultProps = {
-    onMouseMove: null,
-    onKeyDown: null,
-    tabIndex: null,
-    children: null,
-};
 
 Player.Header = function PlayerHeader({ children }) {
     return <Header>{children}</Header>;
 };
 Player.Header.propTypes = {
     children: PropTypes.node,
-};
-Player.Header.defaultProps = {
-    children: null,
 };
 
 Player.Buffer = function PlayerBuffer({ visible = false }) {
@@ -202,18 +193,12 @@ Player.Buffer = function PlayerBuffer({ visible = false }) {
 Player.Buffer.propTypes = {
     visible: PropTypes.bool,
 };
-Player.Buffer.defaultProps = {
-    visible: false,
-};
 
 Player.Footer = function PlayerFooter({ children }) {
     return <Footer>{children}</Footer>;
 };
 Player.Footer.propTypes = {
     children: PropTypes.node,
-};
-Player.Footer.defaultProps = {
-    children: null,
 };
 
 Player.PlayPause = function PlayerPlayPause({ playing = false, buffering = false, onClick }) {
@@ -237,11 +222,6 @@ Player.PlayPause.propTypes = {
     playing: PropTypes.bool,
     buffering: PropTypes.bool,
     onClick: PropTypes.func,
-};
-Player.PlayPause.defaultProps = {
-    playing: false,
-    buffering: false,
-    onClick: null,
 };
 
 Player.Timer = function PlayerTimer({ children }) {

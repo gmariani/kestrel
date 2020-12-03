@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Header } from '../components';
+import { Header, Logo } from '../components';
 import * as ROUTES from '../constants/routes';
 
 const propTypes = {
@@ -51,11 +51,11 @@ function HeaderContainer({ children, hasFocus, categories, selectedCategory }) {
     return (
         <Header onKeyDown={onKeyDown}>
             <Header.Frame>
-                <Header.Logo to={ROUTES.HOME} />
+                <Logo to={ROUTES.HOME} />
                 {/* <Header.ButtonLink to={ROUTES.SIGN_IN}>Sign In</Header.ButtonLink> */}
             </Header.Frame>
             <Header.Menu>
-                {categories.map((category, i) => (
+                {categories.map((category) => (
                     <Header.MenuLink
                         key={category.slug}
                         to={`${ROUTES.BROWSE}${category.slug}`}

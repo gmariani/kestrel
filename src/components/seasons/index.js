@@ -18,12 +18,7 @@ const propTypes = {
     onClickSeason: PropTypes.func,
 };
 
-const defaultProps = {
-    selected: 0,
-    onClickSeason: null,
-};
-
-function Seasons({ focusId, focusTarget, seasons, selected, onClickSeason }) {
+function Seasons({ focusId, focusTarget, seasons, selected = 0, onClickSeason }) {
     const capitalize = (str) => str.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
     const hasFocus = focusId === focusTarget;
 
@@ -50,5 +45,4 @@ function Seasons({ focusId, focusTarget, seasons, selected, onClickSeason }) {
 }
 
 Seasons.propTypes = propTypes;
-Seasons.defaultProps = defaultProps;
 export default Seasons;

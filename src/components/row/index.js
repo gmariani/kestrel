@@ -7,15 +7,9 @@ const propTypes = {
     height: PropTypes.string,
 };
 
-const defaultProps = {
-    children: null,
-    height: 'auto',
-};
-
-function Row({ children, height }) {
+function Row({ children, height = 'auto' }) {
     return <Container height={height}>{children}</Container>;
 }
 
 Row.propTypes = propTypes;
-Row.defaultProps = defaultProps;
 export default Row;

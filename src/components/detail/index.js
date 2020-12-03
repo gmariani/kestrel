@@ -20,13 +20,15 @@ const propTypes = {
     onClickRestart: PropTypes.func.isRequired,
 };
 
-const defaultProps = {
-    focusTarget: 0,
-    series: { year: 0, genres: [], name: 'No Title', description: '' },
-    episodeProgress: null,
-};
-
-function Detail({ focusId, focusTarget, series, episodeProgress, episodeRoute, onClickRestart }) {
+const defaultSeries = { year: 0, genres: [], name: 'No Title', description: '' };
+function Detail({
+    focusId,
+    focusTarget = 0,
+    series = defaultSeries,
+    episodeProgress = null,
+    episodeRoute,
+    onClickRestart,
+}) {
     const hasFocus1 = focusId[0] === focusTarget;
     const hasFocus2 = focusId.length > 1 ? focusId[1] === focusTarget : false;
 
@@ -59,5 +61,4 @@ function Detail({ focusId, focusTarget, series, episodeProgress, episodeRoute, o
 }
 
 Detail.propTypes = propTypes;
-Detail.defaultProps = defaultProps;
 export default Detail;
