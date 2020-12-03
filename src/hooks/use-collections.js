@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { FirebaseContext } from '../context/firebase';
+import FirebaseContext from '../context/firebase';
 
 export default function useCollections() {
     // eslint-disable-next-line

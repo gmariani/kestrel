@@ -1,22 +1,37 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Container, Controls, Meta, Title, Description } from './styles/detail';
 import Button from '../button';
 import ProgressBar from '../progressbar';
 
-export default function Detail({
-    focusId,
-    focusTarget,
-    series,
-    episodeProgress,
-    episodeRoute,
-    onClickRestart,
-    ...restProps
-}) {
-    const hasFocus1 = Array.isArray(focusId) ? focusId[0] === focusTarget : focusId === focusTarget;
-    const hasFocus2 = Array.isArray(focusId) ? focusId[1] === focusTarget : false;
+const propTypes = {
+    focusId: PropTypes.arrayOf(PropTypes.number).isRequired,
+    focusTarget: PropTypes.number,
+    series: PropTypes.shape({
+        year: PropTypes.number,
+        genres: PropTypes.arrayOf(PropTypes.string),
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+    }),
+    episodeProgress: PropTypes.shape({
+        percent: PropTypes.number.isRequired,
+    }),
+    episodeRoute: PropTypes.string.isRequired,
+    onClickRestart: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    focusTarget: 0,
+    series: { year: 0, genres: [], name: 'No Title', description: '' },
+    episodeProgress: null,
+};
+
+function Detail({ focusId, focusTarget, series, episodeProgress, episodeRoute, onClickRestart }) {
+    const hasFocus1 = focusId[0] === focusTarget;
+    const hasFocus2 = focusId.length > 1 ? focusId[1] === focusTarget : false;
 
     return (
-        <Container {...restProps}>
+        <Container>
             <Meta>
                 {series.year} · {series.genres.join(', ')}
             </Meta>
@@ -42,3 +57,7 @@ export default function Detail({
         </Container>
     );
 }
+
+Detail.propTypes = propTypes;
+Detail.defaultProps = defaultProps;
+export default Detail;

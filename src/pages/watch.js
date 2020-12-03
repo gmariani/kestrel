@@ -231,12 +231,8 @@ export default function Watch() {
                 {padNumber(selectedEpisode + 1)} - {episode.name}
             </Player.Header>
             <Player.Footer>
-                <Player.PlayPause
-                    playing={playing}
-                    style={{ opacity: buffering ? 0.5 : 1 }}
-                    onClick={onTogglePlaying}
-                />
-                <ProgressBar width={50} height='10px' value={currentProgress} onClick={onSeekTo} />
+                <Player.PlayPause playing={playing} buffering={buffering} onClick={onTogglePlaying} />
+                <ProgressBar width='50%' height='10px' value={currentProgress} onClick={onSeekTo} />
                 <Player.Timer>
                     {secondsToDuration(currentTime)}/{secondsToDuration(totalTime)}
                 </Player.Timer>

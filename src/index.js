@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap-reboot.css';
 import GlobalStyles from './global-styles';
 import App from './App';
-import { firebase } from './lib/firebase';
-import { FirebaseContext } from './context/firebase';
+import firebase from './lib/firebase';
+import FirebaseContext from './context/firebase';
 // import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(

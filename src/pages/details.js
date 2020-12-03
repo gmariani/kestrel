@@ -120,7 +120,7 @@ export default function Details() {
                     }}
                 />
                 <Detail
-                    focusId={hasProgress ? [1, 2] : 1}
+                    focusId={hasProgress ? [1, 2] : [1]}
                     focusTarget={focus}
                     series={series}
                     episodeProgress={hasProgress ? episodeProgress : null}

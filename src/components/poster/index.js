@@ -1,8 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import simpleSvgPlaceholder from '@cloudfour/simple-svg-placeholder';
 import { Container, Image, Title, SubTitle, Group } from './styles/poster';
 
-export default function Poster({ posterPath, title, year, genres, to, ...restProps }) {
+const propTypes = {
+    posterPath: PropTypes.string,
+    title: PropTypes.string,
+    year: PropTypes.number,
+    genres: PropTypes.arrayOf(PropTypes.string),
+    to: PropTypes.string.isRequired,
+};
+
+const defaultProps = {
+    posterPath: null,
+    title: 'No Title',
+    year: 0,
+    genres: [],
+};
+
+function Poster({ posterPath, title, year, genres, to }) {
     // const genreList = genres.map((genre) => genre.name).join(', ');
     const genreList = genres.join(', ');
     // const year = new Date(firstAirDate).getFullYear();
@@ -17,7 +33,7 @@ export default function Poster({ posterPath, title, year, genres, to, ...restPro
     });
 
     return (
-        <Container to={to} {...restProps}>
+        <Container to={to}>
             <Image src={posterPath ?? placeholderPath} height='700' width='466' />
             <Title>
                 {title}
@@ -28,6 +44,19 @@ export default function Poster({ posterPath, title, year, genres, to, ...restPro
     );
 }
 
-Poster.Group = function PosterGroup({ children, ...restProps }) {
-    return <Group {...restProps}>{children}</Group>;
+Poster.Group = function PosterGroup({ hasFocus, children }) {
+    return <Group hasFocus={hasFocus}>{children}</Group>;
 };
+Poster.Group.propTypes = {
+    hasFocus: PropTypes.string,
+    children: PropTypes.node,
+};
+
+Poster.Group.defaultProps = {
+    hasFocus: false,
+    children: null,
+};
+
+Poster.propTypes = propTypes;
+Poster.defaultProps = defaultProps;
+export default Poster;

@@ -1,10 +1,31 @@
 import React, { useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Container, Fade, EpisodeContainer, Thumbnail, Meta, Info, Title, Counter, Timer } from './styles/episodes';
 import ProgressBar from '../progressbar';
 import * as ROUTES from '../../constants/routes';
 import { getEpisodeProgress, toSlug, padNumber, secondsToHuman } from '../../utils';
 
-export default function Episodes({
+const propTypes = {
+    focusId: PropTypes.number.isRequired,
+    episodes: PropTypes.arrayOf(PropTypes.object),
+    selectedSeries: PropTypes.string,
+    selectedSeason: PropTypes.number,
+    selectedEpisode: PropTypes.number,
+    progress: PropTypes.arrayOf(PropTypes.array),
+    focusTarget: PropTypes.number.isRequired,
+    onClickEpisode: PropTypes.func,
+};
+
+const defaultProps = {
+    episodes: PropTypes.object,
+    selectedSeries: '',
+    selectedSeason: 0,
+    selectedEpisode: 0,
+    progress: [],
+    onClickEpisode: null,
+};
+
+function Episodes({
     focusId,
     focusTarget,
     episodes,
@@ -13,7 +34,6 @@ export default function Episodes({
     selectedEpisode = 0,
     progress = [],
     onClickEpisode,
-    ...restProps
 }) {
     const hasFocus = focusId === focusTarget;
     const activeEpisodeRef = useRef(null);
@@ -35,7 +55,7 @@ export default function Episodes({
     return (
         <>
             <Fade />
-            <Container {...restProps}>
+            <Container>
                 {episodes.map((episode, i) => {
                     // console.log('selectedSeason', selectedSeason, 'selectedEpisode', selectedEpisode, i);
                     const episodeNumber = padNumber(i + 1);
@@ -50,7 +70,7 @@ export default function Episodes({
                             : secondsToHuman(episodeProgress.totalSeconds);
                     return (
                         <EpisodeContainer
-                            key={i}
+                            key={episodeSlug}
                             ref={isSelected ? activeEpisodeRef : null}
                             onClick={() => {
                                 onClickEpisode(i);
@@ -75,3 +95,7 @@ export default function Episodes({
         </>
     );
 }
+
+Episodes.propTypes = propTypes;
+Episodes.defaultProps = defaultProps;
+export default Episodes;

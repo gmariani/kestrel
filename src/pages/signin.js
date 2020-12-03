@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Background, Logo, Version, SignInForm, Footer } from '../components';
-import { FirebaseContext } from '../context/firebase';
+import FirebaseContext from '../context/firebase';
 import * as ROUTES from '../constants/routes';
 
 export default function SignIn() {
@@ -36,7 +36,7 @@ export default function SignIn() {
     };
 
     return (
-        <Background hasColor opacity='0.8' startColor='#EE6B4D' endColor='rgba(255, 255, 255, 0)'>
+        <Background hasColor opacity={0.8} startColor='#EE6B4D' endColor='rgba(255, 255, 255, 0)'>
             <SignInForm onSubmit={onSubmit} method='POST'>
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}
