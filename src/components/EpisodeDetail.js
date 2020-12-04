@@ -1,8 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Controls, Meta, Title, Description } from './styles/detail';
-import Button from '../button';
-import ProgressBar from '../progressbar';
+import styled from 'styled-components/macro';
+import Link from './Link';
+import ProgressBar from './ProgressBar';
+
+const Container = styled.div`
+    display: flex;
+    font-size: 2rem;
+    color: white;
+    flex-direction: column;
+    justify-content: end;
+    flex: 1;
+`;
+
+const Meta = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
+const Title = styled.div`
+    font-size: 8rem;
+    line-height: 8rem;
+    margin-bottom: 1rem;
+`;
+
+const Description = styled.p`
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5rem;
+`;
+
+const Controls = styled.div`
+    display: flex;
+    column-gap: 2rem;
+    margin-top: 2rem;
+`;
 
 const propTypes = {
     focusId: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -20,8 +52,10 @@ const propTypes = {
     onClickRestart: PropTypes.func.isRequired,
 };
 
+// Actual object to avoid mutable object from invalidating component
 const defaultSeries = { year: 0, genres: [], name: 'No Title', description: '' };
-function Detail({
+
+function EpisodeDetail({
     focusId,
     focusTarget = 0,
     series = defaultSeries,
@@ -43,22 +77,22 @@ function Detail({
             {episodeProgress ? <ProgressBar value={episodeProgress.percent} /> : null}
 
             <Controls>
-                <Button.Link theme='primary' to={episodeRoute} className={hasFocus1 ? 'focused' : ''}>
+                <Link theme='primary' to={episodeRoute} className={hasFocus1 ? 'focused' : ''}>
                     {episodeProgress ? 'Continue' : 'Watch'}
-                </Button.Link>
+                </Link>
                 {episodeProgress ? (
-                    <Button.Link
+                    <Link
                         theme='secondary'
                         className={hasFocus2 ? 'focused' : ''}
                         onClick={() => onClickRestart()}
                         to={episodeRoute}>
                         Restart
-                    </Button.Link>
+                    </Link>
                 ) : null}
             </Controls>
         </Container>
     );
 }
 
-Detail.propTypes = propTypes;
-export default Detail;
+EpisodeDetail.propTypes = propTypes;
+export default EpisodeDetail;

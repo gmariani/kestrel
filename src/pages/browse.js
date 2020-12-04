@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Background, Poster } from '../components';
+import { Background, Poster, Row } from '../components';
 import HeaderContainer from '../containers/header';
 import * as ROUTES from '../constants/routes';
 import { useContent } from '../hooks';
@@ -70,12 +70,12 @@ export default function Browse() {
                 categories={categories}
                 selectedCategory={category}
             />
-            <Poster.Group hasFocus={focusElements[focus] === 'posters'}>
+            <Row>
                 {media.map((poster) =>
                     category === toSlug(poster.category) ? (
                         <Poster
                             key={poster.docId}
-                            posterPath={poster.posterPath}
+                            imagePath={poster.posterPath}
                             title={poster.name}
                             year={poster.year}
                             genres={poster.genres}
@@ -83,7 +83,7 @@ export default function Browse() {
                         />
                     ) : null
                 )}
-            </Poster.Group>
+            </Row>
         </Background>
     );
 }

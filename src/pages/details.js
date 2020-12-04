@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Background, Row, Detail, Seasons, Episodes } from '../components';
+import { Background, Row, Column, EpisodeDetail, Season, Episodes } from '../components';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
 import HeaderContainer from '../containers/header';
@@ -108,18 +108,31 @@ export default function Details() {
             opacity={1}>
             <HeaderContainer />
             <Row height='100%'>
-                <Seasons
-                    seasons={series.seasons}
-                    selected={selectedSeason}
-                    focusId={0}
-                    focusTarget={focus}
-                    onClickSeason={(seasonIndex) => {
-                        // Only update season when playing an episode
-                        setSelectedEpisode(0);
-                        setSelectedSeason(seasonIndex);
-                    }}
-                />
-                <Detail
+                <Column>
+                    {series.seasons.map((season, i) => {
+                        const subTitle = `${season.episodeCount} ${season.episodeCount > 1 ? 'Episodes' : 'Episode'}`;
+                        const isSelected = i === selectedSeason;
+                        const isFocused = focus === 0;
+                        return (
+                            // Will not be sorted, or added to dynamically so it's safe to use array index
+                            <Season
+                                // eslint-disable-next-line react/no-array-index-key
+                                key={i}
+                                index={i}
+                                title={season.name}
+                                subTitle={subTitle}
+                                isSelected={isSelected}
+                                isFocused={isFocused}
+                                onClickSeason={(seasonIndex) => {
+                                    // Only update season when playing an episode
+                                    setSelectedEpisode(0);
+                                    setSelectedSeason(seasonIndex);
+                                }}
+                            />
+                        );
+                    })}
+                </Column>
+                <EpisodeDetail
                     focusId={hasProgress ? [1, 2] : [1]}
                     focusTarget={focus}
                     series={series}

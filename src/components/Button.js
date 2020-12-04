@@ -1,7 +1,8 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
-import { Link as ReachRouterLink } from 'react-router-dom';
 
-export const StyledButton = styled.button`
+const StyledButton = styled.button`
     background-color: ${({ theme }) => {
         switch (theme) {
             case 'secondary':
@@ -40,38 +41,21 @@ export const StyledButton = styled.button`
     }
 `;
 
-export const StyledLink = styled(ReachRouterLink)`
-    background-color: ${({ className }) => {
-        switch (className) {
-            case 'secondary':
-                return 'transparent';
-            case 'primary':
-            default:
-                return 'rgba(255, 255, 255, 0.25)';
-        }
-    }};
-    border-radius: 0.5rem;
-    border-color: transparent;
-    color: #fff;
-    font-family: Tw Cen MT;
-    font-size: 2.5rem;
-    font-style: normal;
-    font-weight: normal;
-    line-height: 44px;
-    padding: 1rem 6rem;
-    transition: all 0.3s;
-    text-decoration: none;
+const propTypes = {
+    children: PropTypes.node,
+    theme: PropTypes.string,
+    type: PropTypes.string,
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+};
 
-    &.player {
-        height: 100%;
-    }
+function Button({ children, theme = 'default', className = '', type = 'button', disabled = false }) {
+    return (
+        <StyledButton theme={theme} type={type} className={className} disabled={disabled}>
+            {children}
+        </StyledButton>
+    );
+}
+Button.propTypes = propTypes;
 
-    &:active,
-    &:focus,
-    &.focused,
-    &:hover {
-        color: black;
-        background-color: white;
-        text-decoration: none;
-    }
-`;
+export default Button;

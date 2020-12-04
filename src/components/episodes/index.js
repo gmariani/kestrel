@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Container, Fade, EpisodeContainer, Thumbnail, Meta, Info, Title, Counter, Timer } from './styles/episodes';
-import ProgressBar from '../progressbar';
+import ProgressBar from '../ProgressBar';
 import * as ROUTES from '../../constants/routes';
 import { getEpisodeProgress, toSlug, padNumber, secondsToHuman } from '../../utils';
 

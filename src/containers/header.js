@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Header, Logo } from '../components';
+import { Header, Logo, Link } from '../components';
 import * as ROUTES from '../constants/routes';
 
 const propTypes = {
@@ -62,6 +62,12 @@ function HeaderContainer({ children, hasFocus, categories, selectedCategory }) {
                         className={category.slug === selectedCategory ? 'selected' : ''}>
                         {category.name}
                     </Header.MenuLink>
+                    // <Link
+                    //     key={category.slug}
+                    //     to={`${ROUTES.BROWSE}${category.slug}`}
+                    //     className={category.slug === selectedCategory ? 'selected' : ''}>
+                    //     {category.name}
+                    // </Link>
                 ))}
             </Header.Menu>
             {children}

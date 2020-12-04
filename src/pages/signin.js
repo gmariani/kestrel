@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Background, Logo, Version, SignInForm, Footer } from '../components';
+import { Button, Background, SignInForm, SecurityCode, Footer } from '../components';
 import FirebaseContext from '../context/firebase';
 import * as ROUTES from '../constants/routes';
 
@@ -28,6 +28,7 @@ export default function SignIn() {
                 history.push(ROUTES.BROWSE);
             })
             .catch((err) => {
+                // eslint-disable-next-line no-console
                 console.error(err);
                 // setEmailAddress('');
                 setPassword('');
@@ -40,15 +41,12 @@ export default function SignIn() {
             <SignInForm onSubmit={onSubmit} method='POST'>
                 <SignInForm.Title>Passcode</SignInForm.Title>
                 {error && <SignInForm.Error>{error}</SignInForm.Error>}
-                <SignInForm.InputGroup length={8} onChange={onChange} />
+                <SecurityCode length={8} onChange={onChange} />
                 <Button disabled={isInvalid} type='submit' theme='primary' width='280px'>
                     Login
                 </Button>
             </SignInForm>
-            <Footer>
-                <Logo />
-                <Version />
-            </Footer>
+            <Footer />
         </Background>
     );
 }

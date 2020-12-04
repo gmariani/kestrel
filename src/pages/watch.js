@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
-import { Player, ProgressBar, Button, Row } from '../components';
+import { Player, ProgressBar, Link, Row } from '../components';
 import { useContent } from '../hooks';
 import { toSlug, secondsToDuration, padNumber } from '../utils';
 import * as ROUTES from '../constants/routes';
@@ -205,21 +205,21 @@ export default function Watch() {
                 <Player.EndTitle>{series.name}</Player.EndTitle>
                 <Player.EndSubTitle episodeIndex={selectedEpisode} episode={episode} />
                 <Row>
-                    <Button.Link
+                    <Link
                         theme={nextEpisode ? 'secondary' : 'primary'}
                         onClick={() => setEnded(false)}
                         to={`${ROUTES.DETAILS}${mediaId}`}>
                         Back
-                    </Button.Link>
+                    </Link>
                     {nextEpisode ? (
-                        <Button.Link
+                        <Link
                             theme='primary'
                             onClick={() => {
                                 setEnded(false);
                             }}
                             to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${toSlug(nextEpisode.name)}`}>
                             Next
-                        </Button.Link>
+                        </Link>
                     ) : null}
                 </Row>
             </Player.EndDetails>

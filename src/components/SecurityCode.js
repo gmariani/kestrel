@@ -1,34 +1,45 @@
 import React, { useState, createRef } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Title, Error, InputGroup, Input } from './styles/signinform';
+import styled from 'styled-components/macro';
 
-function SignInForm({ children, onSubmit }) {
-    return (
-        <Container onSubmit={onSubmit} method='POST'>
-            {children}
-        </Container>
-    );
-}
-SignInForm.propTypes = {
-    children: PropTypes.node.isRequired,
-    onSubmit: PropTypes.func.isRequired,
+const InputGroup = styled.div`
+    display: flex;
+    column-gap: 10px;
+    margin-bottom: 5rem;
+    justify-content: center;
+`;
+
+const Input = styled.input`
+    font-family: Tw Cen MT;
+    background-color: transparent;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 2px solid white;
+    width: 3rem;
+    color: white;
+    font-size: 2.5rem;
+    text-align: center;
+    transition: all 0.3s;
+    &:active,
+    &:focus {
+        width: 3.5rem;
+        border-bottom-width: 4px;
+        border-top: none;
+        border-right: none;
+        border-right: none;
+        outline: none;
+    }
+`;
+
+const propTypes = {
+    length: PropTypes.number,
+    blurOnComplete: PropTypes.bool,
+    onChange: PropTypes.func,
+    onComplete: PropTypes.func,
 };
 
-SignInForm.Error = function FormError({ children }) {
-    return <Error>{children}</Error>;
-};
-SignInForm.Error.propTypes = {
-    children: PropTypes.node.isRequired,
-};
-
-SignInForm.Title = function FormTitle({ children }) {
-    return <Title>{children}</Title>;
-};
-SignInForm.Title.propTypes = {
-    children: PropTypes.node.isRequired,
-};
-
-SignInForm.InputGroup = function FormInputGroup({ length = 8, blurOnComplete = true, onChange, onComplete }) {
+function SecurityCode({ length = 8, blurOnComplete = true, onChange, onComplete }) {
     const [code, setCode] = useState('');
     const groupRef = createRef();
 
@@ -207,12 +218,7 @@ SignInForm.InputGroup = function FormInputGroup({ length = 8, blurOnComplete = t
             ))}
         </InputGroup>
     );
-};
-SignInForm.InputGroup.propTypes = {
-    length: PropTypes.number,
-    blurOnComplete: PropTypes.bool,
-    onChange: PropTypes.func,
-    onComplete: PropTypes.func,
-};
+}
 
-export default SignInForm;
+SecurityCode.propTypes = propTypes;
+export default SecurityCode;

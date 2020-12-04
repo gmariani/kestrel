@@ -1,6 +1,12 @@
 import React from 'react';
+import styled from 'styled-components/macro';
 import PropTypes from 'prop-types';
-import Container from './styles/row';
+
+const Container = styled.div`
+    display: flex;
+    height: ${({ height }) => height};
+    column-gap: 2rem;
+`;
 
 const propTypes = {
     children: PropTypes.node,
