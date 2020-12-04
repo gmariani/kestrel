@@ -19,6 +19,7 @@ export default function useContent(target, orderBy = 'name') {
                 setContent(allContent);
             })
             .catch((error) => {
+                // eslint-disable-next-line no-console
                 console.log(error);
             });
     }, [firebase, target, orderBy]);

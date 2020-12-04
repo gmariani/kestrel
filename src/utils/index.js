@@ -1,8 +1,7 @@
 export { default as capitalize } from './capitalize';
-export { default as toSlug } from './to-slug';
-export { default as focusNext } from './focus-next';
-export { default as padNumber } from './number';
-export { default as getUUID } from './uuid';
-export { default as getEpisodeProgress } from './episode-progress';
-export { default as getSeries } from './series';
+export { default as toSlug } from './toSlug';
+export { default as padNumber } from './padNumber';
+export { default as getUUID } from './getUUID';
+export { default as getEpisodeProgress } from './getEpisodeProgress';
+export { default as getSeries } from './getSeries';
 export * from './time';

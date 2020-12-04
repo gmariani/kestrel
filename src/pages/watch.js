@@ -3,17 +3,12 @@ import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
 import { Player, ProgressBar, Link, Row } from '../components';
 import { useContent } from '../hooks';
-import { toSlug, secondsToDuration, padNumber } from '../utils';
+import { toSlug, secondsToDuration, padNumber, getSeries } from '../utils';
 import * as ROUTES from '../constants/routes';
 
 // TODO get tokenized s3 links
 
 export default function Watch() {
-    const getSeries = (media, mediaId) => {
-        const foundMetadata = media.filter((metadata) => mediaId === metadata.docId);
-        return foundMetadata.length ? foundMetadata[0] : null;
-    };
-
     function isCurrentEpisode(episode) {
         return this === toSlug(episode.name);
     }

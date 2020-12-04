@@ -74,6 +74,7 @@ function HeaderContainer({ children, hasFocus, categories, selectedCategory }) {
         </Header>
     );
 }
+
 HeaderContainer.propTypes = propTypes;
 HeaderContainer.defaultProps = defaultProps;
 export default HeaderContainer;

@@ -1,4 +1,4 @@
-import padNumber from './number';
+import padNumber from './padNumber';
 
 export function durationToSeconds(duration = '00:00') {
     const parts = duration.split(':').map((num) => parseInt(num, 10));
@@ -8,11 +8,10 @@ export function durationToSeconds(duration = '00:00') {
 }
 
 export function secondsToDuration(duration = 0) {
-    /* eslint-disable no-param-reassign */
-    const hours = Math.floor((duration %= 86400) / 3600);
-    const minutes = Math.floor((duration %= 3600) / 60);
-    const seconds = duration % 60;
-    /* eslint-enable no-param-reassign */
+    let temp = duration;
+    const hours = Math.floor((temp %= 86400) / 3600);
+    const minutes = Math.floor((temp %= 3600) / 60);
+    const seconds = temp % 60;
     if (hours) return `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(Math.floor(seconds))}`;
     return `${padNumber(minutes)}:${padNumber(Math.floor(seconds))}`;
 }
