@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Background, Row, Column, EpisodeDetail, Season, Episodes } from '../components';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
-import HeaderContainer from '../containers/header';
+// import { HeaderContainer } from '../containers';
 import { getEpisodeProgress, toSlug, getSeries } from '../utils';
 
 export default function Details() {
@@ -106,7 +106,7 @@ export default function Details() {
             hasImage
             imagePath={series.backgroundPath}
             opacity={1}>
-            <HeaderContainer />
+            {/* <HeaderContainer /> */}
             <Row height='100%'>
                 <Column>
                     {series.seasons.map((season, i) => {

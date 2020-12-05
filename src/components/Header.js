@@ -45,15 +45,14 @@ const MenuLink = styled(ReachRouterLink)`
 
     &:not([disabled]):active,
     &:not([disabled]):focus,
-    &:not([disabled]).focused,
+    &:not([disabled]).focused.selected,
     &:not([disabled]):hover {
         color: black;
         background-color: white;
         text-decoration: none;
     }
 
-    &:not([disabled]):focus,
-    &:not([disabled]).focused {
+    &:not([disabled]):focus {
         outline: 2px solid white;
     }
 `;

@@ -8,6 +8,7 @@ const Container = styled(ReachRouterLink)`
     max-width: 466px;
     transition: all 0.2s ease-in-out;
     &:focus,
+    &.focused.selected,
     &:hover {
         text-decoration: none;
         transform: scale(1.05);
@@ -50,9 +51,10 @@ const propTypes = {
     year: PropTypes.number,
     genres: PropTypes.arrayOf(PropTypes.string),
     to: PropTypes.string.isRequired,
+    className: PropTypes.string,
 };
 
-function Poster({ imagePath, to, title = 'No Title', year = 1900, genres = [] }) {
+function Poster({ imagePath, to, title = 'No Title', year = 1900, genres = [], className = '' }) {
     // If no image exists, show this
     const placeholderPath = simpleSvgPlaceholder({
         bgColor: '#0F1C3F',
@@ -63,7 +65,7 @@ function Poster({ imagePath, to, title = 'No Title', year = 1900, genres = [] })
     });
 
     return (
-        <Container to={to}>
+        <Container to={to} className={className}>
             <Image src={imagePath ?? placeholderPath} height='700' width='466' />
             <Title>
                 {title}

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Background, Poster, Row } from '../components';
-import HeaderContainer from '../containers/header';
-import * as ROUTES from '../constants/routes';
 import { useContent } from '../hooks';
+import { Background } from '../components';
+import { HeaderContainer, PosterContainer } from '../containers';
 import { toSlug } from '../utils';
 
 export default function Browse() {
@@ -11,16 +10,12 @@ export default function Browse() {
     const { content: categories } = useContent('categories', 'order');
     const { content: media } = useContent('media');
     const params = useParams();
-    // useEffect(() => {
-    //     document.addEventListener('keydown', onKeyDown, false);
-
-    //     return () => {
-    //         document.removeEventListener('keydown', onKeyDown, false);
-    //     };
-    // }, []);
 
     // Variables //
-    const category = params.categoryId ?? (categories.length ? categories[0].slug : '');
+    const selectedCategory = params.categoryId ?? (categories.length ? categories[0].slug : '');
+
+    // Background theme
+    // TODO use https://codepen.io/meodai/pen/RerqjG
     const getColor = () => {
         const themes = [
             ['hsla(11,83%,62%,1)', 'hsla(11,100%,50%,1)'], // red
@@ -32,28 +27,30 @@ export default function Browse() {
         // const end = Math.floor(Math.random() * 255);
         // return [`hsla(${start},83%,62%,1)`, `hsla(${start},100%,50%,1)`];
     };
-
     const themeColor = getColor();
 
+    // Key listener
     const focusElements = ['header', 'posters'];
     const [focus, setFocus] = useState(0);
-    const onKeyDown = (event) => {
-        console.log('Browse.onKeyDown');
-        const keyCode = event.which || event.keyCode;
-        if (keyCode >= 37 && keyCode <= 41) {
-            // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
-            if (keyCode === 37) {
-                //
-            } else if (keyCode === 38) {
-                setFocus((focus - 1) % focusElements.length);
-            } else if (keyCode === 39) {
-                //
-            } else if (keyCode === 40) {
-                setFocus((focus + 1) % focusElements.length);
+    useEffect(() => {
+        const onKeyDown = (event) => {
+            const { keyCode } = event;
+            if (keyCode >= 37 && keyCode <= 41) {
+                // (38) Up Arrow, (40) Down Arrow
+                if (keyCode === 38) {
+                    setFocus((focus - 1 + focusElements.length) % focusElements.length);
+                } else if (keyCode === 40) {
+                    setFocus((focus + 1) % focusElements.length);
+                }
+                event.preventDefault();
             }
-            event.preventDefault();
-        }
-    };
+        };
+
+        document.addEventListener('keydown', onKeyDown, false);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown, false);
+        };
+    }, [focus, setFocus, focusElements.length]);
 
     return (
         <Background
@@ -63,27 +60,16 @@ export default function Browse() {
             opacity={0.5}
             startColor={themeColor[0]}
             endColor={themeColor[1]}
-            onKeyDown={onKeyDown}
             tabIndex='0'>
             <HeaderContainer
                 hasFocus={focusElements[focus] === 'header'}
                 categories={categories}
-                selectedCategory={category}
+                selectedCategory={selectedCategory}
             />
-            <Row>
-                {media.map((poster) =>
-                    category === toSlug(poster.category) ? (
-                        <Poster
-                            key={poster.docId}
-                            imagePath={poster.posterPath}
-                            title={poster.name}
-                            year={poster.year}
-                            genres={poster.genres}
-                            to={`${ROUTES.DETAILS}${poster.docId}`}
-                        />
-                    ) : null
-                )}
-            </Row>
+            <PosterContainer
+                hasFocus={focusElements[focus] === 'posters'}
+                posters={media.filter((poster) => selectedCategory === toSlug(poster.category))}
+            />
         </Background>
     );
 }

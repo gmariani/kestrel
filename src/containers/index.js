@@ -1,2 +1,2 @@
-// eslint-disable-next-line import/prefer-default-export
-export { default as HeaderContainer } from './header';
+export { default as HeaderContainer } from './HeaderContainer';
+export { default as PosterContainer } from './PosterContainer';
