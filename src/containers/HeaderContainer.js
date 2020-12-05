@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Header, Logo, Link } from '../components';
+import { Header, Logo } from '../components';
 import * as ROUTES from '../constants/routes';
 
 const propTypes = {
