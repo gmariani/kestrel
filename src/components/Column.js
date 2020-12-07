@@ -7,6 +7,13 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: start;
     position: relative;
+
+    /* from episode container
+    flex: 1;
+    row-gap: 1.5rem;
+    overflow: hidden;
+    padding-right: 1rem;
+    padding-left: 1rem;*/
 `;
 
 const propTypes = {

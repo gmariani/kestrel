@@ -37,17 +37,14 @@ const Controls = styled.div`
 `;
 
 const propTypes = {
-    focusId: PropTypes.arrayOf(PropTypes.number).isRequired,
-    focusTarget: PropTypes.number,
+    hasFocus: PropTypes.bool,
     series: PropTypes.shape({
         year: PropTypes.number,
         genres: PropTypes.arrayOf(PropTypes.string),
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
     }),
-    episodeProgress: PropTypes.shape({
-        percent: PropTypes.number.isRequired,
-    }),
+    progress: PropTypes.number,
     episodeRoute: PropTypes.string.isRequired,
     onClickRestart: PropTypes.func.isRequired,
 };
@@ -55,17 +52,8 @@ const propTypes = {
 // Actual object to avoid mutable object from invalidating component
 const defaultSeries = { year: 0, genres: [], name: 'No Title', description: '' };
 
-function EpisodeDetail({
-    focusId,
-    focusTarget = 0,
-    series = defaultSeries,
-    episodeProgress = null,
-    episodeRoute,
-    onClickRestart,
-}) {
-    const hasFocus1 = focusId[0] === focusTarget;
-    const hasFocus2 = focusId.length > 1 ? focusId[1] === focusTarget : false;
-
+function EpisodeDetail({ hasFocus = false, series = defaultSeries, progress = 0, episodeRoute, onClickRestart }) {
+    // className={`${i === selectedSeason ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
     return (
         <Container>
             <Meta>
@@ -74,18 +62,14 @@ function EpisodeDetail({
             <Title>{series.name}</Title>
             <Description>{series.description}</Description>
 
-            {episodeProgress ? <ProgressBar value={episodeProgress.percent} /> : null}
+            {progress ? <ProgressBar value={progress} /> : null}
 
             <Controls>
-                <Link theme='primary' to={episodeRoute} className={hasFocus1 ? 'focused' : ''}>
-                    {episodeProgress ? 'Continue' : 'Watch'}
+                <Link theme='primary' to={episodeRoute} className=''>
+                    {progress ? 'Continue' : 'Watch'}
                 </Link>
-                {episodeProgress ? (
-                    <Link
-                        theme='secondary'
-                        className={hasFocus2 ? 'focused' : ''}
-                        onClick={() => onClickRestart()}
-                        to={episodeRoute}>
+                {progress ? (
+                    <Link theme='secondary' className='' onClick={onClickRestart} to={episodeRoute}>
                         Restart
                     </Link>
                 ) : null}

@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Background, Row, Column, EpisodeDetail, Season, Episodes } from '../components';
+import { Background, Row, EpisodeDetail } from '../components';
+import { SeasonContainer, EpisodeContainer } from '../containers';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
 // import { HeaderContainer } from '../containers';
@@ -15,17 +16,33 @@ export default function Details() {
     const lastPlayedEpisode = savedData?.lastPlayedEpisode ?? 0;
     const [selectedSeason, setSelectedSeason] = useState(lastPlayedSeason);
     const [selectedEpisode, setSelectedEpisode] = useState(lastPlayedEpisode);
-    const [focus, setFocus] = useState(2);
     const series = getSeries(media, mediaId);
 
-    const backgroundRef = useRef();
-    useEffect(() => {
-        // Once loaded, set focus
-        if (backgroundRef.current) backgroundRef.current.focus();
-    }, [series, backgroundRef]);
+    const isMovie = false;
+    const focusElements = isMovie ? ['details'] : ['details', 'episodes', 'seasons'];
+    const [focus, setFocus] = useState(0);
+    const onKeyDown = useCallback(
+        (event) => {
+            const { keyCode } = event;
+            if (keyCode >= 37 && keyCode <= 41) {
+                // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
+                if (keyCode === 37) {
+                    setFocus((focus - 1 + focusElements.length) % focusElements.length);
+                } else if (keyCode === 39) {
+                    setFocus((focus + 1) % focusElements.length);
+                }
+                event.preventDefault();
+            }
+        },
+        [focus, setFocus, focusElements.length]
+    );
 
-    // console.log('savedData', mediaId, savedData);
-    // console.log('progress', progress, selectedSeason, selectedEpisode);
+    useEffect(() => {
+        document.addEventListener('keydown', onKeyDown, false);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown, false);
+        };
+    }, [onKeyDown]);
 
     // Firebase hasn't replied yet...
     if (!series) return <div>Loading...</div>;
@@ -35,70 +52,9 @@ export default function Details() {
     const episode = episodes[lastPlayedEpisode];
     const episodeSlug = toSlug(episode.name);
     const episodeProgress = getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration);
-    const hasProgress = episodeProgress.percent > 0;
-    const focusItems = hasProgress
-        ? ['seasons', 'detail-continue', 'detail-restart', 'episodes']
-        : ['seasons', 'detail-continue', 'episodes'];
-
-    const onKeyDown = (event) => {
-        // event.stopPropagation();
-
-        console.log('onKeyDown Row - current focus', focusItems[focus]);
-        switch (event.key) {
-            case 'Left': // IE/Edge specific value
-            case 'ArrowLeft':
-                event.preventDefault();
-                setFocus((focus - 1 + focusItems.length) % focusItems.length);
-                break;
-            case 'Right': // IE/Edge specific value
-            case 'ArrowRight':
-                event.preventDefault();
-                setFocus((focus + 1) % focusItems.length);
-                break;
-
-            case 'Down': // IE/Edge specific value
-            case 'ArrowDown':
-                event.preventDefault();
-                if (focusItems[focus] === 'seasons') {
-                    setSelectedEpisode(0);
-                    setSelectedSeason((selectedSeason + 1) % series.seasons.length);
-                }
-                if (focusItems[focus] === 'episodes') {
-                    setSelectedEpisode((selectedEpisode + 1) % episodes.length);
-                }
-                break;
-            case 'Up': // IE/Edge specific value
-            case 'ArrowUp':
-                event.preventDefault();
-                if (focusItems[focus] === 'seasons') {
-                    const newSeason = (selectedSeason - 1 + series.seasons.length) % series.seasons.length;
-                    console.log('set season to ', newSeason);
-                    setSelectedEpisode(0);
-                    setSelectedSeason(newSeason);
-                }
-                if (focusItems[focus] === 'episodes') {
-                    const newEpisode = (selectedEpisode - 1 + episodes.length) % episodes.length;
-                    console.log('set episode to ', newEpisode);
-                    setSelectedEpisode(newEpisode);
-                }
-                break;
-            case 'Enter':
-                // Do something for "enter" or "return" key press.
-                break;
-            case 'Esc': // IE/Edge specific value
-            case 'Escape':
-                // Do something for "esc" key press.
-                break;
-            default:
-            // Quit when this doesn't handle the key event.
-        }
-    };
 
     return (
         <Background
-            ref={backgroundRef}
-            onLoad={(e) => e.target.focus()}
-            onKeyDown={(e) => onKeyDown(e)}
             tabIndex='0'
             hasShadow
             opacityShadow={0.9}
@@ -108,35 +64,17 @@ export default function Details() {
             opacity={1}>
             {/* <HeaderContainer /> */}
             <Row height='100%'>
-                <Column>
-                    {series.seasons.map((season, i) => {
-                        const subTitle = `${season.episodeCount} ${season.episodeCount > 1 ? 'Episodes' : 'Episode'}`;
-                        const isSelected = i === selectedSeason;
-                        const isFocused = focus === 0;
-                        return (
-                            // Will not be sorted, or added to dynamically so it's safe to use array index
-                            <Season
-                                // eslint-disable-next-line react/no-array-index-key
-                                key={i}
-                                index={i}
-                                title={season.name}
-                                subTitle={subTitle}
-                                isSelected={isSelected}
-                                isFocused={isFocused}
-                                onClickSeason={(seasonIndex) => {
-                                    // Only update season when playing an episode
-                                    setSelectedEpisode(0);
-                                    setSelectedSeason(seasonIndex);
-                                }}
-                            />
-                        );
-                    })}
-                </Column>
+                <SeasonContainer
+                    hasFocus={focusElements[focus] === 'seasons'}
+                    seasons={series.seasons}
+                    onClickSeason={(seasonIndex) => {
+                        setSelectedSeason(seasonIndex);
+                    }}
+                />
                 <EpisodeDetail
-                    focusId={hasProgress ? [1, 2] : [1]}
-                    focusTarget={focus}
+                    hasFocus={focusElements[focus] === 'details'}
                     series={series}
-                    episodeProgress={hasProgress ? episodeProgress : null}
+                    progress={episodeProgress?.percent}
                     episodeRoute={`${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${episodeSlug}`}
                     onClickRestart={() => {
                         // Reset episode progress
@@ -155,14 +93,11 @@ export default function Details() {
                         setProgress(tempProgress);
                     }}
                 />
-                <Episodes
-                    focusId={hasProgress ? 3 : 2}
+                <EpisodeContainer
+                    hasFocus={focusElements[focus] === 'episodes'}
+                    seasonProgress={progress?.[selectedSeason]}
                     episodes={episodes}
-                    selectedSeries={mediaId}
-                    selectedSeason={selectedSeason}
-                    selectedEpisode={selectedEpisode}
-                    progress={progress}
-                    focusTarget={focus}
+                    seasonPath={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/`}
                     onClickEpisode={(episodeIndex) => {
                         // Update last played episode
                         localStorage.setItem(
@@ -173,7 +108,6 @@ export default function Details() {
                                 lastPlayedEpisode: episodeIndex,
                             })
                         );
-                        setSelectedEpisode(episodeIndex);
                     }}
                 />
             </Row>

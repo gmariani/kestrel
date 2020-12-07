@@ -19,10 +19,18 @@ const Container = styled.button`
     transition: all 0.3s;
     user-select: none;
 
-    &:hover,
+    &:active,
     &:focus,
-    &.focused {
+    &.focused.selected,
+    &:hover {
         border: 2px solid white;
+    }
+
+    &:active .season__subtitle,
+    &:focus .season__subtitle,
+    &.focused.selected .season__subtitle,
+    &:hover .season__subtitle {
+        color: white;
     }
 `;
 
@@ -30,27 +38,21 @@ const SubTitle = styled.span`
     display: block;
     font-size: 1rem;
     color: transparent;
-    &.selected {
-        color: white;
-    }
 `;
 
 const propTypes = {
-    index: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
-    subTitle: PropTypes.string,
-    isSelected: PropTypes.bool,
-    isFocused: PropTypes.bool,
-    onClickSeason: PropTypes.func,
+    numEpisodes: PropTypes.number,
+    className: PropTypes.string,
+    onClick: PropTypes.func,
 };
 
-function Season({ index = 0, title, subTitle = '', isSelected = false, isFocused = false, onClickSeason }) {
-    const classSelected = isSelected ? 'selected' : '';
-    const classFocused = isSelected && isFocused ? 'focused' : '';
+function Season({ title, numEpisodes = 0, className = '', onClick }) {
+    const subTitle = `${numEpisodes} ${numEpisodes > 1 || numEpisodes === 0 ? 'Episodes' : 'Episode'}`;
     return (
-        <Container className={`${classSelected} ${classFocused}`} onClick={() => onClickSeason(index)}>
+        <Container className={className} onClick={onClick}>
             {capitalize(title)}
-            <SubTitle className={classSelected}>{subTitle}</SubTitle>
+            <SubTitle className='season__subtitle'>{subTitle}</SubTitle>
         </Container>
     );
 }
