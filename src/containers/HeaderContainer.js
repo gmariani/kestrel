@@ -6,17 +6,12 @@ import * as ROUTES from '../constants/routes';
 
 const propTypes = {
     hasFocus: PropTypes.bool,
+    hideMenu: PropTypes.bool,
     categories: PropTypes.arrayOf(PropTypes.object),
     selectedCategory: PropTypes.string,
 };
 
-const defaultProps = {
-    hasFocus: false,
-    categories: [],
-    selectedCategory: '',
-};
-
-function HeaderContainer({ hasFocus, categories, selectedCategory }) {
+function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCategory }) {
     const history = useHistory();
     useEffect(() => {
         const onKeyDown = (event) => {
@@ -61,27 +56,28 @@ function HeaderContainer({ hasFocus, categories, selectedCategory }) {
                 <Logo to={ROUTES.HOME} />
                 {/* <Header.ButtonLink to={ROUTES.SIGN_IN}>Sign In</Header.ButtonLink> */}
             </Header.Frame>
-            <Header.Menu>
-                {categories.map((category) => (
-                    <Header.MenuLink
-                        key={category.slug}
-                        to={`${ROUTES.BROWSE}${category.slug}`}
-                        // prettier-ignore
-                        className={`${category.slug === selectedCategory ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
-                        {category.name}
-                    </Header.MenuLink>
-                    // <Link
-                    //     key={category.slug}
-                    //     to={`${ROUTES.BROWSE}${category.slug}`}
-                    //     className={category.slug === selectedCategory ? 'selected' : ''}>
-                    //     {category.name}
-                    // </Link>
-                ))}
-            </Header.Menu>
+            {!hideMenu ? (
+                <Header.Menu>
+                    {categories.map((category) => (
+                        <Header.MenuLink
+                            key={category.slug}
+                            to={`${ROUTES.BROWSE}${category.slug}`}
+                            // prettier-ignore
+                            className={`${category.slug === selectedCategory ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
+                            {category.name}
+                        </Header.MenuLink>
+                        // <Link
+                        //     key={category.slug}
+                        //     to={`${ROUTES.BROWSE}${category.slug}`}
+                        //     className={category.slug === selectedCategory ? 'selected' : ''}>
+                        //     {category.name}
+                        // </Link>
+                    ))}
+                </Header.Menu>
+            ) : null}
         </Header>
     );
 }
 
 HeaderContainer.propTypes = propTypes;
-HeaderContainer.defaultProps = defaultProps;
 export default HeaderContainer;

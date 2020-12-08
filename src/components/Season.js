@@ -3,6 +3,12 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { capitalize } from '../utils';
 
+const SubTitle = styled.span`
+    display: block;
+    font-size: 1rem;
+    color: transparent;
+`;
+
 const Container = styled.button`
     background-color: transparent;
     border: 2px solid transparent;
@@ -26,18 +32,9 @@ const Container = styled.button`
         border: 2px solid white;
     }
 
-    &:active .season__subtitle,
-    &:focus .season__subtitle,
-    &.focused.selected .season__subtitle,
-    &:hover .season__subtitle {
+    &:active ${SubTitle}, &:focus ${SubTitle}, &.focused.selected ${SubTitle}, &:hover ${SubTitle} {
         color: white;
     }
-`;
-
-const SubTitle = styled.span`
-    display: block;
-    font-size: 1rem;
-    color: transparent;
 `;
 
 const propTypes = {
@@ -52,7 +49,7 @@ function Season({ title, numEpisodes = 0, className = '', onClick }) {
     return (
         <Container className={className} onClick={onClick}>
             {capitalize(title)}
-            <SubTitle className='season__subtitle'>{subTitle}</SubTitle>
+            <SubTitle>{subTitle}</SubTitle>
         </Container>
     );
 }

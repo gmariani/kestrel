@@ -11,10 +11,15 @@ const Container = styled.div`
 const propTypes = {
     children: PropTypes.node,
     height: PropTypes.string,
+    className: PropTypes.string,
 };
 
-function Row({ children, height = 'auto' }) {
-    return <Container height={height}>{children}</Container>;
+function Row({ children, height = 'auto', className = '' }) {
+    return (
+        <Container height={height} className={className}>
+            {children}
+        </Container>
+    );
 }
 
 Row.propTypes = propTypes;

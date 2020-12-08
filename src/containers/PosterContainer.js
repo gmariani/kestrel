@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import { Row, Poster } from '../components';
 import * as ROUTES from '../constants/routes';
 
@@ -15,6 +16,7 @@ const defaultProps = {
 
 function PosterContainer({ hasFocus, posters }) {
     const [selectedPoster, setSelectedPoster] = useState('');
+    const history = useHistory();
 
     // Check if selected poster is available in this category, if not
     // reset it to the first poster
@@ -35,6 +37,11 @@ function PosterContainer({ hasFocus, posters }) {
                 return foundPosters.length ? foundPosters[0].index : 0;
             };
             const foundIndex = findPosterIndex(selectedPoster);
+            // (13) Enter
+            if (keyCode === 13) {
+                history.push(`${ROUTES.DETAILS}${selectedPoster}`);
+                event.preventDefault();
+            }
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
                 if (keyCode === 37) {
@@ -54,7 +61,7 @@ function PosterContainer({ hasFocus, posters }) {
         return () => {
             document.removeEventListener('keydown', onKeyDown, false);
         };
-    }, [hasFocus, selectedPoster, posters]);
+    }, [history, hasFocus, selectedPoster, posters]);
 
     return (
         <Row>

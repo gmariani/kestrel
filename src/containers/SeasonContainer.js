@@ -19,8 +19,6 @@ function SeasonContainer({ hasFocus = false, seasons, onClickSeason }) {
         setSelectedSeason(0);
     }
 
-    console.log('INFO', 'SeasonContainer', selectedSeason);
-
     const onKeyDown = useCallback(
         (event) => {
             const { keyCode } = event;

@@ -1,7 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Fade, Column, Episode } from '../components';
+import styled from 'styled-components/macro';
+import { Column, Episode } from '../components';
 import { getEpisodeProgress, padNumber, toSlug } from '../utils';
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    /*justify-content: start;*/
+    position: relative;
+    flex: 1;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow: hidden;
+`;
 
 const propTypes = {
     hasFocus: PropTypes.bool,
@@ -49,9 +61,13 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes, sea
         };
     }, [onKeyDown]);
 
+    useEffect(() => {
+        const episodeRef = document.querySelector('.episode.selected');
+        episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    }, [selectedEpisode]);
+
     return (
-        <Column>
-            <Fade />
+        <Container>
             <Column>
                 {episodes.map((episode, i) => {
                     const isSelected = i === selectedEpisode;
@@ -59,12 +75,12 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes, sea
                     const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const episodeSlug = toSlug(episode.name);
                     const episodeProgress = getEpisodeProgress(seasonProgress?.[i], episode.duration);
-                    // console.log('selectedSeason', selectedSeason, 'selectedEpisode', selectedEpisode, i);
+
                     return (
                         <Episode
                             key={episodeSlug}
                             to={`${seasonPath}/${episodeSlug}`}
-                            className={`${classSelected} ${classFocused}`}
+                            className={`episode ${classSelected} ${classFocused}`}
                             imagePath={episode.thumbnail}
                             title={episode.name}
                             episodeNumber={padNumber(i + 1)}
@@ -77,7 +93,7 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes, sea
                     );
                 })}
             </Column>
-        </Column>
+        </Container>
     );
 }
 

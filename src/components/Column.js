@@ -7,21 +7,16 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: start;
     position: relative;
-
-    /* from episode container
-    flex: 1;
     row-gap: 1.5rem;
-    overflow: hidden;
-    padding-right: 1rem;
-    padding-left: 1rem;*/
 `;
 
 const propTypes = {
     children: PropTypes.node,
+    className: PropTypes.string,
 };
 
-function Column({ children }) {
-    return <Container>{children}</Container>;
+function Column({ children, className = '' }) {
+    return <Container className={className}>{children}</Container>;
 }
 
 Column.propTypes = propTypes;

@@ -19,5 +19,8 @@ html, body,
     flex-direction: column;
     position: relative;
 }
+.align-items-center {
+    align-items: center;
+}
 `;
 export default GlobalStyles;

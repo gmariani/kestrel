@@ -7,6 +7,7 @@ const Track = styled.div`
     width: ${({ width }) => `${width};`};
     background-color: ${({ theme }) => (theme === 'dark' ? 'rgba(0, 0, 0, 0.25)' : 'rgba(255, 255, 255, 0.25)')};
     cursor: pointer;
+    flex: 1;
 `;
 
 const Bar = styled.div`
