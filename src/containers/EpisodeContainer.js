@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import { useHistory } from 'react-router-dom';
 import { Column, Episode } from '../components';
 import { getEpisodeProgress, padNumber, toSlug } from '../utils';
 
@@ -23,9 +24,9 @@ const propTypes = {
     onClickEpisode: PropTypes.func,
 };
 
-function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes, seasonPath, onClickEpisode }) {
+function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes = [], seasonPath, onClickEpisode }) {
+    const history = useHistory();
     const [selectedEpisode, setSelectedEpisode] = useState(0);
-    const numEpisodes = episodes.length;
 
     // Check if selected episode is available in this season, if not
     // reset it to the first episode
@@ -34,24 +35,29 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes, sea
         setSelectedEpisode(0);
     }
 
-    // TODO: When using keyboard don't set selectedEpisode, but just 'preview'. actually select on Enter
-
+    // TODO Find a better way to pass all these variables to the callback
     const onKeyDown = useCallback(
         (event) => {
             const { keyCode } = event;
             if (!hasFocus) return;
 
+            // (13) Enter
+            if (keyCode === 13) {
+                onClickEpisode(selectedEpisode);
+                history.push(`${seasonPath}/${toSlug(episodes[selectedEpisode].name)}`);
+                event.preventDefault();
+            }
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
                 if (keyCode === 38) {
-                    setSelectedEpisode((selectedEpisode - 1 + numEpisodes) % numEpisodes);
+                    setSelectedEpisode((selectedEpisode - 1 + episodes.length) % episodes.length);
                 } else if (keyCode === 40) {
-                    setSelectedEpisode((selectedEpisode + 1) % numEpisodes);
+                    setSelectedEpisode((selectedEpisode + 1) % episodes.length);
                 }
                 event.preventDefault();
             }
         },
-        [hasFocus, selectedEpisode, setSelectedEpisode, numEpisodes]
+        [hasFocus, history, onClickEpisode, selectedEpisode, setSelectedEpisode, seasonPath, episodes]
     );
 
     useEffect(() => {

@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { FaPlay, FaHistory } from 'react-icons/fa';
 import Link from './Link';
 import Row from './Row';
 import ProgressBar from './ProgressBar';
-import { secondsToHuman } from '../utils';
+import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
 
 const Container = styled.div`
     display: flex;
@@ -20,6 +21,7 @@ const Meta = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 3rem;
+    font-size: 1.25rem;
 `;
 
 const Title = styled.div`
@@ -31,10 +33,14 @@ const Title = styled.div`
 const Description = styled.p`
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-    line-height: 1.5rem;
+    line-height: 2rem;
+    max-width: 800px;
 `;
 
-const Timer = styled.span``;
+const Timer = styled.span`
+    text-transform: uppercase;
+    font-size: 1rem;
+`;
 
 const Controls = styled.div`
     display: flex;
@@ -49,8 +55,8 @@ const Controls = styled.div`
  * @param {number} lastSeason
  * @param {number} lastEpisode
  */
-function getWatchLabel(isMovie = false, hasProgress = false, lastSeason = 0, lastEpisode = 0) {
-    if (isMovie) {
+function getWatchLabel(isSingle = false, hasProgress = false, lastSeason = 0, lastEpisode = 0) {
+    if (isSingle) {
         // Watch Movie
         // Resume Movie
         return hasProgress ? 'Resume Movie' : 'Watch Movie';
@@ -70,9 +76,34 @@ function getWatchLabel(isMovie = false, hasProgress = false, lastSeason = 0, las
     return `Start Watching: S1 E1`;
 }
 
+function getMetaLabel(isSingle = false, contentRating, year, duration, genres, category) {
+    // Rating - Year - Total run time- genre - Movie
+    // For tv
+    // rating- year - genrea - TV Series
+    const items = [];
+    if (contentRating) items.push(contentRating);
+    if (year) items.push(year);
+    if (isSingle && duration) {
+        const totalSeconds = durationToSeconds(duration);
+        items.push(secondsToHuman(totalSeconds));
+    }
+
+    if (genres) items.push(genres.join(', '));
+    if (category) {
+        if (category === 'tv') {
+            items.push('TV Series');
+        } else if (category === 'movies') {
+            items.push('Movie');
+        } else {
+            items.push(capitalize(category));
+        }
+    }
+    return items.join(' • ');
+}
+
 const propTypes = {
     hasFocus: PropTypes.bool,
-    isMovie: PropTypes.bool,
+    isSingle: PropTypes.bool,
     season: PropTypes.number,
     episode: PropTypes.number,
     series: PropTypes.shape({
@@ -100,7 +131,7 @@ const defaultSeries = { year: 0, genres: [], name: 'No Title', description: '' }
 
 function EpisodeDetail({
     hasFocus = false,
-    isMovie = false,
+    isSingle = false,
     season = 0,
     episode = 0,
     series = defaultSeries,
@@ -115,12 +146,18 @@ function EpisodeDetail({
     const selectElements = progress ? ['watch', 'restart'] : ['watch'];
 
     // Hooks
+    const history = useHistory();
     const [selected, setSelected] = useState(0);
     const onKeyDown = useCallback(
         (event) => {
             const { keyCode } = event;
             if (!hasFocus) return;
 
+            // (13) Enter
+            if (keyCode === 13) {
+                history.push(episodeRoute);
+                event.preventDefault();
+            }
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
                 if (keyCode === 38) {
@@ -131,8 +168,12 @@ function EpisodeDetail({
                 event.preventDefault();
             }
         },
-        [hasFocus, selected, setSelected, selectElements.length]
+        [hasFocus, history, episodeRoute, selected, setSelected, selectElements.length]
     );
+
+    if (!hasProgress && selected > 0) {
+        setSelected(0);
+    }
 
     useEffect(() => {
         document.addEventListener('keydown', onKeyDown, false);
@@ -146,7 +187,14 @@ function EpisodeDetail({
             <Title>{series.name}</Title>
             <Description>{series.description}</Description>
             <Meta>
-                {series.year} &bull; {series.genres.join(', ')}
+                {getMetaLabel(
+                    isSingle,
+                    series?.contentRating,
+                    series?.year,
+                    series?.duration,
+                    series?.genres,
+                    series?.category
+                )}
             </Meta>
 
             {hasProgress ? (
@@ -160,7 +208,7 @@ function EpisodeDetail({
                     to={episodeRoute}
                     // prettier-ignore
                     className={`${selectElements[selected] === 'watch' ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
-                    <FaPlay /> {getWatchLabel(isMovie, hasProgress, season, episode)}
+                    <FaPlay /> {getWatchLabel(isSingle, hasProgress, season, episode)}
                 </Link>
                 {hasProgress ? (
                     <Link
@@ -168,7 +216,7 @@ function EpisodeDetail({
                         // prettier-ignore
                         className={`${selectElements[selected] === 'restart' ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
                         onClick={onClickRestart}>
-                        <FaHistory /> {isMovie ? 'Restart Movie' : 'Restart Episode'}
+                        <FaHistory /> {isSingle ? 'Restart Movie' : 'Restart Episode'}
                     </Link>
                 ) : null}
             </Controls>

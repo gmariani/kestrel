@@ -47,7 +47,8 @@ const Image = styled.div`
     top: 0;
     left: 0;
     background-image: ${({ src }) => `url(${src})`};
-    background-position: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
     mix-blend-mode: ${({ blendMode }) => blendMode};
     opacity: ${({ opacity }) => opacity};
 `;

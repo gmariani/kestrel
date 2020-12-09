@@ -11,9 +11,8 @@ const StyledLink = styled(ReachRouterLink)`
     font-style: normal;
     font-weight: normal;
     line-height: 2rem;
-    padding: 0.5rem;
     transition: all 0.3s;
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     border-radius: 3px;
     display: flex;
     align-items: center;

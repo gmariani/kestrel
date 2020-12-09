@@ -26,10 +26,10 @@ export function secondsToHuman(duration) {
 
     if (days || hours || minutes) {
         return (
-            (years ? `${years}y ` : '') +
-            (days ? `${days}d ` : '') +
-            (hours ? `${hours}h ` : '') +
-            (minutes ? `${minutes}m ` : '')
+            (years ? `${years} years ` : '') +
+            (days ? `${days} days ` : '') +
+            (hours ? `${hours} hrs ` : '') +
+            (minutes ? `${minutes} mins ` : '')
         );
     }
 

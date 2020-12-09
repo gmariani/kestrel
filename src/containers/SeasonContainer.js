@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components/macro';
 import { Column, Season } from '../components';
+
+const Container = styled.div`
+    overflow: hidden;
+`;
 
 const propTypes = {
     hasFocus: PropTypes.bool,
@@ -26,15 +31,18 @@ function SeasonContainer({ hasFocus = false, seasons, onClickSeason }) {
 
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
+                let newSelectedSeason = selectedSeason;
                 if (keyCode === 38) {
-                    setSelectedSeason((selectedSeason - 1 + numSeasons) % numSeasons);
+                    newSelectedSeason = (selectedSeason - 1 + numSeasons) % numSeasons;
                 } else if (keyCode === 40) {
-                    setSelectedSeason((selectedSeason + 1) % numSeasons);
+                    newSelectedSeason = (selectedSeason + 1) % numSeasons;
                 }
+                setSelectedSeason(newSelectedSeason);
+                onClickSeason(newSelectedSeason);
                 event.preventDefault();
             }
         },
-        [hasFocus, selectedSeason, setSelectedSeason, numSeasons]
+        [hasFocus, onClickSeason, selectedSeason, setSelectedSeason, numSeasons]
     );
 
     useEffect(() => {
@@ -44,22 +52,29 @@ function SeasonContainer({ hasFocus = false, seasons, onClickSeason }) {
         };
     }, [onKeyDown]);
 
+    useEffect(() => {
+        const episodeRef = document.querySelector('.season.selected');
+        episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    }, [selectedSeason]);
+
     return (
-        <Column>
-            {seasons.map((season, i) => {
-                return (
-                    // Will not be sorted, or added to dynamically so it's safe to use array index
-                    <Season
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={i}
-                        title={season.name}
-                        numEpisodes={season.episodeCount}
-                        className={`${i === selectedSeason ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                        onClick={() => onClickSeason(i)}
-                    />
-                );
-            })}
-        </Column>
+        <Container>
+            <Column>
+                {seasons.map((season, i) => {
+                    return (
+                        // Will not be sorted, or added to dynamically so it's safe to use array index
+                        <Season
+                            // eslint-disable-next-line react/no-array-index-key
+                            key={i}
+                            title={season.name}
+                            numEpisodes={season.episodeCount}
+                            className={`season ${i === selectedSeason ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
+                            onClick={() => onClickSeason(i)}
+                        />
+                    );
+                })}
+            </Column>
+        </Container>
     );
 }
 

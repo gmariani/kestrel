@@ -16,11 +16,11 @@ export default function Details() {
     const lastPlayedSeason = savedData?.lastPlayedSeason ?? 0;
     const lastPlayedEpisode = savedData?.lastPlayedEpisode ?? 0;
     const [selectedSeason, setSelectedSeason] = useState(lastPlayedSeason);
-    const [selectedEpisode, setSelectedEpisode] = useState(lastPlayedEpisode);
+    // const [selectedEpisode, setSelectedEpisode] = useState(lastPlayedEpisode);
     const series = getSeries(media, mediaId);
 
-    const isMovie = series && series.filePath;
-    const focusElements = isMovie ? ['details'] : ['details', 'episodes', 'seasons'];
+    const isSingle = series && series.filePath;
+    const focusElements = isSingle ? ['details'] : ['details', 'episodes', 'seasons'];
     const [focus, setFocus] = useState(0);
     const onKeyDown = useCallback(
         (event) => {
@@ -55,9 +55,11 @@ export default function Details() {
     // if (!loaded) return <Player.Buffer visible={true} />;
 
     const episodes = series.seasons ? series.seasons[selectedSeason].episodes : [series];
-    const episode = episodes[lastPlayedEpisode];
-    const episodeSlug = toSlug(episode.name);
-    const episodeProgress = getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration);
+    const episode = episodes?.[lastPlayedEpisode];
+    const episodeProgress = episode
+        ? getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration)
+        : 0;
+    const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${toSlug(episode.name)}` : null;
 
     return (
         <Background
@@ -70,7 +72,7 @@ export default function Details() {
             opacity={1}>
             <HeaderContainer hideMenu />
             <Row height='100%'>
-                {!isMovie ? (
+                {!isSingle ? (
                     <SeasonContainer
                         hasFocus={focusElements[focus] === 'seasons'}
                         seasons={series.seasons}
@@ -81,12 +83,12 @@ export default function Details() {
                 ) : null}
                 <EpisodeDetail
                     hasFocus={focusElements[focus] === 'details'}
-                    isMovie={isMovie}
+                    isSingle={isSingle}
                     series={series}
-                    season={selectedSeason}
-                    episode={selectedEpisode}
+                    season={lastPlayedSeason}
+                    episode={lastPlayedEpisode}
                     progress={episodeProgress}
-                    episodeRoute={`${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${episodeSlug}`}
+                    episodeRoute={episodeRoute}
                     onClickRestart={() => {
                         // Reset episode progress
                         const tempProgress = [...progress];
@@ -104,7 +106,7 @@ export default function Details() {
                         setProgress(tempProgress);
                     }}
                 />
-                {!isMovie ? (
+                {!isSingle ? (
                     <EpisodeContainer
                         hasFocus={focusElements[focus] === 'episodes'}
                         seasonProgress={progress?.[selectedSeason]}
