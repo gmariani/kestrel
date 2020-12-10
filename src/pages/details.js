@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { Background, Row, EpisodeDetail } from '../components';
+import { TempContainer, Shadow, ScrimBackground, Row, EpisodeDetail } from '../components';
 import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../containers';
 import { useContent } from '../hooks';
 import * as ROUTES from '../constants/routes';
@@ -62,70 +62,67 @@ export default function Details() {
     const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${toSlug(episode.name)}` : null;
 
     return (
-        <Background
-            tabIndex='0'
-            hasShadow
-            opacityShadow={0.9}
-            hasColor={false}
-            hasImage
-            imagePath={series.backgroundPath}
-            opacity={1}>
-            <HeaderContainer hideMenu />
-            <Row height='100%'>
-                {!isSingle ? (
-                    <SeasonContainer
-                        hasFocus={focusElements[focus] === 'seasons'}
-                        seasons={series.seasons}
-                        onClickSeason={(seasonIndex) => {
-                            setSelectedSeason(seasonIndex);
-                        }}
-                    />
-                ) : null}
-                <EpisodeDetail
-                    hasFocus={focusElements[focus] === 'details'}
-                    isSingle={isSingle}
-                    series={series}
-                    season={lastPlayedSeason}
-                    episode={lastPlayedEpisode}
-                    progress={episodeProgress}
-                    episodeRoute={episodeRoute}
-                    onClickRestart={() => {
-                        // Reset episode progress
-                        const tempProgress = [...progress];
-                        if (!tempProgress[lastPlayedSeason]) tempProgress[lastPlayedSeason] = [];
-                        tempProgress[lastPlayedSeason][lastPlayedEpisode] = 0;
-                        localStorage.setItem(
-                            mediaId,
-                            JSON.stringify({
-                                progress: tempProgress,
-                                lastPlayedSeason,
-                                lastPlayedEpisode,
-                            })
-                        );
-                        // Save progress
-                        setProgress(tempProgress);
-                    }}
-                />
-                {!isSingle ? (
-                    <EpisodeContainer
-                        hasFocus={focusElements[focus] === 'episodes'}
-                        seasonProgress={progress?.[selectedSeason]}
-                        episodes={episodes}
-                        seasonPath={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/`}
-                        onClickEpisode={(episodeIndex) => {
-                            // Update last played episode
+        <>
+            <TempContainer>
+                <HeaderContainer hideMenu />
+                <Row height='100%'>
+                    {!isSingle ? (
+                        <SeasonContainer
+                            hasFocus={focusElements[focus] === 'seasons'}
+                            seasons={series.seasons}
+                            onClickSeason={(seasonIndex) => {
+                                setSelectedSeason(seasonIndex);
+                            }}
+                        />
+                    ) : null}
+                    <EpisodeDetail
+                        hasFocus={focusElements[focus] === 'details'}
+                        isSingle={isSingle}
+                        series={series}
+                        season={lastPlayedSeason}
+                        episode={lastPlayedEpisode}
+                        progress={episodeProgress}
+                        episodeRoute={episodeRoute}
+                        onClickRestart={() => {
+                            // Reset episode progress
+                            const tempProgress = [...progress];
+                            if (!tempProgress[lastPlayedSeason]) tempProgress[lastPlayedSeason] = [];
+                            tempProgress[lastPlayedSeason][lastPlayedEpisode] = 0;
                             localStorage.setItem(
                                 mediaId,
                                 JSON.stringify({
-                                    progress,
-                                    lastPlayedSeason: selectedSeason,
-                                    lastPlayedEpisode: episodeIndex,
+                                    progress: tempProgress,
+                                    lastPlayedSeason,
+                                    lastPlayedEpisode,
                                 })
                             );
+                            // Save progress
+                            setProgress(tempProgress);
                         }}
                     />
-                ) : null}
-            </Row>
-        </Background>
+                    {!isSingle ? (
+                        <EpisodeContainer
+                            hasFocus={focusElements[focus] === 'episodes'}
+                            seasonProgress={progress?.[selectedSeason]}
+                            episodes={episodes}
+                            seasonPath={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/`}
+                            onClickEpisode={(episodeIndex) => {
+                                // Update last played episode
+                                localStorage.setItem(
+                                    mediaId,
+                                    JSON.stringify({
+                                        progress,
+                                        lastPlayedSeason: selectedSeason,
+                                        lastPlayedEpisode: episodeIndex,
+                                    })
+                                );
+                            }}
+                        />
+                    ) : null}
+                </Row>
+            </TempContainer>
+            <Shadow opacity={0.9} />
+            <ScrimBackground imagePath={series.backgroundPath} />
+        </>
     );
 }

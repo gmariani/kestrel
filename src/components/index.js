@@ -1,4 +1,7 @@
-export { default as Background } from './Background';
+export { default as Gradient } from './Gradient';
+export { default as ScrimBackground } from './ScrimBackground';
+export { default as Shadow } from './Shadow';
+export { default as TempContainer } from './TempContainer';
 export { default as Button } from './Button';
 export { default as Column } from './Column';
 export { default as EpisodeDetail } from './EpisodeDetail';

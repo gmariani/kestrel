@@ -44,7 +44,7 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes = []
             // (13) Enter
             if (keyCode === 13) {
                 onClickEpisode(selectedEpisode);
-                history.push(`${seasonPath}/${toSlug(episodes[selectedEpisode].name)}`);
+                history.push(`${seasonPath}${toSlug(episodes[selectedEpisode].name)}`);
                 event.preventDefault();
             }
             if (keyCode >= 37 && keyCode <= 41) {
@@ -85,7 +85,7 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes = []
                     return (
                         <Episode
                             key={episodeSlug}
-                            to={`${seasonPath}/${episodeSlug}`}
+                            to={`${seasonPath}${episodeSlug}`}
                             className={`episode ${classSelected} ${classFocused}`}
                             imagePath={episode.thumbnail}
                             title={episode.name}

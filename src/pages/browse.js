@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useContent } from '../hooks';
-import { Background } from '../components';
+import { TempContainer, Shadow, ScrimBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
 import { toSlug } from '../utils';
 
@@ -13,21 +13,6 @@ export default function Browse() {
 
     // Variables //
     const selectedCategory = params.categoryId ?? (categories.length ? categories[0].slug : '');
-
-    // Background theme
-    // TODO use https://codepen.io/meodai/pen/RerqjG
-    const getColor = () => {
-        const themes = [
-            ['hsla(11,83%,62%,1)', 'hsla(11,100%,50%,1)'], // red
-            ['hsla(214,55%,50%,1)', 'hsla(214,36%,37%,1)'], // blue
-        ];
-        // return themes[Math.floor(Math.random() * 2)];
-        return themes[1];
-        // const start = Math.floor(Math.random() * 255);
-        // const end = Math.floor(Math.random() * 255);
-        // return [`hsla(${start},83%,62%,1)`, `hsla(${start},100%,50%,1)`];
-    };
-    const themeColor = getColor();
 
     // Key listener
     const focusElements = ['header', 'posters'];
@@ -53,23 +38,20 @@ export default function Browse() {
     }, [focus, setFocus, focusElements.length]);
 
     return (
-        <Background
-            hasShadow
-            hasColor
-            blendMode='lighten'
-            opacity={0.5}
-            startColor={themeColor[0]}
-            endColor={themeColor[1]}
-            tabIndex='0'>
-            <HeaderContainer
-                hasFocus={focusElements[focus] === 'header'}
-                categories={categories}
-                selectedCategory={selectedCategory}
-            />
-            <PosterContainer
-                hasFocus={focusElements[focus] === 'posters'}
-                posters={media.filter((poster) => selectedCategory === toSlug(poster.category))}
-            />
-        </Background>
+        <>
+            <TempContainer>
+                <HeaderContainer
+                    hasFocus={focusElements[focus] === 'header'}
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                />
+                <PosterContainer
+                    hasFocus={focusElements[focus] === 'posters'}
+                    posters={media.filter((poster) => selectedCategory === toSlug(poster.category))}
+                />
+            </TempContainer>
+            <Shadow />
+            <ScrimBackground />
+        </>
     );
 }

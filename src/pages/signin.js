@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Background, SignInForm, SecurityCode, Footer } from '../components';
+import { Button, TempContainer, Gradient, SignInForm, SecurityCode, Footer } from '../components';
 import FirebaseContext from '../context/firebase';
 import * as ROUTES from '../constants/routes';
 
@@ -37,16 +37,19 @@ export default function SignIn() {
     };
 
     return (
-        <Background hasColor opacity={0.8} startColor='#EE6B4D' endColor='rgba(255, 255, 255, 0)'>
-            <SignInForm onSubmit={onSubmit} method='POST'>
-                <SignInForm.Title>Passcode</SignInForm.Title>
-                {error && <SignInForm.Error>{error}</SignInForm.Error>}
-                <SecurityCode length={8} onChange={onChange} />
-                <Button disabled={isInvalid} type='submit' theme='primary' width='280px'>
-                    Login
-                </Button>
-            </SignInForm>
-            <Footer />
-        </Background>
+        <>
+            <TempContainer>
+                <SignInForm onSubmit={onSubmit} method='POST'>
+                    <SignInForm.Title>Passcode</SignInForm.Title>
+                    {error && <SignInForm.Error>{error}</SignInForm.Error>}
+                    <SecurityCode length={8} onChange={onChange} />
+                    <Button disabled={isInvalid} type='submit' theme='primary' width='280px'>
+                        Login
+                    </Button>
+                </SignInForm>
+                <Footer />
+            </TempContainer>
+            <Gradient opacity={0.8} startColor='#EE6B4D' endColor='rgba(255, 255, 255, 0)' />
+        </>
     );
 }
