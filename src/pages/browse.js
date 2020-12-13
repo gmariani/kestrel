@@ -50,8 +50,8 @@ export default function Browse() {
                     posters={media.filter((poster) => selectedCategory === toSlug(poster.category))}
                 />
             </TempContainer>
-            <Shadow />
-            <ScrimBackground />
+            {/* <Shadow /> */}
+            <ScrimBackground hue={11.2} base='#000' />
         </>
     );
 }

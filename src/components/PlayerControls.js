@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import ProgressBar from './ProgressBar';
-import PlayPauseButton from './PlayPauseButton';
-import PrevButton from './PrevButton';
+import IconButton from './IconButton';
 import { secondsToDuration } from '../utils';
 
 const Container = styled.div`
@@ -52,6 +51,7 @@ const Settings = styled.div`
     justify-content: end;
     align-content: center;
     display: flex;
+    column-gap: 1rem;
 `;
 
 const propTypes = {
@@ -83,6 +83,7 @@ function PlayerControls({
         if (onSeek) onSeek(seekPercent);
         // player.seekTo(seekPercent);
     };
+    // const style = { opacity: disabled ? 0.5 : 1 };
     return (
         <Container>
             <Track>
@@ -93,17 +94,18 @@ function PlayerControls({
             <Controls>
                 <Spacer />
                 <Buttons>
-                    <PrevButton label='Start Over' />
-                    <PlayPauseButton
-                        playing={playing}
-                        disabled={buffering}
-                        onClickPlay={onPlay}
-                        onClickPause={onPause}
-                    />
-                    <div>Play Next</div>
+                    <IconButton label='Start Over' icon='prev' />
+                    {playing ? (
+                        <IconButton label='Pause' icon='pause' disabled={buffering} onClick={onPause} />
+                    ) : (
+                        <IconButton label='Play' icon='play' disabled={buffering} onClick={onPlay} />
+                    )}
+                    <IconButton label='Play Next' icon='next' />
                 </Buttons>
-
-                <Settings>Settings - Info</Settings>
+                <Settings>
+                    <IconButton label='Settings' icon='cog' />
+                    <IconButton label='Info' icon='info' />
+                </Settings>
             </Controls>
         </Container>
     );

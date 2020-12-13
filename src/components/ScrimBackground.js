@@ -23,11 +23,11 @@ const Layer = styled.div`
 `;
 
 const Base = styled(Layer)`
-    background-color: rgb(41, 44, 51);
+    background-color: var(--base);
 `;
 
 const Gradient = styled(Layer)`
-    opacity: 0.5;
+    /*opacity: 0.5;*/
     background-image: linear-gradient(245deg, hsla(var(--hue), 50%, 40%, 0) 35%, hsla(var(--hue), 50%, 40%, 1) 70%);
 `;
 
@@ -95,16 +95,17 @@ const Scrim = styled(Layer)`
 
 const propTypes = {
     hue: PropTypes.number,
+    base: PropTypes.string,
     imagePath: PropTypes.string,
 };
 
-const ScrimBackground = ({ hue = -1, imagePath = '' }) => {
+const ScrimBackground = ({ hue = -1, base = '#292C33', imagePath = '' }) => {
     // TODO use https://codepen.io/meodai/pen/RerqjG
     // TODO or use Vibrant.js to pull dominant color, usePalette doesn't seem accurate
     // const { data, loading, error } = usePalette(imagePath);
     // getHue(data.vibrant)
     return (
-        <Container style={{ '--hue': hue > 0 ? hue : Math.random() * 360 }}>
+        <Container style={{ '--hue': hue > 0 ? hue : Math.random() * 360, '--base': base }}>
             <Base />
             {imagePath !== '' ? <Art src={imagePath} /> : null}
             <Gradient />
