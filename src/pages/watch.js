@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
-import { Player, ProgressBar, Link, Row } from '../components';
+import { Player, Link, Loading, Row, PlayerDetail, PlayerControls } from '../components';
 import { useContent } from '../hooks';
-import { toSlug, secondsToDuration, padNumber, getSeries } from '../utils';
+import { toSlug, getSeries } from '../utils';
 import * as ROUTES from '../constants/routes';
 
 // TODO get tokenized s3 links
@@ -42,7 +42,7 @@ export default function Watch() {
     // End Hooks //
 
     // Wait until firebase replies with episode data
-    if (!loaded) return <Player.Buffer visible />;
+    if (!loaded) return <Loading visible />;
 
     // React Player Handlers //
     const onReady = () => {
@@ -222,17 +222,26 @@ export default function Watch() {
         </Player.End>
     ) : (
         <Player onMouseMove={onActivity} onKeyDown={(e) => onKeyDown(e)} tabIndex='0'>
-            <Player.Header>
-                {padNumber(selectedEpisode + 1)} - {episode.name}
-            </Player.Header>
-            <Player.Footer>
-                <Player.PlayPause playing={playing} buffering={buffering} onClick={onTogglePlaying} />
-                <ProgressBar width='50%' height='10px' value={currentProgress} onClick={onSeekTo} />
-                <Player.Timer>
-                    {secondsToDuration(currentTime)}/{secondsToDuration(totalTime)}
-                </Player.Timer>
-            </Player.Footer>
-            <Player.Buffer visible={buffering} />
+            <Player.Overlay>
+                <PlayerDetail
+                    isSingle={false}
+                    series={series}
+                    seasonNum={selectedSeason + 1}
+                    episodeNum={selectedEpisode + 1}
+                    episodeTitle={episode.name}
+                />
+                <PlayerControls
+                    playing={playing}
+                    progress={currentProgress}
+                    buffering={buffering}
+                    currentTime={currentTime}
+                    totalTime={totalTime}
+                    onSeek={onSeekTo}
+                    onPlay={onTogglePlaying}
+                    onPause={onTogglePlaying}
+                />
+            </Player.Overlay>
+            <Loading visible={buffering} />
             <ReactPlayer
                 ref={playerRef}
                 style={{ overflow: 'hidden' }}

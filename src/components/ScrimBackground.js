@@ -11,6 +11,7 @@ const Container = styled.div`
     bottom: 0;
     left: 0;
     overflow: hidden;
+    background-color: hsla(var(--hue), 50%, 40%, 0.5);
 `;
 
 const Layer = styled.div`
@@ -26,6 +27,7 @@ const Base = styled(Layer)`
 `;
 
 const Gradient = styled(Layer)`
+    opacity: 0.5;
     background-image: linear-gradient(245deg, hsla(var(--hue), 50%, 40%, 0) 35%, hsla(var(--hue), 50%, 40%, 1) 70%);
 `;
 
@@ -54,42 +56,42 @@ const Scrim = styled(Layer)`
         radial-gradient(ellipse at top right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 20%);
 `;
 
-function getHue(color) {
-    if (color === undefined) return 0;
-    const hex = color.substring(1);
-    const r = parseInt(hex.substring(0, 2), 16) / 255;
-    const g = parseInt(hex.substring(2, 4), 16) / 255;
-    const b = parseInt(hex.substring(4, 6), 16) / 255;
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    let h;
-    let s;
-    const l = (max + min) / 2;
+// function getHue(color) {
+//     if (color === undefined) return 0;
+//     const hex = color.substring(1);
+//     const r = parseInt(hex.substring(0, 2), 16) / 255;
+//     const g = parseInt(hex.substring(2, 4), 16) / 255;
+//     const b = parseInt(hex.substring(4, 6), 16) / 255;
+//     const max = Math.max(r, g, b);
+//     const min = Math.min(r, g, b);
+//     let h;
+//     let s;
+//     const l = (max + min) / 2;
 
-    if (max === min) {
-        h = 0;
-        s = 0; // achromatic
-    } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r:
-                h = (g - b) / d + (g < b ? 6 : 0);
-                break;
-            case g:
-                h = (b - r) / d + 2;
-                break;
-            case b:
-                h = (r - g) / d + 4;
-                break;
-            default:
-        }
-        h /= 6;
-    }
+//     if (max === min) {
+//         h = 0;
+//         s = 0; // achromatic
+//     } else {
+//         const d = max - min;
+//         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+//         switch (max) {
+//             case r:
+//                 h = (g - b) / d + (g < b ? 6 : 0);
+//                 break;
+//             case g:
+//                 h = (b - r) / d + 2;
+//                 break;
+//             case b:
+//                 h = (r - g) / d + 4;
+//                 break;
+//             default:
+//         }
+//         h /= 6;
+//     }
 
-    return [h, s, l];
-    // return h * 360;
-}
+//     return [h, s, l];
+//     // return h * 360;
+// }
 
 const propTypes = {
     hue: PropTypes.number,
@@ -106,7 +108,7 @@ const ScrimBackground = ({ hue = -1, imagePath = '' }) => {
             <Base />
             {imagePath !== '' ? <Art src={imagePath} /> : null}
             <Gradient />
-            <Highlight />
+            {/* <Highlight /> */}
             <Scrim />
         </Container>
     );

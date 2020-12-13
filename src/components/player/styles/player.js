@@ -15,88 +15,22 @@ export const Container = styled.div`
     }
 `;
 
-export const Header = styled.div`
-    align-items: center;
-    background: rgba(0, 0, 0, 0.5);
-    color: #eeeeee;
+export const Overlay = styled.div`
     display: flex;
-    font-family: Tw Cen MT;
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: normal;
-    height: 100px;
-    justify-content: center;
-    line-height: 52px;
-    min-height: 100px;
-    opacity: 0;
+    background: rgba(0, 0, 0, 0.5);
+    top: -2px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
     position: absolute;
-    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-    top: 0;
+    /*opacity: 0;*/
     transition: opacity 0.3s;
-    width: 100%;
-
-    .show & {
-        opacity: 1;
-    }
-`;
-
-export const BufferContainer = styled.div`
-    align-items: center;
-    display: ${({ visible }) => (visible ? 'flex' : 'none')};
-    height: 100%;
-    justify-content: center;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    width: 100%;
-`;
-
-export const Buffer = styled.div`
-    color: white;
-`;
-
-export const Footer = styled.div`
-    align-items: center;
-    background: rgba(0, 0, 0, 0.5);
-    bottom: 0;
-    color: #eeeeee;
-    display: flex;
-    font-family: Tw Cen MT;
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: normal;
-    height: 100px;
+    padding: 4rem;
     justify-content: space-between;
-    line-height: 52px;
-    min-height: 100px;
-    opacity: 0;
-    padding: 1.5rem 5%;
-    position: absolute;
-    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-    transition: opacity 0.3s;
-    width: 100%;
+    flex-direction: column;
 
     .show & {
         opacity: 1;
-    }
-`;
-
-export const Timer = styled.div`
-    color: #eeeeee;
-    font-family: Tw Cen MT;
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: normal;
-    line-height: 52px;
-    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-    user-select: none;
-`;
-
-export const Icon = styled.svg`
-    fill: white;
-    button:hover & {
-        fill: black;
     }
 `;
 

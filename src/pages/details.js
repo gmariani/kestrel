@@ -122,7 +122,7 @@ export default function Details() {
                 </Row>
             </TempContainer>
             <Shadow opacity={0.9} />
-            <ScrimBackground imagePath={series.backgroundPath} />
+            <ScrimBackground hue={series.backgroundHue} imagePath={series.backgroundPath} />
         </>
     );
 }
