@@ -4,12 +4,11 @@ import styled from 'styled-components/macro';
 
 const Container = styled.div`
     display: flex;
-    font-size: 2rem;
     color: white;
     flex-direction: column;
     justify-content: start;
     flex: 1;
-
+    pointer-events: none;
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
 
     width: 30%;
@@ -18,13 +17,15 @@ const Container = styled.div`
 const Meta = styled.div`
     display: flex;
     justify-content: space-between;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    user-select: none;
 `;
 
 const Title = styled.div`
-    font-size: 4rem;
-    line-height: 4rem;
-    margin-bottom: 1rem;
+    font-size: 3rem;
+    line-height: 3rem;
+    margin-bottom: 0.5rem;
+    user-select: none;
 `;
 
 function getMetaLabel(episodeTitle, contentRating = 'NR', seasonNum = 0, episodeNum = 0, isSingle = false) {

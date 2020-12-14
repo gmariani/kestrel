@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
-import ProgressBar from './ProgressBar';
+import Slider from './Slider';
 import IconButton from './IconButton';
+import Resolution from './Resolution';
+import Timer from './Timer';
 import { secondsToDuration } from '../utils';
 
 const Container = styled.div`
@@ -17,21 +19,11 @@ const Container = styled.div`
     width: 100%;
 `;
 
-const Timer = styled.div`
-    color: #eeeeee;
-    font-family: Tw Cen MT;
-    font-size: 1.5rem;
-    font-style: normal;
-    font-weight: normal;
-    line-height: 52px;
-    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-    user-select: none;
-`;
-
 const Track = styled.div`
     display: flex;
     column-gap: 1rem;
     align-items: center;
+    margin-bottom: 2rem;
 `;
 const Controls = styled.div`
     display: flex;
@@ -56,10 +48,11 @@ const Settings = styled.div`
 
 const propTypes = {
     progress: PropTypes.number,
-    playing: PropTypes.bool,
-    buffering: PropTypes.bool,
-    currentTime: PropTypes.number,
+    resolution: PropTypes.string,
+    time: PropTypes.number,
     totalTime: PropTypes.number,
+    isPlaying: PropTypes.bool,
+    isBuffering: PropTypes.bool,
     onSeek: PropTypes.func,
     onPlay: PropTypes.func,
     onPause: PropTypes.func,
@@ -67,38 +60,34 @@ const propTypes = {
 
 function PlayerControls({
     progress = 0,
-    playing = false,
-    buffering = false,
-    currentTime = 0,
+    resolution = 'sd',
+    time = 0,
     totalTime = 0,
+    isPlaying = false,
+    isBuffering = false,
     onSeek,
     onPlay,
     onPause,
 }) {
-    const onClickSeek = (event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const seekX = event.pageX - rect.x;
-        const trackWidth = rect.width;
-        const seekPercent = seekX / trackWidth;
-        if (onSeek) onSeek(seekPercent);
-        // player.seekTo(seekPercent);
-    };
     // const style = { opacity: disabled ? 0.5 : 1 };
     return (
         <Container>
             <Track>
-                <ProgressBar width='50%' height='10px' value={progress} onClick={onClickSeek} />
-                <Timer>-{secondsToDuration(totalTime - currentTime)}</Timer>
+                <Slider position={progress / 100} time={secondsToDuration(time)} onSeek={onSeek} />
+                <Timer time={`-${secondsToDuration(totalTime - time)}`} />
             </Track>
 
             <Controls>
-                <Spacer />
+                <Spacer>
+                    <Resolution type={resolution} />
+                </Spacer>
+
                 <Buttons>
                     <IconButton label='Start Over' icon='prev' />
-                    {playing ? (
-                        <IconButton label='Pause' icon='pause' disabled={buffering} onClick={onPause} />
+                    {isPlaying ? (
+                        <IconButton label='Pause' icon='pause' disabled={isBuffering} onClick={onPause} />
                     ) : (
-                        <IconButton label='Play' icon='play' disabled={buffering} onClick={onPlay} />
+                        <IconButton label='Play' icon='play' disabled={isBuffering} onClick={onPlay} />
                     )}
                     <IconButton label='Play Next' icon='next' />
                 </Buttons>

@@ -10,6 +10,13 @@ const Container = styled.button`
     flex-direction: column;
     padding: 0;
     align-items: center;
+
+    ${(props) => {
+        if (props.disabled) {
+            return 'pointer-events:none;opacity:0.5';
+        }
+        return '';
+    }}
 `;
 
 const Circle = styled.div`
@@ -68,7 +75,7 @@ function IconButton({ label = 'Start Over', icon = 'play', disabled = false, onC
     }
     // const style = { opacity: disabled ? 0.5 : 1 };
     return (
-        <Container onClick={onClick}>
+        <Container disabled={disabled} onClick={onClick}>
             <Circle>{getIcon(icon)}</Circle>
             <Label>{label}</Label>
         </Container>

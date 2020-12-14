@@ -3,31 +3,36 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 
 const Track = styled.div`
-    height: ${({ height }) => `${height};`};
-    width: ${({ width }) => `${width};`};
-    background-color: ${({ theme }) => (theme === 'dark' ? 'rgba(0, 0, 0, 0.25)' : 'rgba(255, 255, 255, 0.25)')};
+    height: ${({ height }) => `${height}px;`};
+    width: 100%;
+    background-color: var(--trackBG);
     cursor: pointer;
     flex: 1;
 `;
 
-const Bar = styled.div`
-    height: ${({ height }) => `${height};`};
-    width: ${({ value }) => `${value}%;`};
-    background: ${({ theme }) => (theme === 'dark' ? 'black' : 'white')};
+const Progress = styled.div`
+    height: 100%;
+    pointer-events: none;
+    background: var(--progressBG);
 `;
 
 const propTypes = {
-    width: PropTypes.string,
-    height: PropTypes.string,
+    height: PropTypes.number,
     value: PropTypes.number,
     theme: PropTypes.string,
     onClick: PropTypes.func,
 };
 
-function ProgressBar({ width = '100%', height = '5px', value = 0, theme = 'light', onClick }) {
+function ProgressBar({ height = 5, value = 0, theme = 'light', onClick }) {
+    const bgColor = theme === 'dark' ? 'rgba(0,0,0, 0.6)' : 'rgba(255,255,255, 0.6)';
+    const bgColor2 = theme === 'dark' ? 'rgba(0,0,0, 0.25)' : 'rgba(255,255,255, 0.25)';
     return (
-        <Track width={width} height={height} theme={theme} onClick={onClick}>
-            <Bar value={value} height={height} theme={theme} />
+        <Track
+            height={height}
+            theme={theme}
+            onClick={onClick}
+            style={{ '--progressBG': bgColor, '--trackBG': bgColor2 }}>
+            <Progress style={{ width: `${value}%` }} />
         </Track>
     );
 }

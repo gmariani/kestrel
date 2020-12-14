@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
 import { Player, Link, Loading, Row, PlayerDetail, PlayerControls } from '../components';
@@ -27,11 +27,7 @@ export default function Watch() {
     const selectedEpisode = episodes.findIndex(isCurrentEpisode, episodeSlug);
     const episode = episodes[selectedEpisode];
     const nextEpisode = episodes[selectedEpisode + 1] ? episodes[selectedEpisode + 1] : null;
-    let player = null;
-    const playerRef = (instance) => {
-        player = instance;
-    };
-
+    const playerRef = useRef();
     const [currentProgress, setCurrentProgress] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
     const [playing, setPlaying] = useState(true);
@@ -54,7 +50,7 @@ export default function Watch() {
         console.log('resume', currentTime, storedTime);
         // Only resume time if more than 10 seconds into the video
         if (storedTime > 10) {
-            player.seekTo(storedTime, 'seconds');
+            playerRef.current.seekTo(storedTime, 'seconds');
         }
     };
     const onPlay = () => {
@@ -132,8 +128,14 @@ export default function Watch() {
         const seekX = event.pageX - rect.x;
         const trackWidth = rect.width;
         const seekPercent = seekX / trackWidth;
-        player.seekTo(seekPercent);
+        playerRef.current.seekTo(seekPercent);
     };
+
+    function seekhandler(progressPercent) {
+        console.log('seekHandler', progressPercent);
+        setCurrentProgress(progressPercent * 100);
+        playerRef.current.seekTo(progressPercent);
+    }
 
     const onInactivity = (currentTarget) => {
         currentTarget.classList.remove('show');
@@ -231,12 +233,13 @@ export default function Watch() {
                     episodeTitle={episode.name}
                 />
                 <PlayerControls
-                    playing={playing}
                     progress={currentProgress}
-                    buffering={buffering}
-                    currentTime={currentTime}
+                    resolution={series?.resolution}
+                    time={currentTime}
                     totalTime={totalTime}
-                    onSeek={onSeekTo}
+                    isPlaying={playing}
+                    isBuffering={buffering}
+                    onSeek={(percent) => seekhandler(percent)}
                     onPlay={onTogglePlaying}
                     onPause={onTogglePlaying}
                 />

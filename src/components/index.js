@@ -22,3 +22,5 @@ export { default as SecurityCode } from './SecurityCode';
 export { default as Shadow } from './Shadow';
 export { default as SignInForm } from './SignInForm';
 export { default as TempContainer } from './TempContainer';
+export { default as Timer } from './Timer';
+export { default as Resolution } from './Resolution';

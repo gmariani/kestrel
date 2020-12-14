@@ -19,6 +19,9 @@ html, body,
     flex-direction: column;
     position: relative;
 }
+#root.dragging {
+    cursor:dragging;
+}
 .align-items-center {
     align-items: center;
 }
