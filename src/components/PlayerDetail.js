@@ -7,11 +7,11 @@ const Container = styled.div`
     color: white;
     flex-direction: column;
     justify-content: start;
-    flex: 1;
+    /*flex: 1;*/
     pointer-events: none;
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
 
-    width: 30%;
+    width: 500px;
 `;
 
 const Meta = styled.div`

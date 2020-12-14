@@ -21,13 +21,18 @@ const propTypes = {
     value: PropTypes.number,
     theme: PropTypes.string,
     onClick: PropTypes.func,
+    innerRef: PropTypes.shape({
+        current: PropTypes.node,
+    }),
 };
 
-function ProgressBar({ height = 5, value = 0, theme = 'light', onClick }) {
+const ProgressBar = React.forwardRef(({ height = 5, value = 0, theme = 'light', onClick }, ref) => {
     const bgColor = theme === 'dark' ? 'rgba(0,0,0, 0.6)' : 'rgba(255,255,255, 0.6)';
     const bgColor2 = theme === 'dark' ? 'rgba(0,0,0, 0.25)' : 'rgba(255,255,255, 0.25)';
+
     return (
         <Track
+            ref={ref}
             height={height}
             theme={theme}
             onClick={onClick}
@@ -35,7 +40,7 @@ function ProgressBar({ height = 5, value = 0, theme = 'light', onClick }) {
             <Progress style={{ width: `${value}%` }} />
         </Track>
     );
-}
+});
 
 ProgressBar.propTypes = propTypes;
 export default ProgressBar;

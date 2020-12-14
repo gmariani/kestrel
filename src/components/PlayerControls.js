@@ -25,12 +25,15 @@ const Track = styled.div`
     align-items: center;
     margin-bottom: 2rem;
 `;
+
 const Controls = styled.div`
     display: flex;
 `;
+
 const Spacer = styled.div`
     flex: 1;
 `;
+
 const Buttons = styled.div`
     display: flex;
     align-content: end;
@@ -69,7 +72,6 @@ function PlayerControls({
     onPlay,
     onPause,
 }) {
-    // const style = { opacity: disabled ? 0.5 : 1 };
     return (
         <Container>
             <Track>

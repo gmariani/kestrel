@@ -1,7 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
-import { Player, Link, Loading, Row, PlayerDetail, PlayerControls } from '../components';
+import {
+    Player,
+    CreditsDetail,
+    Credits,
+    Row,
+    Link,
+    CreditsPreview,
+    Loading,
+    PlayerOverlay,
+    PlayerDetail,
+    PlayerControls,
+} from '../components';
 import { useContent } from '../hooks';
 import { toSlug, getSeries } from '../utils';
 import * as ROUTES from '../constants/routes';
@@ -9,163 +20,136 @@ import * as ROUTES from '../constants/routes';
 // TODO get tokenized s3 links
 
 export default function Watch() {
+    // Must be a stand-alone function in order to pass the episodeSlug as
+    // 'this', hack
     function isCurrentEpisode(episode) {
         return this === toSlug(episode.name);
     }
 
     // Start Hooks //
+    const playerRef = useRef();
     const { content: media, loaded } = useContent('media');
     const { mediaId, season, episodeSlug } = useParams();
-    // Convert string to number for season
-    const selectedSeason = +season;
     const savedData = JSON.parse(localStorage.getItem(mediaId));
-    // console.log('savedData', mediaId, savedData);
-    const [progress, setProgress] = useState(savedData?.progress ?? []);
-
-    const series = getSeries(media, mediaId);
-    const episodes = series ? series.seasons[selectedSeason].episodes : [];
-    const selectedEpisode = episodes.findIndex(isCurrentEpisode, episodeSlug);
-    const episode = episodes[selectedEpisode];
-    const nextEpisode = episodes[selectedEpisode + 1] ? episodes[selectedEpisode + 1] : null;
-    const playerRef = useRef();
+    const [savedProgress, setSavedProgress] = useState(savedData?.progress ?? []);
     const [currentProgress, setCurrentProgress] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
     const [playing, setPlaying] = useState(true);
     const [buffering, setBuffering] = useState(false);
     const [ended, setEnded] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
     const [timeoutID, setTimeoutID] = useState(null);
     // End Hooks //
 
     // Wait until firebase replies with episode data
     if (!loaded) return <Loading visible />;
 
+    const series = getSeries(media, mediaId);
+    const seasonIndex = parseInt(season, 10);
+    // const isSingle = series && series.filePath;
+    // Grab list of media (if movie or series)
+    const episodes = series.seasons ? series.seasons[seasonIndex].episodes : [series];
+    // Get selected media
+    const episodeIndex = episodes.findIndex(isCurrentEpisode, episodeSlug);
+    const currentEpisode = episodes[episodeIndex];
+    const nextEpisode = episodes[episodeIndex + 1] ? episodes[episodeIndex + 1] : null;
+    const nextRoute = nextEpisode ? `${ROUTES.WATCH}${mediaId}/${seasonIndex}/${toSlug(nextEpisode.name)}` : null;
+
     // React Player Handlers //
-    const onReady = () => {
-        console.log('onReady');
-    };
-    const onStart = () => {
-        console.log('onStart');
-        const storedTime = progress?.[selectedSeason]?.[selectedEpisode] ?? 0;
-        console.log('resume', currentTime, storedTime);
+    const playerStartHandler = () => {
+        // Is there a previously saved timestamp?
+        const storedTime = savedProgress?.[seasonIndex]?.[episodeIndex] ?? 0;
+
         // Only resume time if more than 10 seconds into the video
         if (storedTime > 10) {
+            // eslint-disable-next-line no-console
+            console.info('Resume to', storedTime);
             playerRef.current.seekTo(storedTime, 'seconds');
         }
     };
-    const onPlay = () => {
-        // console.log('onPlay');
-        setPlaying(true);
-    };
-    const onProgress = ({ played, playedSeconds }) => {
+
+    const playerProgressHandler = ({ played, playedSeconds }) => {
         // Update progress
-        const tempProgress = [...progress];
-        if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
-        tempProgress[selectedSeason][selectedEpisode] = playedSeconds;
+        const tempProgress = [...savedProgress];
+        if (!tempProgress[seasonIndex]) tempProgress[seasonIndex] = [];
+        tempProgress[seasonIndex][episodeIndex] = playedSeconds;
         localStorage.setItem(
             mediaId,
             JSON.stringify({
                 progress: tempProgress,
-                lastPlayedSeason: selectedSeason,
-                lastPlayedEpisode: selectedEpisode,
+                lastPlayedSeason: seasonIndex,
+                lastPlayedEpisode: episodeIndex,
             })
         );
 
-        setProgress(tempProgress);
+        setSavedProgress(tempProgress);
         setCurrentProgress(played * 100);
         setCurrentTime(playedSeconds);
     };
-    const onDuration = (duration) => {
-        setTotalTime(duration);
-    };
-    const onPause = () => {
-        // console.log('onPause');
-        setPlaying(false);
-    };
-    const onBuffer = () => {
-        // console.log('onBuffer', event);
-        setBuffering(true);
-    };
-    const onBufferEnd = () => {
-        // console.log('onBufferEnd', event);
-        setBuffering(false);
-    };
-    // Called when media seeks with seconds parameter
-    const onSeek = () => {
-        // console.log('onSeek', seconds);
-    };
-    const onEnded = (event) => {
-        console.log('onEnded', event);
-        // console.log('save selectedEpisode', selectedEpisode + 1);
 
-        // Reset episode progress and increment to next episode
-        const tempProgress = [...progress];
-        if (!tempProgress[selectedSeason]) tempProgress[selectedSeason] = [];
-        tempProgress[selectedSeason][selectedEpisode] = 0;
+    const playerEndHandler = () => {
+        // Reset episode progress
+        const seriesProgress = [...savedProgress];
+        if (!seriesProgress[seasonIndex]) seriesProgress[seasonIndex] = [];
+        seriesProgress[seasonIndex][episodeIndex] = 0;
+
+        // Save and increment to next episode
         localStorage.setItem(
             mediaId,
             JSON.stringify({
-                tempProgress,
-                lastPlayedSeason: selectedSeason,
-                lastPlayedEpisode: nextEpisode ? selectedEpisode + 1 : 0,
+                seriesProgress,
+                lastPlayedSeason: seasonIndex,
+                lastPlayedEpisode: nextEpisode ? episodeIndex + 1 : 0,
             })
         );
 
         setEnded(true);
     };
-    const onError = (event) => {
-        console.log('onError', event);
+
+    const playerErrorHandler = (event) => {
+        // eslint-disable-next-line no-console
+        console.error('playerErrorHandler', event);
     };
     // End React Player //
 
-    const onTogglePlaying = (event) => {
-        event.target.blur();
+    const togglePlaying = () => {
         if (!buffering) setPlaying(!playing);
     };
 
-    const onSeekTo = (event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const seekX = event.pageX - rect.x;
-        const trackWidth = rect.width;
-        const seekPercent = seekX / trackWidth;
-        playerRef.current.seekTo(seekPercent);
-    };
-
-    function seekhandler(progressPercent) {
-        console.log('seekHandler', progressPercent);
+    const seekHandler = (progressPercent) => {
         setCurrentProgress(progressPercent * 100);
+        // Tell React Player to seek
         playerRef.current.seekTo(progressPercent);
-    }
-
-    const onInactivity = (currentTarget) => {
-        currentTarget.classList.remove('show');
     };
 
-    const onActivity = ({ currentTarget }) => {
-        currentTarget.classList.add('show');
+    const inactivityHandler = (playerScreen) => {
+        playerScreen.classList.remove('show');
+    };
+
+    const activityHandler = (event) => {
+        const playerScreen = event.currentTarget;
+        playerScreen.classList.add('show');
         clearTimeout(timeoutID);
-        setTimeoutID(setTimeout(onInactivity, 3000, currentTarget));
+        setTimeoutID(setTimeout(inactivityHandler, 3000, playerScreen));
     };
 
-    const onKeyDown = (event) => {
+    const keyHandler = (event) => {
         switch (event.key) {
             case 'Spacebar':
             case ' ':
                 event.preventDefault();
-                // toggle play/pause
-                console.log('toggle onTogglePlaying');
-                if (!buffering) setPlaying(!playing);
+                togglePlaying();
                 break;
 
             case 'Left':
             case 'ArrowLeft':
                 event.preventDefault();
-                // rewind 10 seconds
+                // TODO rewind 10 seconds
                 break;
             case 'Right':
             case 'ArrowRight':
                 event.preventDefault();
-                // skip ahead 10 seconds
+                // TODO skip ahead 10 seconds
                 break;
 
             case 'Down':
@@ -181,7 +165,9 @@ export default function Watch() {
                 // toggle full screen
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen();
-                } else if (document.exitFullscreen) document.exitFullscreen();
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
                 break;
 
             case 'Enter':
@@ -197,40 +183,46 @@ export default function Watch() {
     };
 
     return ended ? (
-        <Player.End>
-            <Player.EndDetails>
-                <Player.EndTitle>{series.name}</Player.EndTitle>
-                <Player.EndSubTitle episodeIndex={selectedEpisode} episode={episode} />
+        <Credits>
+            <CreditsDetail>
+                <PlayerDetail
+                    isSingle={false}
+                    series={series}
+                    seasonNum={seasonIndex + 1}
+                    episodeNum={episodeIndex + 1}
+                    episodeTitle={currentEpisode.name}
+                />
                 <Row>
                     <Link
-                        theme={nextEpisode ? 'secondary' : 'primary'}
+                        theme={nextRoute ? 'secondary' : 'primary'}
                         onClick={() => setEnded(false)}
                         to={`${ROUTES.DETAILS}${mediaId}`}>
                         Back
                     </Link>
-                    {nextEpisode ? (
-                        <Link
-                            theme='primary'
-                            onClick={() => {
-                                setEnded(false);
-                            }}
-                            to={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/${toSlug(nextEpisode.name)}`}>
+                    {nextRoute ? (
+                        <Link theme='primary' onClick={() => setEnded(false)} to={nextRoute}>
                             Next
                         </Link>
                     ) : null}
                 </Row>
-            </Player.EndDetails>
-            <Player.Preview episodeIndex={selectedEpisode} nextEpisode={nextEpisode} />
-        </Player.End>
+            </CreditsDetail>
+            {nextEpisode && (
+                <CreditsPreview
+                    nextIndex={episodeIndex + 2}
+                    nextThumbnail={nextEpisode.thumbnail}
+                    nextName={nextEpisode.name}
+                />
+            )}
+        </Credits>
     ) : (
-        <Player onMouseMove={onActivity} onKeyDown={(e) => onKeyDown(e)} tabIndex='0'>
-            <Player.Overlay>
+        <Player onMouseMove={activityHandler} onKeyDown={keyHandler}>
+            <PlayerOverlay>
                 <PlayerDetail
                     isSingle={false}
                     series={series}
-                    seasonNum={selectedSeason + 1}
-                    episodeNum={selectedEpisode + 1}
-                    episodeTitle={episode.name}
+                    seasonNum={seasonIndex + 1}
+                    episodeNum={episodeIndex + 1}
+                    episodeTitle={currentEpisode.name}
                 />
                 <PlayerControls
                     progress={currentProgress}
@@ -239,31 +231,31 @@ export default function Watch() {
                     totalTime={totalTime}
                     isPlaying={playing}
                     isBuffering={buffering}
-                    onSeek={(percent) => seekhandler(percent)}
-                    onPlay={onTogglePlaying}
-                    onPause={onTogglePlaying}
+                    onSeek={(percent) => seekHandler(percent)}
+                    onPlay={togglePlaying}
+                    onPause={togglePlaying}
                 />
-            </Player.Overlay>
+            </PlayerOverlay>
             <Loading visible={buffering} />
             <ReactPlayer
                 ref={playerRef}
                 style={{ overflow: 'hidden' }}
                 playing={playing}
                 // controls={true}
-                url={episode.filePath}
+                url={currentEpisode.filePath}
                 width='100%'
                 height='100%'
-                onBuffer={onBuffer}
-                onBufferEnd={onBufferEnd}
-                onReady={onReady}
-                onStart={onStart}
-                onPlay={onPlay}
-                onPause={onPause}
-                onDuration={onDuration}
-                onProgress={onProgress}
-                onEnded={onEnded}
-                onError={onError}
-                onSeek={onSeek}
+                onBuffer={() => setBuffering(true)}
+                onBufferEnd={() => setBuffering(false)}
+                // onReady={}
+                onStart={playerStartHandler}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onDuration={(duration) => setTotalTime(duration)}
+                onProgress={playerProgressHandler}
+                onEnded={playerEndHandler}
+                onError={playerErrorHandler}
+                // onSeek={}
                 config={{
                     file: {
                         attributes: {
@@ -272,7 +264,7 @@ export default function Watch() {
                         tracks: [
                             {
                                 kind: 'subtitles',
-                                src: episode.subPath,
+                                src: currentEpisode.subPath,
                                 srcLang: 'en',
                                 default: true,
                             },
