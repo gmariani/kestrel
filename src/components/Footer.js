@@ -12,7 +12,6 @@ const Container = styled.div`
 `;
 
 const Version = styled.span`
-    font-family: Tw Cen MT;
     font-style: normal;
     font-weight: normal;
     font-size: 1.25rem;

@@ -4,7 +4,6 @@ import styled from 'styled-components/macro';
 
 const Container = styled.div`
     color: #eeeeee;
-    font-family: Tw Cen MT;
     font-size: 1.15rem;
     font-style: normal;
     font-weight: normal;

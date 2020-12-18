@@ -22,7 +22,6 @@ const Image = styled.img`
 `;
 
 const Title = styled.h2`
-    font-family: Tw Cen MT;
     font-style: normal;
     font-weight: bold;
     font-size: 2.1875rem;
@@ -36,7 +35,6 @@ const Title = styled.h2`
 `;
 
 const SubTitle = styled.p`
-    font-family: Tw Cen MT;
     font-style: normal;
     font-weight: normal;
     font-size: 1.5625rem;

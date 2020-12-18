@@ -11,7 +11,6 @@ const Container = styled.div`
     & video::cue {
         background-color: transparent;
         color: white;
-        font-family: Tw Cen MT;
         margin-bottom: 2rem;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }

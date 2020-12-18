@@ -10,7 +10,6 @@ const InputGroup = styled.div`
 `;
 
 const Input = styled.input`
-    font-family: Tw Cen MT;
     background-color: transparent;
     border-top: none;
     border-right: none;

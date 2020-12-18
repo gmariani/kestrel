@@ -14,7 +14,6 @@ const Container = styled.button`
     border: 2px solid transparent;
     border-radius: 0.5rem;
     color: white;
-    font-family: Tw Cen MT;
     font-size: 1.5rem;
     font-weight: 600;
     max-width: 300px;

@@ -15,7 +15,6 @@ const StyledButton = styled.button`
     border-radius: 0.5rem;
     border-color: transparent;
     color: #fff;
-    font-family: Tw Cen MT;
     font-size: 2.5rem;
     font-style: normal;
     font-weight: normal;

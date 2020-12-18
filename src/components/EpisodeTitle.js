@@ -30,7 +30,7 @@ const Title = styled.div`
 
 function getMetaLabel(episodeTitle, contentRating = 'NR', seasonNum = 0, episodeNum = 0, isSingle = false) {
     if (isSingle) {
-        return `${episodeTitle} • ${contentRating}`;
+        return `${contentRating}`;
     }
     return `S${seasonNum} E${episodeNum} - ${episodeTitle} • ${contentRating}`;
 }
@@ -49,7 +49,7 @@ const propTypes = {
 // Actual object to avoid mutable object from invalidating component
 const defaultSeries = { name: 'No Series Title', contentRating: 'NR' };
 
-function PlayerDetail({
+function EpisodeTitle({
     isSingle = false,
     seasonNum = 0,
     episodeNum = 0,
@@ -64,5 +64,5 @@ function PlayerDetail({
     );
 }
 
-PlayerDetail.propTypes = propTypes;
-export default PlayerDetail;
+EpisodeTitle.propTypes = propTypes;
+export default EpisodeTitle;

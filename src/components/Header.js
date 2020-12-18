@@ -28,7 +28,6 @@ const Menu = styled.nav`
 const MenuLink = styled(ReachRouterLink)`
     color: rgba(255, 255, 255, 0.5);
     background-color: transparent;
-    font-family: Tw Cen MT;
     font-size: 2rem;
     font-style: normal;
     font-weight: normal;

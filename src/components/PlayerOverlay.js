@@ -1,20 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import FlexCol from './FlexCol';
 
-const Container = styled.div`
-    display: flex;
+const Container = styled(FlexCol)`
     background: rgba(0, 0, 0, 0.5);
-    top: -2px;
-    bottom: -2px;
-    left: -2px;
-    right: -2px;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
     position: absolute;
     opacity: 0;
     transition: opacity 0.3s;
     padding: 4rem;
-    justify-content: space-between;
-    flex-direction: column;
 
     .show & {
         opacity: 1;
@@ -26,7 +24,7 @@ const propTypes = {
 };
 
 function PlayerOverlay({ children }) {
-    return <Container>{children}</Container>;
+    return <Container justifyContent='space-between'>{children}</Container>;
 }
 
 PlayerOverlay.propTypes = propTypes;

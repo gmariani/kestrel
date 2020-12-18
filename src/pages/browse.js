@@ -51,7 +51,7 @@ export default function Browse() {
                 />
             </TempContainer>
             {/* <Shadow /> */}
-            <ScrimBackground hue={11.2} base='#000' />
+            <ScrimBackground hue={11.2} base='#131c37' />
         </>
     );
 }

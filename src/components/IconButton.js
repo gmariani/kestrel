@@ -26,11 +26,15 @@ const Circle = styled.div`
     width: 50px;
     height: 50px;
     transition: background-color 0.3s;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 2rem;
 
     & svg {
-        margin-top: -5px;
         width: 45%;
         height: auto;
+        max-height: 45%;
         fill: white;
         transition: fill 0.3s;
     }
@@ -46,6 +50,7 @@ const Circle = styled.div`
 const Label = styled.div`
     color: white;
     font-size: 1rem;
+    text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
 `;
 
 const propTypes = {

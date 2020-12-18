@@ -22,7 +22,6 @@ const Error = styled.div`
 `;
 
 const Title = styled.h2`
-    font-family: Tw Cen MT;
     font-style: normal;
     font-weight: normal;
     font-size: 3rem;

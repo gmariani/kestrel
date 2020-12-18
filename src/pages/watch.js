@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
+import styled from 'styled-components/macro';
 import {
     Player,
     CreditsDetail,
@@ -10,8 +11,12 @@ import {
     CreditsPreview,
     Loading,
     PlayerOverlay,
-    PlayerDetail,
-    PlayerControls,
+    IconButton,
+    TrackBar,
+    Resolution,
+    EpisodeTitle,
+    FlexRow,
+    FlexCol,
 } from '../components';
 import { useContent } from '../hooks';
 import { toSlug, getSeries } from '../utils';
@@ -46,7 +51,7 @@ export default function Watch() {
 
     const series = getSeries(media, mediaId);
     const seasonIndex = parseInt(season, 10);
-    // const isSingle = series && series.filePath;
+    const isSingle = !!(series && series.filePath);
     // Grab list of media (if movie or series)
     const episodes = series.seasons ? series.seasons[seasonIndex].episodes : [series];
     // Get selected media
@@ -185,8 +190,8 @@ export default function Watch() {
     return ended ? (
         <Credits>
             <CreditsDetail>
-                <PlayerDetail
-                    isSingle={false}
+                <EpisodeTitle
+                    isSingle={isSingle}
                     series={series}
                     seasonNum={seasonIndex + 1}
                     episodeNum={episodeIndex + 1}
@@ -217,24 +222,42 @@ export default function Watch() {
     ) : (
         <Player onMouseMove={activityHandler} onKeyDown={keyHandler}>
             <PlayerOverlay>
-                <PlayerDetail
-                    isSingle={false}
+                <EpisodeTitle
+                    isSingle={isSingle}
                     series={series}
                     seasonNum={seasonIndex + 1}
                     episodeNum={episodeIndex + 1}
                     episodeTitle={currentEpisode.name}
                 />
-                <PlayerControls
-                    progress={currentProgress}
-                    resolution={series?.resolution}
-                    time={currentTime}
-                    totalTime={totalTime}
-                    isPlaying={playing}
-                    isBuffering={buffering}
-                    onSeek={(percent) => seekHandler(percent)}
-                    onPlay={togglePlaying}
-                    onPause={togglePlaying}
-                />
+                <FlexCol>
+                    <TrackBar
+                        position={currentProgress}
+                        currentSeconds={currentTime}
+                        totalSeconds={totalTime}
+                        onChange={(percent) => seekHandler(percent)}
+                    />
+
+                    <FlexRow>
+                        <FlexRow flexGrow={1} alignItems='start' justifyContent='start'>
+                            <Resolution type={series?.resolution} />
+                        </FlexRow>
+
+                        <FlexRow flexGrow={1} alignItems='start' justifyContent='center'>
+                            <IconButton label='Start Over' icon='prev' onClick={() => seekHandler(0)} />
+                            {playing ? (
+                                <IconButton label='Pause' icon='pause' disabled={buffering} onClick={togglePlaying} />
+                            ) : (
+                                <IconButton label='Play' icon='play' disabled={buffering} onClick={togglePlaying} />
+                            )}
+                            <IconButton label='Play Next' icon='next' />
+                        </FlexRow>
+
+                        <FlexRow flexGrow={1} alignItems='start' justifyContent='end'>
+                            <IconButton label='Settings' icon='cog' />
+                            <IconButton label='Info' icon='info' />
+                        </FlexRow>
+                    </FlexRow>
+                </FlexCol>
             </PlayerOverlay>
             <Loading visible={buffering} />
             <ReactPlayer
