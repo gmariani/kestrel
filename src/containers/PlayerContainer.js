@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
 import {
     Player,
@@ -12,38 +13,16 @@ import {
     FlexRow,
     FlexCol,
 } from '../components';
+import mediaInterface from '../interfaces/media';
 
 const propTypes = {
-    isSingle: PropTypes.bool,
-    media: PropTypes.shape({
-        filePath: PropTypes.string,
-        slug: PropTypes.string,
-        resolution: PropTypes.string,
-        seasons: PropTypes.arrayOf(PropTypes.object),
-    }),
-    seasonIndex: PropTypes.string,
-    episodeIndex: PropTypes.number,
-    currentEpisode: PropTypes.shape({
-        name: PropTypes.string,
-        filePath: PropTypes.string,
-        subPath: PropTypes.string,
-    }),
-    nextEpisode: PropTypes.shape({}),
-    nextRoute: PropTypes.string,
+    media: mediaInterface,
     onEnded: PropTypes.func,
 };
 
-function PlayerContainer({
-    isSingle,
-    media,
-    seasonIndex,
-    episodeIndex,
-    currentEpisode,
-    nextEpisode,
-    nextRoute,
-    onEnded,
-}) {
+function PlayerContainer({ media, onEnded }) {
     // Hooks
+    const history = useHistory();
     const playerRef = useRef();
     const savedData = JSON.parse(localStorage.getItem(media.slug));
     const [savedProgress, setSavedProgress] = useState(savedData?.progress ?? []);
@@ -53,10 +32,15 @@ function PlayerContainer({
     const [playing, setPlaying] = useState(true);
     const [buffering, setBuffering] = useState(false);
 
+    const { isSingle, season, episode, nextEpisode } = media;
+    const seasonSlug = season.slug;
+    const seasonNum = season.number;
+    const episodeSlug = episode.slug;
+
     // React Player Handlers //
     const playerStartHandler = () => {
         // Is there a previously saved timestamp?
-        const storedTime = savedProgress?.[seasonIndex]?.[episodeIndex] ?? 0;
+        const storedTime = savedProgress?.[seasonSlug]?.[episodeSlug] ?? 0;
 
         // Only resume time if more than 10 seconds into the video
         if (storedTime > 10) {
@@ -69,14 +53,14 @@ function PlayerContainer({
     const playerProgressHandler = ({ played, playedSeconds }) => {
         // Update progress
         const tempProgress = [...savedProgress];
-        if (!tempProgress[seasonIndex]) tempProgress[seasonIndex] = [];
-        tempProgress[seasonIndex][episodeIndex] = playedSeconds;
+        if (!tempProgress[seasonSlug]) tempProgress[seasonSlug] = [];
+        tempProgress[seasonSlug][episodeSlug] = playedSeconds;
         localStorage.setItem(
             media.slug,
             JSON.stringify({
                 progress: tempProgress,
-                lastPlayedSeason: seasonIndex,
-                lastPlayedEpisode: episodeIndex,
+                lastPlayedSeason: seasonSlug,
+                lastPlayedEpisode: episodeSlug,
             })
         );
 
@@ -88,16 +72,16 @@ function PlayerContainer({
     const playerEndHandler = () => {
         // Reset episode progress
         const seriesProgress = [...savedProgress];
-        if (!seriesProgress[seasonIndex]) seriesProgress[seasonIndex] = [];
-        seriesProgress[seasonIndex][episodeIndex] = 0;
+        if (!seriesProgress[seasonSlug]) seriesProgress[seasonSlug] = [];
+        seriesProgress[seasonSlug][episodeSlug] = 0;
 
         // Save and increment to next episode
         localStorage.setItem(
             media.slug,
             JSON.stringify({
                 seriesProgress,
-                lastPlayedSeason: seasonIndex,
-                lastPlayedEpisode: nextEpisode ? episodeIndex + 1 : 0,
+                lastPlayedSeason: seasonSlug,
+                lastPlayedEpisode: nextEpisode ? nextEpisode.slug : null,
             })
         );
 
@@ -116,8 +100,14 @@ function PlayerContainer({
 
     const seekHandler = (progressPercent) => {
         setCurrentProgress(progressPercent * 100);
+        setCurrentSeconds(totalSeconds * progressPercent);
+
         // Tell React Player to seek
         playerRef.current.seekTo(progressPercent);
+    };
+
+    const gotoNext = () => {
+        history.push(nextEpisode.route);
     };
 
     // useIdleTimer(3000)
@@ -189,9 +179,9 @@ function PlayerContainer({
                 <EpisodeTitle
                     isSingle={isSingle}
                     series={media}
-                    seasonNum={seasonIndex + 1}
-                    episodeNum={episodeIndex + 1}
-                    episodeTitle={currentEpisode.name}
+                    seasonNum={seasonNum}
+                    episodeNum={episode.number}
+                    episodeName={episode.name}
                 />
                 <FlexCol>
                     <TrackBar
@@ -213,7 +203,7 @@ function PlayerContainer({
                             ) : (
                                 <IconButton label='Play' icon='play' disabled={buffering} onClick={togglePlaying} />
                             )}
-                            <IconButton label='Play Next' icon='next' />
+                            {nextEpisode?.route && <IconButton label='Play Next' icon='next' onClick={gotoNext} />}
                         </FlexRow>
 
                         <FlexRow flexGrow={1} alignItems='start' justifyContent='end'>
@@ -231,7 +221,7 @@ function PlayerContainer({
                 style={{ overflow: 'hidden' }}
                 playing={playing}
                 // controls={true}
-                url={currentEpisode.filePath}
+                url={episode.filePath}
                 width='100%'
                 height='100%'
                 onBuffer={() => setBuffering(true)}
@@ -253,7 +243,7 @@ function PlayerContainer({
                         tracks: [
                             {
                                 kind: 'subtitles',
-                                src: currentEpisode.subPath,
+                                src: episode.subPath,
                                 srcLang: 'en',
                                 default: true,
                             },

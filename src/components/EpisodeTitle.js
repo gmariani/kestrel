@@ -7,10 +7,8 @@ const Container = styled.div`
     color: white;
     flex-direction: column;
     justify-content: start;
-    /*flex: 1;*/
     pointer-events: none;
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-
     width: 500px;
 `;
 
@@ -39,7 +37,7 @@ const propTypes = {
     isSingle: PropTypes.bool,
     seasonNum: PropTypes.number,
     episodeNum: PropTypes.number,
-    episodeTitle: PropTypes.string,
+    episodeName: PropTypes.string,
     series: PropTypes.shape({
         name: PropTypes.string.isRequired,
         contentRating: PropTypes.string,
@@ -53,13 +51,13 @@ function EpisodeTitle({
     isSingle = false,
     seasonNum = 0,
     episodeNum = 0,
-    episodeTitle = 'No Title',
+    episodeName = 'No Title',
     series = defaultSeries,
 }) {
     return (
         <Container>
             <Title>{series.name}</Title>
-            <Meta>{getMetaLabel(episodeTitle, series?.contentRating, seasonNum, episodeNum, isSingle)}</Meta>
+            <Meta>{getMetaLabel(episodeName, series?.contentRating, seasonNum, episodeNum, isSingle)}</Meta>
         </Container>
     );
 }

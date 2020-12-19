@@ -54,12 +54,14 @@ export default function Details() {
     if (!series) return <div>Loading...</div>;
     // if (!loaded) return <Player.Buffer visible={true} />;
 
-    const episodes = series.seasons ? series.seasons[selectedSeason].episodes : [series];
+    const seasonRef = series.seasons ? series.seasons[selectedSeason] : series;
+    const episodes = seasonRef.seasons ? seasonRef.episodes : [seasonRef];
     const episode = episodes?.[lastPlayedEpisode];
     const episodeProgress = episode
         ? getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration)
         : 0;
-    const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${toSlug(episode.name)}` : null;
+    // const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${toSlug(episode.name)}` : null;
+    const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${toSlug(seasonRef.name)}/${toSlug(episode.name)}` : null;
 
     return (
         <>

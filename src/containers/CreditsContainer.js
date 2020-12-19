@@ -1,59 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Credits, CreditsDetail, Row, Link, CreditsPreview, EpisodeTitle } from '../components';
+import { Credits, FlexCol, FlexRow, Link, CreditsPreview, EpisodeTitle } from '../components';
+import mediaInterface from '../interfaces/media';
 
 const propTypes = {
-    isSingle: PropTypes.string,
-    media: PropTypes.shape({
-        filePath: PropTypes.string,
-        slug: PropTypes.string,
-        resolution: PropTypes.string,
-        seasons: PropTypes.arrayOf(PropTypes.object),
-    }),
-    seasonIndex: PropTypes.string,
-    episodeIndex: PropTypes.number,
-    currentEpisode: PropTypes.shape({
-        name: PropTypes.string,
-    }),
-    backRoute: PropTypes.string,
-    nextRoute: PropTypes.string,
+    media: mediaInterface,
     onStarted: PropTypes.func,
 };
 
-function CreditsContainer({
-    isSingle,
-    media,
-    seasonIndex,
-    episodeIndex,
-    currentEpisode,
-    backRoute,
-    nextRoute,
-    onStarted,
-}) {
+function CreditsContainer({ media, onStarted }) {
+    const { isSingle, season, episode, nextEpisode } = media;
+    const nextRoute = media.nextEpisode?.route;
     return (
         <Credits>
-            <CreditsDetail>
+            <FlexCol justifyContent='end' rowGap='2rem'>
                 <EpisodeTitle
                     isSingle={isSingle}
                     series={media}
-                    seasonNum={seasonIndex + 1}
-                    episodeNum={episodeIndex + 1}
-                    episodeTitle={currentEpisode.name}
+                    seasonNum={season.number}
+                    episodeNum={episode.number}
+                    episodeName={episode.name}
                 />
-                <Row>
-                    <Link theme={nextRoute ? 'secondary' : 'primary'} onClick={onStarted} to={backRoute}>
+                <FlexRow columnGap='2rem'>
+                    <Link theme={nextRoute ? 'secondary' : 'primary'} onClick={onStarted} to={media.route}>
                         Back
                     </Link>
-                    {nextRoute ? (
+                    {nextRoute && (
                         <Link theme='primary' onClick={onStarted} to={nextRoute}>
                             Next
                         </Link>
-                    ) : null}
-                </Row>
-            </CreditsDetail>
+                    )}
+                </FlexRow>
+            </FlexCol>
             {/* {nextEpisode && (
                 <CreditsPreview
-                    nextIndex={episodeIndex + 2}
+                    nextIndex={nextEpisode.index}
                     nextThumbnail={nextEpisode.thumbnail}
                     nextName={nextEpisode.name}
                 />

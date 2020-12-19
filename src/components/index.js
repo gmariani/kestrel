@@ -1,7 +1,6 @@
 export { default as Button } from './Button';
 export { default as Column } from './Column';
 export { default as Credits } from './Credits';
-export { default as CreditsDetail } from './CreditsDetail';
 export { default as CreditsPreview } from './CreditsPreview';
 export { default as Episode } from './Episode';
 export { default as EpisodeDetail } from './EpisodeDetail';
