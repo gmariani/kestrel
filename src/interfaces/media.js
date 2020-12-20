@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 
 const mediaInterface = PropTypes.shape({
+    docId: PropTypes.string,
     backgroundHue: PropTypes.number,
     backgroundPath: PropTypes.string,
     category: PropTypes.string,

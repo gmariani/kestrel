@@ -8,7 +8,9 @@ const trimChar = (origString, charToTrim) => {
     return origString.replace(regEx, '');
 };
 
-export default function toSlug(name) {
+export default function toSlug(name = '') {
+    if (name === '') return '';
+
     /* eslint-disable no-param-reassign */
     // Strip tags
     name = name.replace(/(<([^>]+)>)/gi, '');

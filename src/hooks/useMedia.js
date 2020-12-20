@@ -3,12 +3,13 @@ import useContent from './useContent';
 import { toSlug } from '../utils';
 import * as ROUTES from '../constants/routes';
 
-export default function useMedia(mediaId, seasonName, episodeName) {
+export default function useMedia(mediaSlug, seasonName, episodeName) {
     const { content, loaded } = useContent('media');
+    const mediaId = 'asdf';
     const [media, setMedia] = useState({
         loaded: false,
         isSingle: true,
-        route: `${ROUTES.DETAILS}${mediaId}`,
+        route: ``,
         season: null,
         episode: null,
         nextEpisode: null,
@@ -17,7 +18,7 @@ export default function useMedia(mediaId, seasonName, episodeName) {
     useEffect(() => {
         if (!loaded) return;
 
-        const mediaRef = content.find((series) => mediaId === series.docId);
+        const mediaRef = content.find((series) => mediaSlug === toSlug(series.name));
         const isSingle = !!(mediaRef && mediaRef.filePath);
 
         // Can't use arrow-function as 'this' won't be replaced properly
@@ -27,42 +28,49 @@ export default function useMedia(mediaId, seasonName, episodeName) {
 
         // Season
         const seasonSlug = toSlug(seasonName);
-        const seasonIndex = isSingle ? 0 : mediaRef.seasons.findIndex(isCurrent, seasonSlug);
+        let seasonIndex = isSingle ? 0 : mediaRef.seasons.findIndex(isCurrent, seasonSlug);
+        // If we can't find the season, pick the first one
+        if (seasonIndex === -1) seasonIndex = 0;
         const seasonRef = isSingle ? mediaRef : mediaRef.seasons[seasonIndex];
         const episodes = isSingle ? [seasonRef] : seasonRef.episodes;
         const season = {
             index: seasonIndex,
             number: seasonRef?.seasonNumber,
             slug: seasonSlug,
-            route: `${ROUTES.DETAILS}${mediaId}/${seasonSlug}}`,
+            route: `/tv/${mediaSlug}/details/${seasonSlug}`,
             name: seasonRef.name,
             episodes,
         };
 
         // Episode
         const episodeSlug = toSlug(episodeName);
-        const episodeIndex = episodes.findIndex(isCurrent, episodeSlug);
+        let episodeIndex = episodes.findIndex(isCurrent, episodeSlug);
+        // If we can't find the episode, pick the first one
+        if (episodeIndex === -1) episodeIndex = 0;
         const episodeRef = episodes[episodeIndex];
-        const episode = {
-            index: episodeIndex,
-            number: episodeIndex + 1,
-            slug: episodeSlug,
-            route: `${ROUTES.WATCH}${mediaId}/${seasonSlug}/${toSlug(episodeRef.name)}`,
-            name: episodeRef.name,
-            filePath: episodeRef.filePath,
-            subPath: episodeRef.subPath,
-            duration: episodeRef.duration,
-        };
+        // prettier-ignore
+        const episode = episodeRef
+            ? {
+                index: episodeIndex,
+                number: episodeIndex + 1,
+                slug: episodeSlug,
+                route: isSingle ? `/movie/${mediaSlug}/watch` : `/tv/${mediaSlug}/watch/${seasonSlug}/${episodeSlug}`,
+                name: episodeRef.name,
+                filePath: episodeRef.filePath,
+                subPath: episodeRef.subPath,
+                duration: episodeRef.duration,
+            }
+            : null;
 
         // Next Episode
-        const nextEpisodeRef = episodes[episodeIndex + 1] ?? null;
         let nextEpisode = null;
+        const nextEpisodeRef = episodes[episodeIndex + 1] ?? null;
         if (nextEpisodeRef) {
             nextEpisode = {
                 index: episodeIndex + 1,
                 number: episodeIndex + 2,
                 slug: toSlug(nextEpisodeRef.name),
-                route: `${ROUTES.WATCH}${mediaId}/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
+                route: `/tv/${mediaSlug}/watch/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
                 name: nextEpisodeRef.name,
                 filePath: nextEpisodeRef.filePath,
                 subPath: nextEpisodeRef.subPath,
@@ -73,14 +81,28 @@ export default function useMedia(mediaId, seasonName, episodeName) {
         setMedia({
             loaded,
             isSingle,
-            resolution: mediaRef.resolution,
-            name: mediaRef.name,
+
+            id: mediaRef.docId,
+            backgroundHue: mediaRef.backgroundHue,
+            backgroundPath: mediaRef.backgroundPath,
+            category: mediaRef.category,
             contentRating: mediaRef.contentRating,
+            description: mediaRef.description,
+            genres: mediaRef.genres,
+            imdb: mediaRef.imdb,
+            name: mediaRef.name,
+            posterPath: mediaRef.posterPath,
+            resolution: mediaRef.resolution,
+            seasons: isSingle ? null : mediaRef.seasons,
+            slug: mediaRef.slug,
+            tmdb: mediaRef.tmdb,
+            year: mediaRef.year,
+
             season,
             episode,
             nextEpisode,
         });
-    }, [loaded, content, mediaId, seasonName, episodeName]);
+    }, [loaded, content, mediaSlug, seasonName, episodeName]);
     // console.log('useMedia', media);
     return media;
 }

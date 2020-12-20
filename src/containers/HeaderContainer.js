@@ -31,12 +31,12 @@ function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCateg
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
                 if (keyCode === 37) {
                     history.push(
-                        `${ROUTES.BROWSE}${categories[(foundIndex - 1 + categories.length) % categories.length].slug}`
+                        `/browse/${categories[(foundIndex - 1 + categories.length) % categories.length].slug}`
                     );
                 } else if (keyCode === 38) {
                     //
                 } else if (keyCode === 39) {
-                    history.push(`${ROUTES.BROWSE}${categories[(foundIndex + 1) % categories.length].slug}`);
+                    history.push(`/browse/${categories[(foundIndex + 1) % categories.length].slug}`);
                 } else if (keyCode === 40) {
                     //
                 }
@@ -61,14 +61,14 @@ function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCateg
                     {categories.map((category) => (
                         <Header.MenuLink
                             key={category.slug}
-                            to={`${ROUTES.BROWSE}${category.slug}`}
+                            to={`/browse/${category.slug}`}
                             // prettier-ignore
                             className={`${category.slug === selectedCategory ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
                             {category.name}
                         </Header.MenuLink>
                         // <Link
                         //     key={category.slug}
-                        //     to={`${ROUTES.BROWSE}${category.slug}`}
+                        //     to={`/browse/${category.slug}`}
                         //     className={category.slug === selectedCategory ? 'selected' : ''}>
                         //     {category.name}
                         // </Link>

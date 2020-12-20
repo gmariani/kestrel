@@ -69,7 +69,7 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes = []
 
     useEffect(() => {
         const episodeRef = document.querySelector('.episode.selected');
-        episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }, [selectedEpisode]);
 
     return (

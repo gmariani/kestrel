@@ -13,15 +13,15 @@ export default function App() {
             <Switch>
                 <Redirect from={ROUTES.SIGN_IN} to={ROUTES.BROWSE} />
 
-                <Route path={ROUTES.BROWSE_ID}>
+                <Route path={ROUTES.BROWSE}>
                     <Browse />
                 </Route>
 
-                <Route path={ROUTES.DETAILS_ID}>
+                <Route path={ROUTES.DETAILS}>
                     <Details />
                 </Route>
 
-                <Route path={ROUTES.WATCH_ID}>
+                <Route exact path={[ROUTES.WATCH_MOVIE, ROUTES.WATCH_TV]}>
                     <Watch />
                 </Route>
 

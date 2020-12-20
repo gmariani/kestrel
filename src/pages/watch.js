@@ -9,8 +9,8 @@ import CreditsContainer from '../containers/CreditsContainer';
 
 export default function Watch() {
     // Hooks
-    const { mediaId, season, episodeSlug } = useParams();
-    const media = useMedia(mediaId, season, episodeSlug);
+    const { mediaSlug, seasonSlug, episodeSlug } = useParams();
+    const media = useMedia(mediaSlug, seasonSlug, episodeSlug);
     const [ended, setEnded] = useState(false);
 
     if (!media.loaded) return <Loading visible />;

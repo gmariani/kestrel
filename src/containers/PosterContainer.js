@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { Row, Poster } from '../components';
 import * as ROUTES from '../constants/routes';
+import { toSlug } from '../utils';
 
 const propTypes = {
     hasFocus: PropTypes.bool,
+    selectedCategory: PropTypes.string,
     posters: PropTypes.arrayOf(PropTypes.object),
 };
 
@@ -14,7 +16,7 @@ const defaultProps = {
     posters: [],
 };
 
-function PosterContainer({ hasFocus, posters }) {
+function PosterContainer({ hasFocus, selectedCategory, posters }) {
     const [selectedPoster, setSelectedPoster] = useState('');
     const history = useHistory();
 
@@ -74,7 +76,8 @@ function PosterContainer({ hasFocus, posters }) {
                     genres={poster.genres}
                     // prettier-ignore
                     className={`${poster.docId === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                    to={`${ROUTES.DETAILS}${poster.docId}`}
+                    //  to={`${ROUTES.DETAILS}${poster.docId}`}
+                    to={`/${toSlug(selectedCategory)}/${toSlug(poster.name)}/details`}
                 />
             ))}
         </Row>

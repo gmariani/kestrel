@@ -12,7 +12,7 @@ export default function Browse() {
     const params = useParams();
 
     // Variables //
-    const selectedCategory = params.categoryId ?? (categories.length ? categories[0].slug : '');
+    const selectedCategory = params.categorySlug ?? (categories.length ? categories[0].slug : '');
 
     // Key listener
     const focusElements = ['header', 'posters'];
@@ -47,6 +47,7 @@ export default function Browse() {
                 />
                 <PosterContainer
                     hasFocus={focusElements[focus] === 'posters'}
+                    selectedCategory={selectedCategory}
                     posters={media.filter((poster) => selectedCategory === toSlug(poster.category))}
                 />
             </TempContainer>

@@ -1,25 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { TempContainer, Shadow, ScrimBackground, Row, EpisodeDetail } from '../components';
+import { useParams, useHistory, Redirect } from 'react-router-dom';
+import { Loading, TempContainer, Shadow, ScrimBackground, Row, EpisodeDetail } from '../components';
 import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../containers';
-import { useContent } from '../hooks';
+import { useMedia } from '../hooks';
 import * as ROUTES from '../constants/routes';
 
-import { getEpisodeProgress, toSlug, getSeries } from '../utils';
+import { getEpisodeProgress, toSlug } from '../utils';
 
 export default function Details() {
-    const { content: media } = useContent('media');
     const history = useHistory();
-    const { mediaId } = useParams();
+    const { categorySlug, mediaSlug, seasonSlug } = useParams();
+
+    // function slugToID(slug, data) {
+    //     function isMatch(item) {
+    //         return this === toSlug(item.name);
+    //     }
+    //     const match = data.find(isMatch, slug);
+    //     return match ? match.docId : null;
+    // }
+
+    const media = useMedia(mediaSlug, seasonSlug);
+    const { isSingle, docId: mediaId, season, seasons, episode } = media;
+
     const savedData = JSON.parse(localStorage.getItem(mediaId));
     const [progress, setProgress] = useState(savedData?.progress ?? []);
-    const lastPlayedSeason = savedData?.lastPlayedSeason ?? 0;
-    const lastPlayedEpisode = savedData?.lastPlayedEpisode ?? 0;
-    const [selectedSeason, setSelectedSeason] = useState(lastPlayedSeason);
-    // const [selectedEpisode, setSelectedEpisode] = useState(lastPlayedEpisode);
-    const series = getSeries(media, mediaId);
+    const lastPlayedSeasonIndex = savedData?.lastPlayedSeason ?? 0;
+    const lastPlayedEpisodeIndex = savedData?.lastPlayedEpisode ?? 0;
 
-    const isSingle = series && series.filePath;
     const focusElements = isSingle ? ['details'] : ['details', 'episodes', 'seasons'];
     const [focus, setFocus] = useState(0);
     const onKeyDown = useCallback(
@@ -27,7 +34,7 @@ export default function Details() {
             const { keyCode } = event;
             // (27) Esc
             if (keyCode === 27) {
-                history.push(`${ROUTES.BROWSE}`);
+                history.push(`/browse`);
                 event.preventDefault();
             }
             if (keyCode >= 37 && keyCode <= 41) {
@@ -42,7 +49,6 @@ export default function Details() {
         },
         [history, focus, setFocus, focusElements.length]
     );
-
     useEffect(() => {
         document.addEventListener('keydown', onKeyDown, false);
         return () => {
@@ -51,17 +57,30 @@ export default function Details() {
     }, [onKeyDown]);
 
     // Firebase hasn't replied yet...
-    if (!series) return <div>Loading...</div>;
-    // if (!loaded) return <Player.Buffer visible={true} />;
+    if (!media.loaded) return <Loading visible />;
 
-    const seasonRef = series.seasons ? series.seasons[selectedSeason] : series;
-    const episodes = seasonRef.seasons ? seasonRef.episodes : [seasonRef];
-    const episode = episodes?.[lastPlayedEpisode];
-    const episodeProgress = episode
-        ? getEpisodeProgress(progress?.[lastPlayedSeason]?.[lastPlayedEpisode], episode.duration)
-        : 0;
-    // const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${lastPlayedSeason}/${toSlug(episode.name)}` : null;
-    const episodeRoute = episode ? `${ROUTES.WATCH}${mediaId}/${toSlug(seasonRef.name)}/${toSlug(episode.name)}` : null;
+    // If no season is selected and previous season exists, jump to that
+    if (!seasonSlug && lastPlayedSeasonIndex !== undefined) {
+        return (
+            <Redirect
+                to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(
+                    media.seasons[lastPlayedSeasonIndex].name
+                )}`}
+            />
+        );
+    }
+
+    // TODO convert saved data from indices to slugs?
+
+    const { episodes } = season;
+    const episodeRef = episodes?.[lastPlayedEpisodeIndex] ?? { duration: '0:0', name: '' };
+    const episodeProgress = getEpisodeProgress(
+        progress?.[lastPlayedSeasonIndex]?.[lastPlayedEpisodeIndex],
+        episodeRef.duration
+    );
+    const episodeRoute = isSingle
+        ? `/${categorySlug}/${mediaSlug}/watch`
+        : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(episodeRef.name)}`;
 
     return (
         <>
@@ -71,31 +90,35 @@ export default function Details() {
                     {!isSingle ? (
                         <SeasonContainer
                             hasFocus={focusElements[focus] === 'seasons'}
-                            seasons={series.seasons}
+                            seasons={media.seasons}
                             onClickSeason={(seasonIndex) => {
-                                setSelectedSeason(seasonIndex);
+                                history.push(
+                                    `/${toSlug(media.category)}/${media.slug}/details/${toSlug(
+                                        media.seasons[seasonIndex].name
+                                    )}`
+                                );
                             }}
                         />
                     ) : null}
                     <EpisodeDetail
                         hasFocus={focusElements[focus] === 'details'}
                         isSingle={isSingle}
-                        series={series}
-                        season={lastPlayedSeason}
-                        episode={lastPlayedEpisode}
+                        series={media}
+                        season={lastPlayedSeasonIndex}
+                        episode={lastPlayedEpisodeIndex}
                         progress={episodeProgress}
                         episodeRoute={episodeRoute}
                         onClickRestart={() => {
                             // Reset episode progress
                             const tempProgress = [...progress];
-                            if (!tempProgress[lastPlayedSeason]) tempProgress[lastPlayedSeason] = [];
-                            tempProgress[lastPlayedSeason][lastPlayedEpisode] = 0;
+                            if (!tempProgress[lastPlayedSeasonIndex]) tempProgress[lastPlayedSeasonIndex] = [];
+                            tempProgress[lastPlayedSeasonIndex][lastPlayedEpisodeIndex] = 0;
                             localStorage.setItem(
                                 mediaId,
                                 JSON.stringify({
                                     progress: tempProgress,
-                                    lastPlayedSeason,
-                                    lastPlayedEpisode,
+                                    lastPlayedSeasonIndex,
+                                    lastPlayedEpisodeIndex,
                                 })
                             );
                             // Save progress
@@ -105,16 +128,16 @@ export default function Details() {
                     {!isSingle ? (
                         <EpisodeContainer
                             hasFocus={focusElements[focus] === 'episodes'}
-                            seasonProgress={progress?.[selectedSeason]}
+                            seasonProgress={progress?.[season.index]}
                             episodes={episodes}
-                            seasonPath={`${ROUTES.WATCH}${mediaId}/${selectedSeason}/`}
+                            seasonPath={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
                             onClickEpisode={(episodeIndex) => {
                                 // Update last played episode
                                 localStorage.setItem(
                                     mediaId,
                                     JSON.stringify({
                                         progress,
-                                        lastPlayedSeason: selectedSeason,
+                                        lastPlayedSeason: season.index,
                                         lastPlayedEpisode: episodeIndex,
                                     })
                                 );
@@ -124,7 +147,7 @@ export default function Details() {
                 </Row>
             </TempContainer>
             <Shadow opacity={0.9} />
-            <ScrimBackground hue={series.backgroundHue} imagePath={series.backgroundPath} />
+            <ScrimBackground hue={media.backgroundHue} imagePath={media.backgroundPath} />
         </>
     );
 }

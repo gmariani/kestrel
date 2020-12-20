@@ -1,9 +1,7 @@
 export const HOME = '/';
-export const BROWSE = '/browse/';
-export const BROWSE_ID = '/browse/:categoryId?';
-export const WATCH = '/watch/'; // /:mediaId/watch/:season/:episodeSlug?
-export const WATCH_ID = '/watch/:mediaId/:season/:episodeSlug?';
-export const DETAILS = '/details/'; // /:mediaId/details
-export const DETAILS_ID = '/details/:mediaId?';
+export const BROWSE = '/browse/:categorySlug?';
+export const WATCH_MOVIE = '/:categorySlug/:mediaSlug/watch';
+export const WATCH_TV = '/:categorySlug/:mediaSlug/watch/:seasonSlug/:episodeSlug';
+export const DETAILS = '/:categorySlug/:mediaSlug/details/:seasonSlug?';
 export const SIGN_UP = '/signup';
 export const SIGN_IN = '/signin';

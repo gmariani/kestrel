@@ -59,8 +59,8 @@ function PlayerContainer({ media, onEnded }) {
             media.slug,
             JSON.stringify({
                 progress: tempProgress,
-                lastPlayedSeason: seasonSlug,
-                lastPlayedEpisode: episodeSlug,
+                lastPlayedSeason: season.index,
+                lastPlayedEpisode: episode.index,
             })
         );
 
@@ -80,8 +80,8 @@ function PlayerContainer({ media, onEnded }) {
             media.slug,
             JSON.stringify({
                 seriesProgress,
-                lastPlayedSeason: seasonSlug,
-                lastPlayedEpisode: nextEpisode ? nextEpisode.slug : null,
+                lastPlayedSeason: season.index,
+                lastPlayedEpisode: nextEpisode ? nextEpisode.index : 0,
             })
         );
 

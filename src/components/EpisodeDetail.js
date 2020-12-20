@@ -181,7 +181,7 @@ function EpisodeDetail({
             document.removeEventListener('keydown', onKeyDown, false);
         };
     }, [onKeyDown]);
-    console.log('EpisodeDetail', series);
+    // console.log('EpisodeDetail', series);
     return (
         <Container>
             <Title>{series.name}</Title>
