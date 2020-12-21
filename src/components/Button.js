@@ -46,11 +46,12 @@ const propTypes = {
     type: PropTypes.string,
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    onClick: PropTypes.func,
 };
 
-function Button({ children, theme = 'default', className = '', type = 'button', disabled = false }) {
+function Button({ children, theme = 'default', className = '', type = 'button', onClick, disabled = false }) {
     return (
-        <StyledButton theme={theme} type={type} className={className} disabled={disabled}>
+        <StyledButton theme={theme} type={type} className={className} onClick={onClick} disabled={disabled}>
             {children}
         </StyledButton>
     );

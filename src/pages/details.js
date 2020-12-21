@@ -5,8 +5,6 @@ import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../container
 import { useMedia, useLocalStorage, useFocus } from '../hooks';
 import { getEpisodeProgress, toSlug } from '../utils';
 
-// TODO convert saved data from indices to slugs?
-// TODO Only increase last played if it's greater than before, reset once series end reached
 export default function Details() {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
@@ -33,11 +31,6 @@ export default function Details() {
 
     // If no season is selected and previous season exists, redirect to that
     if (seasonSlug === undefined && lastSeasonIndex !== undefined) {
-        console.log(
-            `details Go to /${toSlug(media.category)}/${media.slug}/details/${toSlug(
-                media.seasons[lastSeasonIndex].name
-            )}`
-        );
         return (
             <Redirect
                 to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`}
@@ -73,10 +66,9 @@ export default function Details() {
                     {!isSingle && (
                         <SeasonContainer
                             hasFocus={focusElement === SEASONS_ELEMENT}
-                            lastSeasonIndex={lastSeasonIndex}
                             seasons={media.seasons}
                             onClickSeason={(seasonIndex) => {
-                                history.push(
+                                history.replace(
                                     `/${toSlug(media.category)}/${media.slug}/details/${toSlug(
                                         media.seasons[seasonIndex].name
                                     )}`

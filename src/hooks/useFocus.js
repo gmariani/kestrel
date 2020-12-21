@@ -77,7 +77,7 @@ function useFocus(items = [], direction = 'horizontal', enabled = true, initial)
     // if (focus === -1) return 'escape';
     // if (focus === -2) return 'enter';
     // return focus === null ? null : items[focus];
-    return [items[focus] ?? null, key];
+    return [items[focus] ?? null, key, setFocus];
 }
 
 useFocus.propTypes = propTypes;

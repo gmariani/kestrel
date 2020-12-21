@@ -7,6 +7,8 @@ import ProgressBar from './ProgressBar';
 const Container = styled.div`
     position: relative;
     width: 100%;
+    --progressBG: rgba(255, 255, 255, 0.6);
+    --trackBG: rgba(255, 255, 255, 0.25);
 `;
 
 const ThumbContainer = styled.div`

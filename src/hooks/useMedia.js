@@ -18,6 +18,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
 
         const mediaRef = content.find((series) => mediaSlug === toSlug(series.name));
         const isSingle = !!(mediaRef && mediaRef.filePath);
+        const categorySlug = toSlug(mediaRef.category);
 
         // Can't use arrow-function as 'this' won't be replaced properly
         function isCurrent(item) {
@@ -52,7 +53,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
                 index: episodeIndex,
                 number: episodeIndex + 1,
                 slug: episodeSlug,
-                route: isSingle ? `/movie/${mediaSlug}/watch` : `/tv/${mediaSlug}/watch/${seasonSlug}/${episodeSlug}`,
+                route: isSingle ? `/${categorySlug}/${mediaSlug}/watch` : `/tv/${mediaSlug}/watch/${seasonSlug}/${episodeSlug}`,
                 name: episodeRef.name,
                 filePath: episodeRef.filePath,
                 subPath: episodeRef.subPath,
@@ -68,7 +69,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
                 index: episodeIndex + 1,
                 number: episodeIndex + 2,
                 slug: toSlug(nextEpisodeRef.name),
-                route: `/tv/${mediaSlug}/watch/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
+                route: `/${categorySlug}/${mediaSlug}/watch/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
                 name: nextEpisodeRef.name,
                 filePath: nextEpisodeRef.filePath,
                 subPath: nextEpisodeRef.subPath,
@@ -79,6 +80,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
         setMedia({
             loaded,
             isSingle,
+            route: `/${categorySlug}/${mediaSlug}/details`,
 
             id: mediaRef.docId,
             backgroundHue: mediaRef.backgroundHue,

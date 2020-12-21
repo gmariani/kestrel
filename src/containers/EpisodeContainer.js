@@ -19,19 +19,17 @@ const Container = styled.div`
 
 const propTypes = {
     hasFocus: PropTypes.bool,
-    lastEpisodeIndex: PropTypes.number,
     episodes: PropTypes.arrayOf(PropTypes.object).isRequired,
     seasonProgress: PropTypes.arrayOf(PropTypes.number),
     routePrefix: PropTypes.string.isRequired,
 };
 
-function EpisodeContainer({ hasFocus = false, lastEpisodeIndex = 0, episodes = [], seasonProgress = [], routePrefix }) {
+function EpisodeContainer({ hasFocus = false, episodes = [], seasonProgress = [], routePrefix }) {
     // Manage focused element
     const [focusElement, focusKey] = useFocus(
         episodes.map((episode, i) => i),
         'vertical',
-        hasFocus,
-        lastEpisodeIndex
+        hasFocus
     );
 
     // On focusElement change, move element into view

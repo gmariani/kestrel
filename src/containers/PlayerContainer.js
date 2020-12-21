@@ -30,22 +30,23 @@ function PlayerContainer({ media, onEnded }) {
     const [totalSeconds, setTotalSeconds] = useState(0);
     const [playing, setPlaying] = useState(true);
     const [buffering, setBuffering] = useState(false);
+    // TODO Only increase last played if it's greater than before, reset once series end reached
     const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
         progress: [],
         lastSeasonIndex: 0,
         lastEpisodeIndex: 0,
     });
-    console.log('PlayerContainer playHistory', media.id, playHistory);
 
     const { isSingle, season, episode, nextEpisode } = media;
-    const seasonSlug = season.slug;
-    const seasonNum = season.number;
-    const episodeSlug = episode.slug;
+    // Create default array if it doesn't exist
+    if (!playHistory.progress[season.index]) {
+        playHistory.progress[season.index] = [];
+    }
 
     // React Player Handlers //
     const playerStartHandler = () => {
         // Is there a previously saved timestamp?
-        const storedTime = playHistory.progress?.[seasonSlug]?.[episodeSlug] ?? 0;
+        const storedTime = playHistory.progress?.[season.index]?.[episode.index] ?? 0;
 
         // Only resume time if more than 10 seconds into the video
         if (storedTime > 10) {
@@ -57,11 +58,9 @@ function PlayerContainer({ media, onEnded }) {
 
     const playerProgressHandler = ({ played, playedSeconds }) => {
         // Update progress
-        const tempProgress = [...playHistory.progress];
-        if (!tempProgress[seasonSlug]) tempProgress[seasonSlug] = [];
-        tempProgress[seasonSlug][episodeSlug] = playedSeconds;
+        playHistory.progress[season.index][episode.index] = playedSeconds;
         setPlayHistory({
-            progress: tempProgress,
+            progress: playHistory.progress,
             lastSeasonIndex: season.index,
             lastEpisodeIndex: episode.index,
         });
@@ -72,15 +71,14 @@ function PlayerContainer({ media, onEnded }) {
 
     const playerEndHandler = () => {
         // Reset episode progress
-        const tempProgress = [...playHistory.progress];
-        if (!tempProgress[seasonSlug]) tempProgress[seasonSlug] = [];
-        tempProgress[seasonSlug][episodeSlug] = 0;
-        // Save and increment to next episode
+        playHistory.progress[season.index][episode.index] = 0;
         setPlayHistory({
-            progress: tempProgress,
+            progress: playHistory.progress,
             lastSeasonIndex: season.index,
             lastEpisodeIndex: nextEpisode ? nextEpisode.index : 0,
         });
+        setCurrentProgress(0);
+        setCurrentSeconds(0);
 
         if (onEnded) onEnded();
     };
@@ -96,6 +94,7 @@ function PlayerContainer({ media, onEnded }) {
     };
 
     const seekHandler = (progressPercent) => {
+        // Update UI immediately
         setCurrentProgress(progressPercent * 100);
         setCurrentSeconds(totalSeconds * progressPercent);
 
@@ -103,11 +102,7 @@ function PlayerContainer({ media, onEnded }) {
         playerRef.current.seekTo(progressPercent);
     };
 
-    const gotoNext = () => {
-        history.push(nextEpisode.route);
-    };
-
-    // useIdleTimer(3000)
+    // TODO useIdleTimer(3000)
 
     const [timeoutID, setTimeoutID] = useState(null);
     const inactivityHandler = (playerScreen) => {
@@ -176,7 +171,7 @@ function PlayerContainer({ media, onEnded }) {
                 <EpisodeTitle
                     isSingle={isSingle}
                     series={media}
-                    seasonNum={seasonNum}
+                    seasonNum={season.number}
                     episodeNum={episode.number}
                     episodeName={episode.name}
                 />
@@ -200,7 +195,13 @@ function PlayerContainer({ media, onEnded }) {
                             ) : (
                                 <IconButton label='Play' icon='play' disabled={buffering} onClick={togglePlaying} />
                             )}
-                            {nextEpisode?.route && <IconButton label='Play Next' icon='next' onClick={gotoNext} />}
+                            {nextEpisode?.route && (
+                                <IconButton
+                                    label='Play Next'
+                                    icon='next'
+                                    onClick={() => history.replace(nextEpisode.route)}
+                                />
+                            )}
                         </FlexRow>
 
                         <FlexRow flexGrow={1} alignItems='start' justifyContent='end'>

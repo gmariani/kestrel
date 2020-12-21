@@ -11,7 +11,9 @@ const Track = styled.div`
 `;
 
 const Progress = styled.div`
+    width: ${({ width }) => `${width}%;`};
     height: 100%;
+    min-height: ${({ height }) => `${height}px;`};
     pointer-events: none;
     background: var(--progressBG);
 `;
@@ -36,8 +38,9 @@ const ProgressBar = React.forwardRef(({ height = 5, value = 0, theme = 'light', 
             height={height}
             theme={theme}
             onClick={onClick}
-            style={{ '--progressBG': bgColor, '--trackBG': bgColor2 }}>
-            <Progress style={{ width: `${value}%` }} />
+            // style={{ '--progressBG': bgColor, '--trackBG': bgColor2 }}
+        >
+            <Progress height={height} width={value} />
         </Track>
     );
 });

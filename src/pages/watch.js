@@ -8,14 +8,20 @@ import CreditsContainer from '../containers/CreditsContainer';
 // TODO get tokenized s3 links
 
 export default function Watch() {
-    // Hooks
     const { mediaSlug, seasonSlug, episodeSlug } = useParams();
     const media = useMedia(mediaSlug, seasonSlug, episodeSlug);
     const [ended, setEnded] = useState(false);
 
     if (!media.loaded) return <Loading visible />;
+    console.log('ended', ended);
     return ended ? (
-        <CreditsContainer media={media} nextRoute={media.nextEpisode?.route} onStarted={() => setEnded(false)} />
+        <CreditsContainer
+            media={media}
+            onStarted={() => {
+                console.log('onstarted clicked');
+                setEnded(false);
+            }}
+        />
     ) : (
         <PlayerContainer media={media} onEnded={() => setEnded(true)} />
     );

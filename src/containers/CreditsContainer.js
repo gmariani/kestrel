@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Credits, FlexCol, FlexRow, Link, CreditsPreview, EpisodeTitle } from '../components';
+import { useHistory } from 'react-router-dom';
+import { Credits, FlexCol, FlexRow, Link, Button, CreditsPreview, EpisodeTitle } from '../components';
 import mediaInterface from '../interfaces/media';
 
 const propTypes = {
@@ -9,8 +10,19 @@ const propTypes = {
 };
 
 function CreditsContainer({ media, onStarted }) {
+    const history = useHistory();
     const { isSingle, season, episode, nextEpisode } = media;
-    const nextRoute = media.nextEpisode?.route;
+    const nextRoute = nextEpisode?.route;
+
+    const onClickBack = () => {
+        if (onStarted) onStarted();
+        history.push(media.route);
+    };
+    const onClickNext = () => {
+        if (onStarted) onStarted();
+        history.replace(nextRoute);
+    };
+    // TODO fix button/link styling
     return (
         <Credits>
             <FlexCol justifyContent='end' rowGap='2rem'>
@@ -25,10 +37,18 @@ function CreditsContainer({ media, onStarted }) {
                     <Link theme={nextRoute ? 'secondary' : 'primary'} onClick={onStarted} to={media.route}>
                         Back
                     </Link>
+                    <Button theme={nextRoute ? 'secondary' : 'primary'} onClick={onClickBack}>
+                        Back
+                    </Button>
                     {nextRoute && (
-                        <Link theme='primary' onClick={onStarted} to={nextRoute}>
-                            Next
-                        </Link>
+                        <>
+                            <Link theme='primary' onClick={onStarted} to={nextRoute}>
+                                Next
+                            </Link>
+                            <Button theme='primary' onClick={onClickNext}>
+                                Next
+                            </Button>
+                        </>
                     )}
                 </FlexRow>
             </FlexCol>

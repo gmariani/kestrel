@@ -27,11 +27,6 @@ const Container = styled(ReachRouterLink)`
     border-radius: 2rem;
     cursor: pointer;
     display: flex;
-    /* height: auto;
-     min-height: 145px;
-     flex-basis: 200px;
-     flex-grow: 1;
-     flex-shrink: 1;*/
     opacity: 0.75;
     padding: 0;
     text-align: left;
@@ -41,6 +36,8 @@ const Container = styled(ReachRouterLink)`
     &:hover {
         text-decoration: none;
     }
+    --progressBG: rgba(255, 255, 255, 0.6);
+    --trackBG: rgba(255, 255, 255, 0.25);
 
     &.focused,
     &:focus,
@@ -52,6 +49,8 @@ const Container = styled(ReachRouterLink)`
     &:focus,
     &:hover {
         transform: scale(1.025);
+        --progressBG: rgba(0, 0, 0, 0.6);
+        --trackBG: rgba(0, 0, 0, 0.25);
     }
 
     &.selected,
@@ -90,10 +89,6 @@ const Info = styled.div`
     flex: 1;
 `;
 
-const Counter = styled.div``;
-
-const Timer = styled.div``;
-
 const propTypes = {
     imagePath: PropTypes.string,
     to: PropTypes.string,
@@ -124,17 +119,20 @@ function Episode({
         progress.percent > 0
             ? `${secondsToHuman(progress.totalSeconds - progress.currentSeconds)} left`
             : secondsToHuman(progress.totalSeconds);
+
     // Title and Meta have classnames so we can target them at the parent level with CSS
     return (
         <Container to={to} className={className}>
             {imagePath && <Thumbnail src={imagePath} />}
             <Info>
                 <Meta>
-                    <Counter>Episode {episodeNumber}</Counter>
-                    <Timer>{timer}</Timer>
+                    <div>Episode {episodeNumber}</div>
+                    <div>{timer}</div>
                 </Meta>
                 <Title>{title}</Title>
-                {progress.percent > 0 && <ProgressBar value={progress.percent} theme='dark' />}
+                {progress.percent > 0 ? (
+                    <ProgressBar value={progress.percent} theme={className.includes('selected') ? 'dark' : 'light'} />
+                ) : null}
             </Info>
         </Container>
     );
