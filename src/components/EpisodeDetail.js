@@ -1,19 +1,19 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { FaPlay, FaHistory } from 'react-icons/fa';
 import Link from './Link';
-import Row from './Row';
+import FlexCol from './FlexCol';
+import FlexRow from './FlexRow';
 import ProgressBar from './ProgressBar';
+import mediaInterface from '../interfaces/media';
 import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
+import { useFocus } from '../hooks';
 
-const Container = styled.div`
-    display: flex;
+const Container = styled(FlexCol)`
     font-size: 2rem;
     color: white;
-    flex-direction: column;
-    justify-content: end;
     flex: 1;
 `;
 
@@ -42,14 +42,6 @@ const Timer = styled.span`
     font-size: 1rem;
 `;
 
-const Controls = styled.div`
-    display: flex;
-    column-gap: 2rem;
-    row-gap: 10px;
-    margin-top: 2rem;
-    flex-direction: column;
-`;
-
 /**
  * Gets the label based on progress and media type
  * @param {number} lastSeason
@@ -62,18 +54,17 @@ function getWatchLabel(isSingle = false, hasProgress = false, lastSeason = 0, la
         return hasProgress ? 'Resume Movie' : 'Watch Movie';
     }
 
-    const seasonNum = lastSeason + 1;
-    const episodeNum = lastEpisode + 1;
+    const suffix = `S${lastSeason + 1} E${lastEpisode + 1}`;
     if (hasProgress) {
         // Resume Episode: S# E#
-        return `Resume Episode: S${seasonNum} E${episodeNum}`;
+        return `Resume Episode: ${suffix}`;
     }
     if (lastEpisode) {
         // Watch Next Episode: S# E#
-        return `Watch Next Episode: S${seasonNum} E${episodeNum}`;
+        return `Watch Next Episode: ${suffix}`;
     }
     // Start Watching: S1 E1
-    return `Start Watching: S1 E1`;
+    return `Start Watching: ${suffix}`;
 }
 
 function getMetaLabel(isSingle = false, contentRating, year, duration, genres, category) {
@@ -104,122 +95,97 @@ function getMetaLabel(isSingle = false, contentRating, year, duration, genres, c
 const propTypes = {
     hasFocus: PropTypes.bool,
     isSingle: PropTypes.bool,
-    season: PropTypes.number,
-    episode: PropTypes.number,
-    series: PropTypes.shape({
-        year: PropTypes.number,
-        genres: PropTypes.arrayOf(PropTypes.string),
-        name: PropTypes.string.isRequired,
-        description: PropTypes.string,
-    }),
-    progress: PropTypes.shape({
+    lastSeasonIndex: PropTypes.number,
+    lastEpisodeIndex: PropTypes.number,
+    media: mediaInterface,
+    lastEpisodeProgress: PropTypes.shape({
         percent: PropTypes.number,
         currentSeconds: PropTypes.number,
         totalSeconds: PropTypes.number,
     }),
-    episodeRoute: PropTypes.string.isRequired,
+    lastEpisodeRoute: PropTypes.string,
     onClickRestart: PropTypes.func.isRequired,
 };
 
 // Actual object to avoid mutable object from invalidating component
-const defaultProgress = {
-    percent: 0,
-    currentSeconds: 0,
-    totalSeconds: 0,
-};
 const defaultSeries = { year: 0, genres: [], name: 'No Title', description: '' };
 
 function EpisodeDetail({
     hasFocus = false,
     isSingle = false,
-    season = 0,
-    episode = 0,
-    series = defaultSeries,
-    progress = defaultProgress,
-    episodeRoute,
+    media = defaultSeries,
+    lastSeasonIndex = 0,
+    lastEpisodeIndex = 0,
+    lastEpisodeProgress,
+    lastEpisodeRoute,
     onClickRestart,
 }) {
-    const hasProgress = progress.percent > 0;
-    const timeRemaining = hasProgress
-        ? `${secondsToHuman(progress.totalSeconds - progress.currentSeconds)} left`
-        : secondsToHuman(progress.totalSeconds);
-    const selectElements = progress ? ['watch', 'restart'] : ['watch'];
+    const hasProgress = lastEpisodeProgress && lastEpisodeProgress.percent > 0;
+    const hasEpisode = !!lastEpisodeRoute;
 
-    // Hooks
-    const history = useHistory();
-    const [selected, setSelected] = useState(0);
-    const onKeyDown = useCallback(
-        (event) => {
-            const { keyCode } = event;
-            if (!hasFocus) return;
+    // Manage focused element
+    const WATCH_ELEMENT = 'watch';
+    const RESTART_ELEMENT = 'restart';
+    const focusElements = hasProgress ? [WATCH_ELEMENT, RESTART_ELEMENT] : [WATCH_ELEMENT];
+    const [focusElement, focusKey] = useFocus(focusElements, 'vertical', hasFocus);
 
-            // (13) Enter
-            if (keyCode === 13) {
-                history.push(episodeRoute);
-                event.preventDefault();
-            }
-            if (keyCode >= 37 && keyCode <= 41) {
-                // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
-                if (keyCode === 38) {
-                    setSelected((selected - 1 + selectElements.length) % selectElements.length);
-                } else if (keyCode === 40) {
-                    setSelected((selected + 1) % selectElements.length);
-                }
-                event.preventDefault();
-            }
-        },
-        [hasFocus, history, episodeRoute, selected, setSelected, selectElements.length]
-    );
-
-    if (!hasProgress && selected > 0) {
-        setSelected(0);
+    // Play the episode
+    if (focusKey === 'Enter' && hasEpisode) {
+        if (focusElement === RESTART_ELEMENT) onClickRestart();
+        console.log(`Go to ${lastEpisodeRoute}}`);
+        return <Redirect to={lastEpisodeRoute} />;
     }
 
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDown, false);
-        return () => {
-            document.removeEventListener('keydown', onKeyDown, false);
-        };
-    }, [onKeyDown]);
-    // console.log('EpisodeDetail', series);
     return (
-        <Container>
-            <Title>{series.name}</Title>
-            <Description>{series.description}</Description>
+        <Container justifyContent='end'>
+            <Title>{media.name}</Title>
+            <Description>{media.description}</Description>
             <Meta>
                 {getMetaLabel(
                     isSingle,
-                    series?.contentRating,
-                    series?.year,
-                    series?.duration,
-                    series?.genres,
-                    series?.category
+                    media?.contentRating,
+                    media?.year,
+                    media?.duration,
+                    media?.genres,
+                    media?.category
                 )}
             </Meta>
 
-            {hasProgress ? (
-                <Row className='align-items-center'>
-                    <ProgressBar value={progress.percent} /> <Timer>{timeRemaining}</Timer>
-                </Row>
-            ) : null}
+            {hasProgress && (
+                <FlexRow alignItems='center'>
+                    <ProgressBar value={lastEpisodeProgress.percent} />{' '}
+                    <Timer>
+                        {
+                            // prettier-ignore
+                            hasProgress
+                                ? `${secondsToHuman(
+                                    lastEpisodeProgress.totalSeconds - lastEpisodeProgress.currentSeconds
+                                )} left`
+                                : secondsToHuman(lastEpisodeProgress.totalSeconds)
+                        }
+                    </Timer>
+                </FlexRow>
+            )}
 
-            <Controls>
-                <Link
-                    to={episodeRoute}
-                    // prettier-ignore
-                    className={`${selectElements[selected] === 'watch' ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
-                    <FaPlay /> {getWatchLabel(isSingle, hasProgress, season, episode)}
-                </Link>
-                {hasProgress ? (
+            {hasEpisode && (
+                <FlexCol rowGap='2rem' style={{ marginTop: '2rem' }}>
                     <Link
-                        to={episodeRoute}
+                        to={lastEpisodeRoute}
                         // prettier-ignore
-                        className={`${selectElements[selected] === 'restart' ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                        onClick={onClickRestart}>
-                        <FaHistory /> {isSingle ? 'Restart Movie' : 'Restart Episode'}
+                        className={`${hasFocus && focusElement === WATCH_ELEMENT ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
+                        <FaPlay /> {getWatchLabel(isSingle, hasProgress, lastSeasonIndex, lastEpisodeIndex)}
                     </Link>
-                ) : null}
-            </Controls>
+                    {hasProgress && (
+                        <Link
+                            to={lastEpisodeRoute}
+                            // prettier-ignore
+                            className={`${hasFocus && focusElement === RESTART_ELEMENT ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
+                            onClick={onClickRestart}>
+                            <FaHistory /> {isSingle ? 'Restart Movie' : 'Restart Episode'}
+                        </Link>
+                    )}
+                </FlexCol>
+            )}
         </Container>
     );
 }

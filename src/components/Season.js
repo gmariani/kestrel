@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import { Link as ReachRouterLink } from 'react-router-dom';
 import { capitalize } from '../utils';
 
 const SubTitle = styled.span`
@@ -9,7 +10,7 @@ const SubTitle = styled.span`
     color: transparent;
 `;
 
-const Container = styled.button`
+const Container = styled(ReachRouterLink)`
     background-color: transparent;
     border: 2px solid transparent;
     border-radius: 0.5rem;
@@ -40,13 +41,13 @@ const propTypes = {
     title: PropTypes.string.isRequired,
     numEpisodes: PropTypes.number,
     className: PropTypes.string,
-    onClick: PropTypes.func,
+    to: PropTypes.string,
 };
 
-function Season({ title, numEpisodes = 0, className = '', onClick }) {
+function Season({ title, numEpisodes = 0, className = '', to }) {
     const subTitle = `${numEpisodes} ${numEpisodes > 1 || numEpisodes === 0 ? 'Episodes' : 'Episode'}`;
     return (
-        <Container className={className} onClick={onClick}>
+        <Container className={className} to={to}>
             {capitalize(title)}
             <SubTitle>{subTitle}</SubTitle>
         </Container>

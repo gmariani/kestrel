@@ -11,7 +11,8 @@ const Container = styled(FlexItem)`
 
 const propTypes = {
     children: PropTypes.node,
-    style: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    style: PropTypes.object,
     className: PropTypes.string,
     rowGap: PropTypes.string,
     flexGrow: PropTypes.number,

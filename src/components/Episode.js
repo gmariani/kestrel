@@ -5,6 +5,21 @@ import { Link as ReachRouterLink } from 'react-router-dom';
 import ProgressBar from './ProgressBar';
 import { secondsToHuman } from '../utils';
 
+const Title = styled.div`
+    font-size: 1.875rem;
+    color: white;
+    flex-grow: 1;
+    user-select: none;
+`;
+
+const Meta = styled.div`
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    color: rgba(184, 183, 183, 1);
+    user-select: none;
+`;
+
 const Container = styled(ReachRouterLink)`
     background-color: black;
     border-width: 0;
@@ -46,17 +61,11 @@ const Container = styled(ReachRouterLink)`
         background-color: white;
     }
 
-    &.selected .episode__meta,
-    &.focused .episode__meta,
-    &:focus .episode__meta,
-    &:hover .episode__meta {
+    &.selected ${Meta}, &.focused ${Meta}, &:focus ${Meta}, &:hover ${Meta} {
         color: rgba(85, 85, 85, 1);
     }
 
-    &.selected .episode__title,
-    &.focused .episode__title,
-    &:focus .episode__title,
-    &:hover .episode__title {
+    &.selected ${Title}, &.focused ${Title}, &:focus ${Title}, &:hover ${Title} {
         color: black;
     }
 `;
@@ -74,26 +83,11 @@ const Thumbnail = styled.div`
     transform: translateX(-1px);
 `;
 
-const Meta = styled.div`
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.5rem;
-    color: rgba(184, 183, 183, 1);
-    user-select: none;
-`;
-
 const Info = styled.div`
     display: flex;
     flex-direction: column;
     padding: 2rem 3rem 2rem 2rem;
     flex: 1;
-`;
-
-const Title = styled.div`
-    font-size: 1.875rem;
-    color: white;
-    flex-grow: 1;
-    user-select: none;
 `;
 
 const Counter = styled.div``;
@@ -111,7 +105,6 @@ const propTypes = {
         totalSeconds: PropTypes.number,
     }),
     className: PropTypes.string,
-    onClickEpisode: PropTypes.func,
 };
 const defaultProgress = {
     percent: 0,
@@ -126,7 +119,6 @@ function Episode({
     episodeNumber = '0',
     progress = defaultProgress,
     className = '',
-    onClickEpisode,
 }) {
     const timer =
         progress.percent > 0
@@ -134,15 +126,15 @@ function Episode({
             : secondsToHuman(progress.totalSeconds);
     // Title and Meta have classnames so we can target them at the parent level with CSS
     return (
-        <Container onClick={onClickEpisode} to={to} className={className}>
-            {imagePath ? <Thumbnail src={imagePath} /> : null}
+        <Container to={to} className={className}>
+            {imagePath && <Thumbnail src={imagePath} />}
             <Info>
-                <Meta className='episode__meta'>
+                <Meta>
                     <Counter>Episode {episodeNumber}</Counter>
                     <Timer>{timer}</Timer>
                 </Meta>
-                <Title className='episode__title'>{title}</Title>
-                {progress.percent > 0 ? <ProgressBar value={progress.percent} theme='dark' /> : null}
+                <Title>{title}</Title>
+                {progress.percent > 0 && <ProgressBar value={progress.percent} theme='dark' />}
             </Info>
         </Container>
     );

@@ -14,6 +14,7 @@ import {
     FlexCol,
 } from '../components';
 import mediaInterface from '../interfaces/media';
+import { useLocalStorage } from '../hooks';
 
 const propTypes = {
     media: mediaInterface,
@@ -24,13 +25,17 @@ function PlayerContainer({ media, onEnded }) {
     // Hooks
     const history = useHistory();
     const playerRef = useRef();
-    const savedData = JSON.parse(localStorage.getItem(media.slug));
-    const [savedProgress, setSavedProgress] = useState(savedData?.progress ?? []);
     const [currentProgress, setCurrentProgress] = useState(0);
     const [currentSeconds, setCurrentSeconds] = useState(0);
     const [totalSeconds, setTotalSeconds] = useState(0);
     const [playing, setPlaying] = useState(true);
     const [buffering, setBuffering] = useState(false);
+    const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
+        progress: [],
+        lastSeasonIndex: 0,
+        lastEpisodeIndex: 0,
+    });
+    console.log('PlayerContainer playHistory', media.id, playHistory);
 
     const { isSingle, season, episode, nextEpisode } = media;
     const seasonSlug = season.slug;
@@ -40,7 +45,7 @@ function PlayerContainer({ media, onEnded }) {
     // React Player Handlers //
     const playerStartHandler = () => {
         // Is there a previously saved timestamp?
-        const storedTime = savedProgress?.[seasonSlug]?.[episodeSlug] ?? 0;
+        const storedTime = playHistory.progress?.[seasonSlug]?.[episodeSlug] ?? 0;
 
         // Only resume time if more than 10 seconds into the video
         if (storedTime > 10) {
@@ -52,38 +57,30 @@ function PlayerContainer({ media, onEnded }) {
 
     const playerProgressHandler = ({ played, playedSeconds }) => {
         // Update progress
-        const tempProgress = [...savedProgress];
+        const tempProgress = [...playHistory.progress];
         if (!tempProgress[seasonSlug]) tempProgress[seasonSlug] = [];
         tempProgress[seasonSlug][episodeSlug] = playedSeconds;
-        localStorage.setItem(
-            media.slug,
-            JSON.stringify({
-                progress: tempProgress,
-                lastPlayedSeason: season.index,
-                lastPlayedEpisode: episode.index,
-            })
-        );
+        setPlayHistory({
+            progress: tempProgress,
+            lastSeasonIndex: season.index,
+            lastEpisodeIndex: episode.index,
+        });
 
-        setSavedProgress(tempProgress);
         setCurrentProgress(played * 100);
         setCurrentSeconds(playedSeconds);
     };
 
     const playerEndHandler = () => {
         // Reset episode progress
-        const seriesProgress = [...savedProgress];
-        if (!seriesProgress[seasonSlug]) seriesProgress[seasonSlug] = [];
-        seriesProgress[seasonSlug][episodeSlug] = 0;
-
+        const tempProgress = [...playHistory.progress];
+        if (!tempProgress[seasonSlug]) tempProgress[seasonSlug] = [];
+        tempProgress[seasonSlug][episodeSlug] = 0;
         // Save and increment to next episode
-        localStorage.setItem(
-            media.slug,
-            JSON.stringify({
-                seriesProgress,
-                lastPlayedSeason: season.index,
-                lastPlayedEpisode: nextEpisode ? nextEpisode.index : 0,
-            })
-        );
+        setPlayHistory({
+            progress: tempProgress,
+            lastSeasonIndex: season.index,
+            lastEpisodeIndex: nextEpisode ? nextEpisode.index : 0,
+        });
 
         if (onEnded) onEnded();
     };

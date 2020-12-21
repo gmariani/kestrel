@@ -19,7 +19,8 @@ const Container = styled.div`
 
 const propTypes = {
     children: PropTypes.node,
-    style: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    style: PropTypes.object,
     className: PropTypes.string,
     flexGrow: PropTypes.number,
     alignContent: PropTypes.string,

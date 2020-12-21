@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import useContent from './useContent';
 import { toSlug } from '../utils';
-import * as ROUTES from '../constants/routes';
 
 export default function useMedia(mediaSlug, seasonName, episodeName) {
     const { content, loaded } = useContent('media');
-    const mediaId = 'asdf';
     const [media, setMedia] = useState({
         loaded: false,
         isSingle: true,

@@ -1,95 +1,79 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
-import { Loading, TempContainer, Shadow, ScrimBackground, Row, EpisodeDetail } from '../components';
+import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
 import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../containers';
-import { useMedia } from '../hooks';
-import * as ROUTES from '../constants/routes';
-
+import { useMedia, useLocalStorage, useFocus } from '../hooks';
 import { getEpisodeProgress, toSlug } from '../utils';
 
+// TODO convert saved data from indices to slugs?
+// TODO Only increase last played if it's greater than before, reset once series end reached
 export default function Details() {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
-
-    // function slugToID(slug, data) {
-    //     function isMatch(item) {
-    //         return this === toSlug(item.name);
-    //     }
-    //     const match = data.find(isMatch, slug);
-    //     return match ? match.docId : null;
-    // }
-
     const media = useMedia(mediaSlug, seasonSlug);
-    const { isSingle, docId: mediaId, season, seasons, episode } = media;
+    const { isSingle, season } = media;
 
-    const savedData = JSON.parse(localStorage.getItem(mediaId));
-    const [progress, setProgress] = useState(savedData?.progress ?? []);
-    const lastPlayedSeasonIndex = savedData?.lastPlayedSeason ?? 0;
-    const lastPlayedEpisodeIndex = savedData?.lastPlayedEpisode ?? 0;
+    // Get previous played history, if no history select first episode of first season
+    const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
+        progress: [],
+        lastSeasonIndex: 0,
+        lastEpisodeIndex: 0,
+    });
+    const { lastSeasonIndex, lastEpisodeIndex, progress } = playHistory;
 
-    const focusElements = isSingle ? ['details'] : ['details', 'episodes', 'seasons'];
-    const [focus, setFocus] = useState(0);
-    const onKeyDown = useCallback(
-        (event) => {
-            const { keyCode } = event;
-            // (27) Esc
-            if (keyCode === 27) {
-                history.push(`/browse`);
-                event.preventDefault();
-            }
-            if (keyCode >= 37 && keyCode <= 41) {
-                // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
-                if (keyCode === 37) {
-                    setFocus((focus - 1 + focusElements.length) % focusElements.length);
-                } else if (keyCode === 39) {
-                    setFocus((focus + 1) % focusElements.length);
-                }
-                event.preventDefault();
-            }
-        },
-        [history, focus, setFocus, focusElements.length]
-    );
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDown, false);
-        return () => {
-            document.removeEventListener('keydown', onKeyDown, false);
-        };
-    }, [onKeyDown]);
+    // Manage focused element
+    const SEASONS_ELEMENT = 'seasons';
+    const DETAILS_ELEMENT = 'details';
+    const EPISODES_ELEMENT = 'episodes';
+    const focusElements = isSingle ? [DETAILS_ELEMENT] : [DETAILS_ELEMENT, EPISODES_ELEMENT, SEASONS_ELEMENT];
+    const [focusElement, focusKey] = useFocus(focusElements, 'horizontal');
 
-    // Firebase hasn't replied yet...
+    // If Firebase hasn't replied yet, show loading screen
     if (!media.loaded) return <Loading visible />;
 
-    // If no season is selected and previous season exists, jump to that
-    if (!seasonSlug && lastPlayedSeasonIndex !== undefined) {
+    // If no season is selected and previous season exists, redirect to that
+    if (seasonSlug === undefined && lastSeasonIndex !== undefined) {
+        console.log(
+            `details Go to /${toSlug(media.category)}/${media.slug}/details/${toSlug(
+                media.seasons[lastSeasonIndex].name
+            )}`
+        );
         return (
             <Redirect
-                to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(
-                    media.seasons[lastPlayedSeasonIndex].name
-                )}`}
+                to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`}
             />
         );
     }
 
-    // TODO convert saved data from indices to slugs?
+    // Go back to the browse screen
+    if (focusKey === 'Escape') {
+        return <Redirect to='/browse' />;
+    }
 
-    const { episodes } = season;
-    const episodeRef = episodes?.[lastPlayedEpisodeIndex] ?? { duration: '0:0', name: '' };
-    const episodeProgress = getEpisodeProgress(
-        progress?.[lastPlayedSeasonIndex]?.[lastPlayedEpisodeIndex],
-        episodeRef.duration
-    );
-    const episodeRoute = isSingle
-        ? `/${categorySlug}/${mediaSlug}/watch`
-        : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(episodeRef.name)}`;
+    // Get last/initial episode meta
+    const lastEpisode = !isSingle ? media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex] : null;
+    const lastEpisodeProgress = lastEpisode
+        ? getEpisodeProgress(progress?.[lastSeasonIndex]?.[lastEpisodeIndex], lastEpisode.duration)
+        : null;
+    function getLastRoute() {
+        if (lastEpisode) {
+            return isSingle
+                ? `/${categorySlug}/${mediaSlug}/watch`
+                : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(lastEpisode.name)}`;
+        }
+        return null;
+    }
+    const lastEpisodeRoute = getLastRoute(isSingle, lastEpisode);
 
     return (
         <>
             <TempContainer>
                 <HeaderContainer hideMenu />
-                <Row height='100%'>
-                    {!isSingle ? (
+                <FlexRow style={{ height: '100%' }} columnGap='2rem'>
+                    {!isSingle && (
                         <SeasonContainer
-                            hasFocus={focusElements[focus] === 'seasons'}
+                            hasFocus={focusElement === SEASONS_ELEMENT}
+                            lastSeasonIndex={lastSeasonIndex}
                             seasons={media.seasons}
                             onClickSeason={(seasonIndex) => {
                                 history.push(
@@ -99,52 +83,39 @@ export default function Details() {
                                 );
                             }}
                         />
-                    ) : null}
+                    )}
                     <EpisodeDetail
-                        hasFocus={focusElements[focus] === 'details'}
+                        hasFocus={focusElement === DETAILS_ELEMENT}
                         isSingle={isSingle}
-                        series={media}
-                        season={lastPlayedSeasonIndex}
-                        episode={lastPlayedEpisodeIndex}
-                        progress={episodeProgress}
-                        episodeRoute={episodeRoute}
+                        media={media}
+                        lastSeasonIndex={lastSeasonIndex}
+                        lastEpisodeIndex={lastEpisodeIndex}
+                        lastEpisodeProgress={lastEpisodeProgress}
+                        lastEpisodeRoute={lastEpisodeRoute}
                         onClickRestart={() => {
-                            // Reset episode progress
+                            // Copy progress
                             const tempProgress = [...progress];
-                            if (!tempProgress[lastPlayedSeasonIndex]) tempProgress[lastPlayedSeasonIndex] = [];
-                            tempProgress[lastPlayedSeasonIndex][lastPlayedEpisodeIndex] = 0;
-                            localStorage.setItem(
-                                mediaId,
-                                JSON.stringify({
-                                    progress: tempProgress,
-                                    lastPlayedSeasonIndex,
-                                    lastPlayedEpisodeIndex,
-                                })
-                            );
-                            // Save progress
-                            setProgress(tempProgress);
+                            // If season array doesn't exist yet, create it
+                            if (!tempProgress[lastSeasonIndex]) tempProgress[lastSeasonIndex] = [];
+                            // Reset episode progress
+                            tempProgress[lastSeasonIndex][lastEpisodeIndex] = 0;
+                            setPlayHistory({
+                                progress: tempProgress,
+                                lastSeasonIndex,
+                                lastEpisodeIndex,
+                            });
                         }}
                     />
-                    {!isSingle ? (
+                    {!isSingle && (
                         <EpisodeContainer
-                            hasFocus={focusElements[focus] === 'episodes'}
+                            hasFocus={focusElement === EPISODES_ELEMENT}
+                            lastEpisodeIndex={lastSeasonIndex === season.index ? lastEpisodeIndex : null}
+                            episodes={season.episodes}
                             seasonProgress={progress?.[season.index]}
-                            episodes={episodes}
-                            seasonPath={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
-                            onClickEpisode={(episodeIndex) => {
-                                // Update last played episode
-                                localStorage.setItem(
-                                    mediaId,
-                                    JSON.stringify({
-                                        progress,
-                                        lastPlayedSeason: season.index,
-                                        lastPlayedEpisode: episodeIndex,
-                                    })
-                                );
-                            }}
+                            routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
                         />
-                    ) : null}
-                </Row>
+                    )}
+                </FlexRow>
             </TempContainer>
             <Shadow opacity={0.9} />
             <ScrimBackground hue={media.backgroundHue} imagePath={media.backgroundPath} />

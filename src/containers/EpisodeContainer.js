@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
-import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Column, Episode } from '../components';
 import { getEpisodeProgress, padNumber, toSlug } from '../utils';
+import { useFocus } from '../hooks';
 
 const Container = styled.div`
     display: flex;
@@ -18,65 +19,39 @@ const Container = styled.div`
 
 const propTypes = {
     hasFocus: PropTypes.bool,
+    lastEpisodeIndex: PropTypes.number,
     episodes: PropTypes.arrayOf(PropTypes.object).isRequired,
     seasonProgress: PropTypes.arrayOf(PropTypes.number),
-    seasonPath: PropTypes.string.isRequired,
-    onClickEpisode: PropTypes.func,
+    routePrefix: PropTypes.string.isRequired,
 };
 
-function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes = [], seasonPath, onClickEpisode }) {
-    const history = useHistory();
-    const [selectedEpisode, setSelectedEpisode] = useState(0);
-
-    // Check if selected episode is available in this season, if not
-    // reset it to the first episode
-    const isEpisodeFound = !!episodes.filter((episode, i) => i === selectedEpisode).length;
-    if (!isEpisodeFound && episodes.length) {
-        setSelectedEpisode(0);
-    }
-
-    // TODO Find a better way to pass all these variables to the callback
-    const onKeyDown = useCallback(
-        (event) => {
-            const { keyCode } = event;
-            if (!hasFocus) return;
-
-            // (13) Enter
-            if (keyCode === 13) {
-                onClickEpisode(selectedEpisode);
-                history.push(`${seasonPath}${toSlug(episodes[selectedEpisode].name)}`);
-                event.preventDefault();
-            }
-            if (keyCode >= 37 && keyCode <= 41) {
-                // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
-                if (keyCode === 38) {
-                    setSelectedEpisode((selectedEpisode - 1 + episodes.length) % episodes.length);
-                } else if (keyCode === 40) {
-                    setSelectedEpisode((selectedEpisode + 1) % episodes.length);
-                }
-                event.preventDefault();
-            }
-        },
-        [hasFocus, history, onClickEpisode, selectedEpisode, setSelectedEpisode, seasonPath, episodes]
+function EpisodeContainer({ hasFocus = false, lastEpisodeIndex = 0, episodes = [], seasonProgress = [], routePrefix }) {
+    // Manage focused element
+    const [focusElement, focusKey] = useFocus(
+        episodes.map((episode, i) => i),
+        'vertical',
+        hasFocus,
+        lastEpisodeIndex
     );
 
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDown, false);
-        return () => {
-            document.removeEventListener('keydown', onKeyDown, false);
-        };
-    }, [onKeyDown]);
-
+    // On focusElement change, move element into view
     useEffect(() => {
         const episodeRef = document.querySelector('.episode.selected');
+        // If no episodes exist, don't break
         if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    }, [selectedEpisode]);
+    }, [focusElement]);
+
+    // Go to watch episode
+    if (focusKey === 'Enter' && episodes.length) {
+        console.log(`Go to ${routePrefix}${toSlug(episodes[focusElement].name)}`);
+        return <Redirect to={`${routePrefix}${toSlug(episodes[focusElement].name)}`} />;
+    }
 
     return (
         <Container>
             <Column>
                 {episodes.map((episode, i) => {
-                    const isSelected = i === selectedEpisode;
+                    const isSelected = i === focusElement;
                     const classSelected = isSelected ? 'selected' : '';
                     const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const episodeSlug = toSlug(episode.name);
@@ -85,16 +60,12 @@ function EpisodeContainer({ hasFocus = false, seasonProgress = [], episodes = []
                     return (
                         <Episode
                             key={episodeSlug}
-                            to={`${seasonPath}${episodeSlug}`}
+                            to={`${routePrefix}${episodeSlug}`}
                             className={`episode ${classSelected} ${classFocused}`}
                             imagePath={episode.thumbnail}
                             title={episode.name}
                             episodeNumber={padNumber(i + 1)}
                             progress={episodeProgress}
-                            onClick={() => {
-                                onClickEpisode(i);
-                                setSelectedEpisode(i);
-                            }}
                         />
                     );
                 })}
