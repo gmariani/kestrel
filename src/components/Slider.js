@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import Timer from './Timer';
@@ -36,7 +36,6 @@ const propTypes = {
 };
 
 function Slider({ position = 0, time = '00:00', theme = 'light', onSeek }) {
-    const trackRef = useRef(null);
     const height = 10;
 
     function trackClickHandler(event) {
@@ -47,14 +46,6 @@ function Slider({ position = 0, time = '00:00', theme = 'light', onSeek }) {
         if (onSeek) onSeek(seekPercent);
     }
 
-    // function getThumbPosition(percent) {
-    //     if (!trackRef || !trackRef.current) return 0;
-
-    //     const track = trackRef.current;
-    //     const trackBounds = track.getBoundingClientRect();
-    //     return percent * trackBounds.width;
-    // }
-    // style={{ left: `${getThumbPosition(position)}px` }}
     return (
         <Container>
             <ThumbContainer value={position * 100}>
@@ -63,7 +54,6 @@ function Slider({ position = 0, time = '00:00', theme = 'light', onSeek }) {
             </ThumbContainer>
 
             <ProgressBar
-                ref={trackRef}
                 height={height}
                 theme={theme}
                 style={{ opacity: 0.7 }}

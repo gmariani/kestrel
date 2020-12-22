@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { Credits, FlexCol, FlexRow, Link, Button, CreditsPreview, EpisodeTitle } from '../components';
+import { Credits, FlexCol, FlexRow, Link, ButtonLink, CreditsPreview, EpisodeTitle } from '../components';
 import mediaInterface from '../interfaces/media';
 
 const propTypes = {
@@ -22,7 +22,7 @@ function CreditsContainer({ media, onStarted }) {
         if (onStarted) onStarted();
         history.replace(nextRoute);
     };
-    // TODO fix button/link styling
+
     return (
         <Credits>
             <FlexCol justifyContent='end' rowGap='2rem'>
@@ -34,21 +34,13 @@ function CreditsContainer({ media, onStarted }) {
                     episodeName={episode.name}
                 />
                 <FlexRow columnGap='2rem'>
-                    <Link theme={nextRoute ? 'secondary' : 'primary'} onClick={onStarted} to={media.route}>
+                    <ButtonLink theme={nextRoute ? 'secondary' : 'primary'} onClick={onClickBack}>
                         Back
-                    </Link>
-                    <Button theme={nextRoute ? 'secondary' : 'primary'} onClick={onClickBack}>
-                        Back
-                    </Button>
+                    </ButtonLink>
                     {nextRoute && (
-                        <>
-                            <Link theme='primary' onClick={onStarted} to={nextRoute}>
-                                Next
-                            </Link>
-                            <Button theme='primary' onClick={onClickNext}>
-                                Next
-                            </Button>
-                        </>
+                        <ButtonLink theme='primary' onClick={onClickNext}>
+                            Next
+                        </ButtonLink>
                     )}
                 </FlexRow>
             </FlexCol>

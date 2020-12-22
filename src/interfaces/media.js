@@ -7,6 +7,7 @@ const mediaInterface = PropTypes.shape({
     category: PropTypes.string,
     contentRating: PropTypes.string,
     description: PropTypes.string,
+    duration: PropTypes.string,
     genres: PropTypes.arrayOf(PropTypes.string),
     imdb: PropTypes.string,
     name: PropTypes.string,

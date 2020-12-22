@@ -88,6 +88,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
             category: mediaRef.category,
             contentRating: mediaRef.contentRating,
             description: mediaRef.description,
+            duration: mediaRef.duration,
             genres: mediaRef.genres,
             imdb: mediaRef.imdb,
             name: mediaRef.name,

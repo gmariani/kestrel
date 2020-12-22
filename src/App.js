@@ -11,7 +11,7 @@ export default function App() {
     return user ? (
         <Router>
             <Switch>
-                <Redirect from={ROUTES.SIGN_IN} to={ROUTES.BROWSE} />
+                <Redirect from={ROUTES.SIGN_IN} to='/browse' />
 
                 <Route path={ROUTES.BROWSE}>
                     <Browse />
@@ -26,7 +26,7 @@ export default function App() {
                 </Route>
 
                 <Route exact path={ROUTES.HOME}>
-                    <Redirect to={ROUTES.BROWSE} />
+                    <Redirect to='/browse' />
                 </Route>
             </Switch>
         </Router>

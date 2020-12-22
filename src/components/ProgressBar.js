@@ -6,7 +6,7 @@ const Track = styled.div`
     height: ${({ height }) => `${height}px;`};
     width: 100%;
     background-color: var(--trackBG);
-    cursor: pointer;
+    cursor: ${({ usePointer }) => (usePointer ? 'pointer' : 'default')};
     flex: 1;
 `;
 
@@ -21,29 +21,17 @@ const Progress = styled.div`
 const propTypes = {
     height: PropTypes.number,
     value: PropTypes.number,
-    theme: PropTypes.string,
+    usePointer: PropTypes.bool,
     onClick: PropTypes.func,
-    innerRef: PropTypes.shape({
-        current: PropTypes.node,
-    }),
 };
 
-const ProgressBar = React.forwardRef(({ height = 5, value = 0, theme = 'light', onClick }, ref) => {
-    const bgColor = theme === 'dark' ? 'rgba(0,0,0, 0.6)' : 'rgba(255,255,255, 0.6)';
-    const bgColor2 = theme === 'dark' ? 'rgba(0,0,0, 0.25)' : 'rgba(255,255,255, 0.25)';
-
+const ProgressBar = ({ height = 5, value = 0, usePointer = true, onClick }) => {
     return (
-        <Track
-            ref={ref}
-            height={height}
-            theme={theme}
-            onClick={onClick}
-            // style={{ '--progressBG': bgColor, '--trackBG': bgColor2 }}
-        >
+        <Track height={height} onClick={onClick} usePointer={usePointer}>
             <Progress height={height} width={value} />
         </Track>
     );
-});
+};
 
 ProgressBar.propTypes = propTypes;
 export default ProgressBar;

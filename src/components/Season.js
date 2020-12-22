@@ -38,17 +38,16 @@ const Container = styled.button`
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    numEpisodes: PropTypes.number,
+    episodeCount: PropTypes.number,
     className: PropTypes.string,
     onClick: PropTypes.func,
 };
 
-function Season({ title, numEpisodes = 0, className = '', onClick }) {
-    const subTitle = `${numEpisodes} ${numEpisodes > 1 || numEpisodes === 0 ? 'Episodes' : 'Episode'}`;
+function Season({ title, episodeCount = 0, className = '', onClick }) {
     return (
         <Container className={className} onClick={onClick}>
             {capitalize(title)}
-            <SubTitle>{subTitle}</SubTitle>
+            <SubTitle>{`${episodeCount} ${episodeCount > 1 || episodeCount === 0 ? 'Episodes' : 'Episode'}`}</SubTitle>
         </Container>
     );
 }

@@ -1,4 +1,5 @@
 export { default as Button } from './Button';
+export { default as ButtonLink } from './ButtonLink';
 export { default as Column } from './Column';
 export { default as Credits } from './Credits';
 export { default as CreditsPreview } from './CreditsPreview';

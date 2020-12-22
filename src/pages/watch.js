@@ -13,12 +13,11 @@ export default function Watch() {
     const [ended, setEnded] = useState(false);
 
     if (!media.loaded) return <Loading visible />;
-    console.log('ended', ended);
+
     return ended ? (
         <CreditsContainer
             media={media}
             onStarted={() => {
-                console.log('onstarted clicked');
                 setEnded(false);
             }}
         />

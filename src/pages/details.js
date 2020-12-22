@@ -13,7 +13,7 @@ export default function Details() {
 
     // Get previous played history, if no history select first episode of first season
     const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
-        progress: [],
+        progress: [[0]],
         lastSeasonIndex: 0,
         lastEpisodeIndex: 0,
     });
@@ -23,14 +23,16 @@ export default function Details() {
     const SEASONS_ELEMENT = 'seasons';
     const DETAILS_ELEMENT = 'details';
     const EPISODES_ELEMENT = 'episodes';
-    const focusElements = isSingle ? [DETAILS_ELEMENT] : [DETAILS_ELEMENT, EPISODES_ELEMENT, SEASONS_ELEMENT];
+    const focusElements = [DETAILS_ELEMENT];
+    if (!isSingle) focusElements.push(EPISODES_ELEMENT);
+    if (!isSingle && media.seasons.length > 1) focusElements.push(SEASONS_ELEMENT);
     const [focusElement, focusKey] = useFocus(focusElements, 'horizontal');
 
     // If Firebase hasn't replied yet, show loading screen
     if (!media.loaded) return <Loading visible />;
 
     // If no season is selected and previous season exists, redirect to that
-    if (seasonSlug === undefined && lastSeasonIndex !== undefined) {
+    if (media.seasons && seasonSlug === undefined && lastSeasonIndex !== undefined) {
         return (
             <Redirect
                 to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`}
@@ -43,35 +45,29 @@ export default function Details() {
         return <Redirect to='/browse' />;
     }
 
-    // Get last/initial episode meta
-    const lastEpisode = !isSingle ? media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex] : null;
-    const lastEpisodeProgress = lastEpisode
-        ? getEpisodeProgress(progress?.[lastSeasonIndex]?.[lastEpisodeIndex], lastEpisode.duration)
-        : null;
-    function getLastRoute() {
-        if (lastEpisode) {
-            return isSingle
-                ? `/${categorySlug}/${mediaSlug}/watch`
-                : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(lastEpisode.name)}`;
-        }
-        return null;
-    }
-    const lastEpisodeRoute = getLastRoute(isSingle, lastEpisode);
+    // Get start (last/initial) episode meta
+    const startEpisode = isSingle ? media : media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex];
+    const startEpisodeProgress = getEpisodeProgress(
+        progress?.[lastSeasonIndex]?.[lastEpisodeIndex],
+        startEpisode.duration
+    );
+    const startEpisodeRoute = isSingle
+        ? `/${categorySlug}/${mediaSlug}/watch`
+        : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(startEpisodeProgress.name)}`;
 
     return (
         <>
             <TempContainer>
                 <HeaderContainer hideMenu />
                 <FlexRow style={{ height: '100%' }} columnGap='2rem'>
-                    {!isSingle && (
+                    {!isSingle && media.seasons.length > 1 && (
                         <SeasonContainer
                             hasFocus={focusElement === SEASONS_ELEMENT}
                             seasons={media.seasons}
-                            onClickSeason={(seasonIndex) => {
+                            onClick={(seasonIndex) => {
                                 history.replace(
-                                    `/${toSlug(media.category)}/${media.slug}/details/${toSlug(
-                                        media.seasons[seasonIndex].name
-                                    )}`
+                                    // prettier-ignore
+                                    `/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[seasonIndex].name)}`
                                 );
                             }}
                         />
@@ -80,22 +76,25 @@ export default function Details() {
                         hasFocus={focusElement === DETAILS_ELEMENT}
                         isSingle={isSingle}
                         media={media}
-                        lastSeasonIndex={lastSeasonIndex}
-                        lastEpisodeIndex={lastEpisodeIndex}
-                        lastEpisodeProgress={lastEpisodeProgress}
-                        lastEpisodeRoute={lastEpisodeRoute}
-                        onClickRestart={() => {
-                            // Copy progress
-                            const tempProgress = [...progress];
+                        startSeasonIndex={lastSeasonIndex}
+                        startEpisodeIndex={lastEpisodeIndex}
+                        startEpisodeProgress={startEpisodeProgress}
+                        startEpisodeRoute={startEpisodeRoute}
+                        onClickWatch={() => {
+                            history.push(startEpisodeRoute);
+                        }}
+                        onClickRestart={(navigate) => {
                             // If season array doesn't exist yet, create it
-                            if (!tempProgress[lastSeasonIndex]) tempProgress[lastSeasonIndex] = [];
+                            if (!progress[lastSeasonIndex]) progress[lastSeasonIndex] = [];
                             // Reset episode progress
-                            tempProgress[lastSeasonIndex][lastEpisodeIndex] = 0;
+                            progress[lastSeasonIndex][lastEpisodeIndex] = 0;
                             setPlayHistory({
-                                progress: tempProgress,
+                                progress,
                                 lastSeasonIndex,
                                 lastEpisodeIndex,
                             });
+
+                            if (navigate) history.push(startEpisodeRoute);
                         }}
                     />
                     {!isSingle && (
