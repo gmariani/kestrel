@@ -31,3 +31,6 @@ export { default as TrackBar } from './TrackBar';
 export { default as FlexItem } from './FlexItem';
 export { default as FlexRow } from './FlexRow';
 export { default as FlexCol } from './FlexCol';
+export { default as SubOverlay } from './SubOverlay';
+export { default as HalfPane } from './HalfPane';
+export { default as FadeBackground } from './FadeBackground';

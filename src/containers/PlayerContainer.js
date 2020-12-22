@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
@@ -12,6 +12,8 @@ import {
     EpisodeTitle,
     FlexRow,
     FlexCol,
+    SubOverlay,
+    HalfPane,
 } from '../components';
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage } from '../hooks';
@@ -25,14 +27,15 @@ function PlayerContainer({ media, onEnded }) {
     // Hooks
     const history = useHistory();
     const playerRef = useRef();
+    const [showSettings, setShowSettings] = useState(false);
+    const [showInfo, setShowInfo] = useState(false);
     const [currentProgress, setCurrentProgress] = useState(0);
     const [currentSeconds, setCurrentSeconds] = useState(0);
     const [totalSeconds, setTotalSeconds] = useState(0);
     const [playing, setPlaying] = useState(true);
     const [buffering, setBuffering] = useState(false);
-    // TODO Only increase last played if it's greater than before, reset once series end reached
     const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
-        progress: [],
+        progress: [[0]],
         lastSeasonIndex: 0,
         lastEpisodeIndex: 0,
     });
@@ -59,10 +62,14 @@ function PlayerContainer({ media, onEnded }) {
     const playerProgressHandler = ({ played, playedSeconds }) => {
         // Update progress
         playHistory.progress[season.index][episode.index] = playedSeconds;
+
         setPlayHistory({
             progress: playHistory.progress,
-            lastSeasonIndex: season.index,
-            lastEpisodeIndex: episode.index,
+            lastSeasonIndex: playHistory.lastSeasonIndex < season.index ? season.index : playHistory.lastSeasonIndex,
+            lastEpisodeIndex:
+                playHistory.lastSeasonIndex < season.index || playHistory.lastEpisodeIndex < episode.index
+                    ? episode.index
+                    : playHistory.lastEpisodeIndex,
         });
 
         setCurrentProgress(played * 100);
@@ -72,6 +79,7 @@ function PlayerContainer({ media, onEnded }) {
     const playerEndHandler = () => {
         // Reset episode progress
         playHistory.progress[season.index][episode.index] = 0;
+        // TODO Reset once series end reached, or continue into next season
         setPlayHistory({
             progress: playHistory.progress,
             lastSeasonIndex: season.index,
@@ -89,9 +97,9 @@ function PlayerContainer({ media, onEnded }) {
     };
     // End React Player //
 
-    const togglePlaying = () => {
+    const togglePlaying = useCallback(() => {
         if (!buffering) setPlaying(!playing);
-    };
+    }, [buffering, playing]);
 
     const seekHandler = (progressPercent) => {
         // Update UI immediately
@@ -106,7 +114,7 @@ function PlayerContainer({ media, onEnded }) {
 
     const [timeoutID, setTimeoutID] = useState(null);
     const inactivityHandler = (playerScreen) => {
-        playerScreen.classList.remove('show');
+        if (!showSettings && !showInfo) playerScreen.classList.remove('show');
     };
 
     const activityHandler = (event) => {
@@ -116,57 +124,87 @@ function PlayerContainer({ media, onEnded }) {
         setTimeoutID(setTimeout(inactivityHandler, 3000, playerScreen));
     };
 
-    const keyHandler = (event) => {
-        switch (event.key) {
-            case 'Spacebar':
-            case ' ':
-                event.preventDefault();
-                togglePlaying();
-                break;
+    const keyHandler = useCallback(
+        (event) => {
+            switch (event.key) {
+                case 'Spacebar':
+                case ' ':
+                    event.preventDefault();
+                    togglePlaying();
+                    break;
 
-            case 'Left':
-            case 'ArrowLeft':
-                event.preventDefault();
-                // TODO rewind 10 seconds
-                break;
-            case 'Right':
-            case 'ArrowRight':
-                event.preventDefault();
-                // TODO skip ahead 10 seconds
-                break;
+                case 'Left':
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    // TODO rewind 10 seconds
+                    break;
+                case 'Right':
+                case 'ArrowRight':
+                    event.preventDefault();
+                    // TODO skip ahead 10 seconds
+                    break;
 
-            case 'Down':
-            case 'ArrowDown':
-                //
-                break;
-            case 'Up':
-            case 'ArrowUp':
-                //
-                break;
+                case 'Down':
+                case 'ArrowDown':
+                    //
+                    break;
+                case 'Up':
+                case 'ArrowUp':
+                    //
+                    break;
 
-            case 'f':
-                // toggle full screen
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-                break;
+                case 'f':
+                    // toggle full screen
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                    break;
 
-            case 'Enter':
-                //
-                break;
-            case 'Esc':
-            case 'Escape':
-                //
-                break;
-            default:
-            // Quit when this doesn't handle the key event.
-        }
-    };
+                case 'Enter':
+                    //
+                    break;
+                case 'Esc':
+                case 'Escape':
+                    setShowSettings(false);
+                    setShowInfo(false);
+                    break;
+                default:
+                // Quit when this doesn't handle the key event.
+            }
+        },
+        [togglePlaying, setShowSettings, setShowInfo]
+    );
+    useEffect(() => {
+        document.addEventListener('keydown', keyHandler, false);
+        return () => {
+            document.removeEventListener('keydown', keyHandler, false);
+        };
+    }, [keyHandler]);
 
     return (
-        <Player onMouseMove={activityHandler} onKeyDown={keyHandler}>
+        <Player onMouseMove={activityHandler}>
+            {showSettings && (
+                <SubOverlay backgroundHue={media.backgroundHue}>
+                    <HalfPane backgroundHue={media.backgroundHue} backgroundPath={media.backgroundPath}>
+                        <div>Series Title</div>
+                        <div>Episode meta</div>
+                        <div>Description</div>
+                        <div>Button to series details page</div>
+                    </HalfPane>
+                </SubOverlay>
+            )}
+            {showInfo && (
+                <SubOverlay backgroundHue={media.backgroundHue}>
+                    <HalfPane backgroundHue={media.backgroundHue} backgroundPath={media.backgroundPath}>
+                        <div>Series Title</div>
+                        <div>Episode meta</div>
+                        <div>Description</div>
+                        <div>Button to series details page</div>
+                    </HalfPane>
+                </SubOverlay>
+            )}
             <PlayerOverlay>
                 <EpisodeTitle
                     isSingle={isSingle}
@@ -205,8 +243,8 @@ function PlayerContainer({ media, onEnded }) {
                         </FlexRow>
 
                         <FlexRow flexGrow={1} alignItems='start' justifyContent='end'>
-                            <IconButton label='Settings' icon='cog' />
-                            <IconButton label='Info' icon='info' />
+                            <IconButton label='Settings' icon='cog' onClick={() => setShowSettings(true)} />
+                            <IconButton label='Info' icon='info' onClick={() => setShowInfo(true)} />
                         </FlexRow>
                     </FlexRow>
                 </FlexCol>

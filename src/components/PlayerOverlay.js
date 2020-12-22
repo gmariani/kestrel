@@ -13,6 +13,7 @@ const Container = styled(FlexCol)`
     opacity: 0;
     transition: opacity 0.3s;
     padding: 4rem;
+    z-index: 5;
 
     .show & {
         opacity: 1;
