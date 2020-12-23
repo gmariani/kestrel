@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export default function useTMDB(type = 'tv', id, seasonNumber = null) {
+export default function useTMDB(type = 'tv', id, seasonNumber, episodeNumber) {
     const [tmdb, setTMDB] = useState([]);
     const apiKey = process.env.REACT_APP_TMDB_KEY;
 
@@ -11,6 +11,8 @@ export default function useTMDB(type = 'tv', id, seasonNumber = null) {
                     return `https://api.themoviedb.org/3/movie/${id}`;
                 case 'season':
                     return `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}`;
+                case 'episode':
+                    return `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}/episode/${episodeNumber}`;
                 case 'tv':
                 default:
                     return `https://api.themoviedb.org/3/tv/${id}`;
@@ -36,7 +38,7 @@ export default function useTMDB(type = 'tv', id, seasonNumber = null) {
                     });
                 }
             );
-    }, [apiKey, type, id, seasonNumber]);
+    }, [apiKey, type, id, seasonNumber, episodeNumber]);
 
     return { tmdb };
 }

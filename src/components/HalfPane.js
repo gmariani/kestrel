@@ -5,7 +5,7 @@ import FlexCol from './FlexCol';
 import FadeBackground from './FadeBackground';
 
 const Container = styled(FlexCol)`
-    padding: 5rem;
+    padding: 7rem 5rem;
     width: 50%;
     position: relative;
 `;

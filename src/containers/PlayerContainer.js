@@ -197,6 +197,8 @@ function PlayerContainer({ media, onEnded }) {
         };
     }, [keyHandler]);
 
+    // TODO: Finish settings, add toggles
+    // TODO: Add episode descriptions from TVDB?
     return (
         <Player onMouseMove={activityHandler}>
             {showSettings && (
@@ -209,13 +211,6 @@ function PlayerContainer({ media, onEnded }) {
             {showInfo && (
                 <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleInfo}>
                     <HalfPane backgroundHue={media.backgroundHue} backgroundPath={media.backgroundPath}>
-                        <PaneEpisodeTitle
-                            isSingle={isSingle}
-                            series={media}
-                            seasonNum={season.number}
-                            episodeNum={episode.number}
-                            episodeName={episode.name}
-                        />
                         <PaneEpisodeDetail
                             hasFocus
                             isSingle={isSingle}
