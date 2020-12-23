@@ -34,3 +34,6 @@ export { default as FlexCol } from './FlexCol';
 export { default as SubOverlay } from './SubOverlay';
 export { default as HalfPane } from './HalfPane';
 export { default as FadeBackground } from './FadeBackground';
+export { default as PaneEpisodeTitle } from './PaneEpisodeTitle';
+export { default as PaneEpisodeDetail } from './PaneEpisodeDetail';
+export { default as PaneEpisodeSettings } from './PaneEpisodeSettings';

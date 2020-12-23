@@ -45,6 +45,7 @@ const Container = styled(ReachRouterLink)`
         opacity: 1;
     }
 
+    &.selected,
     &.selected.focused,
     &:focus,
     &:hover {

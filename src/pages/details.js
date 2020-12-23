@@ -53,7 +53,7 @@ export default function Details() {
     );
     const startEpisodeRoute = isSingle
         ? `/${categorySlug}/${mediaSlug}/watch`
-        : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(startEpisodeProgress.name)}`;
+        : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(startEpisode.name)}`;
 
     return (
         <>

@@ -14,6 +14,9 @@ import {
     FlexCol,
     SubOverlay,
     HalfPane,
+    PaneEpisodeTitle,
+    PaneEpisodeDetail,
+    PaneEpisodeSettings,
 } from '../components';
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage } from '../hooks';
@@ -101,6 +104,14 @@ function PlayerContainer({ media, onEnded }) {
         if (!buffering) setPlaying(!playing);
     }, [buffering, playing]);
 
+    const toggleSettings = useCallback(() => {
+        setShowSettings(!showSettings);
+    }, [showSettings]);
+
+    const toggleInfo = useCallback(() => {
+        setShowInfo(!showInfo);
+    }, [showInfo]);
+
     const seekHandler = (progressPercent) => {
         // Update UI immediately
         setCurrentProgress(progressPercent * 100);
@@ -126,33 +137,35 @@ function PlayerContainer({ media, onEnded }) {
 
     const keyHandler = useCallback(
         (event) => {
+            switch (event.code) {
+                // 460 Subtitle
+                // 461 Back
+                // 457 Info
+                // 424 Prev
+                // 425 Next
+                // 402 Play/Pause
+                // 415 Play
+                // 19 Pause
+                case 412: // Rewind
+                    event.preventDefault();
+                    // Rewind 10 seconds
+                    playerRef.current.seekTo(playerRef.current.getCurrentTime() - 10);
+                    break;
+
+                case 417: // Fast Forward
+                    event.preventDefault();
+                    // Skip ahead 10 seconds
+                    playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10);
+                    break;
+                default:
+                // Quit when this doesn't handle the key event
+            }
             switch (event.key) {
                 case 'Spacebar':
                 case ' ':
                     event.preventDefault();
                     togglePlaying();
                     break;
-
-                case 'Left':
-                case 'ArrowLeft':
-                    event.preventDefault();
-                    // TODO rewind 10 seconds
-                    break;
-                case 'Right':
-                case 'ArrowRight':
-                    event.preventDefault();
-                    // TODO skip ahead 10 seconds
-                    break;
-
-                case 'Down':
-                case 'ArrowDown':
-                    //
-                    break;
-                case 'Up':
-                case 'ArrowUp':
-                    //
-                    break;
-
                 case 'f':
                     // toggle full screen
                     if (!document.fullscreenElement) {
@@ -161,20 +174,21 @@ function PlayerContainer({ media, onEnded }) {
                         document.exitFullscreen();
                     }
                     break;
-
-                case 'Enter':
-                    //
-                    break;
                 case 'Esc':
                 case 'Escape':
-                    setShowSettings(false);
-                    setShowInfo(false);
+                    if (showSettings || showInfo) {
+                        setShowSettings(false);
+                        setShowInfo(false);
+                    } else {
+                        history.push(media.route);
+                    }
+
                     break;
                 default:
-                // Quit when this doesn't handle the key event.
+                // Quit when this doesn't handle the key event
             }
         },
-        [togglePlaying, setShowSettings, setShowInfo]
+        [togglePlaying, showSettings, setShowSettings, showInfo, setShowInfo, history, media]
     );
     useEffect(() => {
         document.addEventListener('keydown', keyHandler, false);
@@ -186,22 +200,30 @@ function PlayerContainer({ media, onEnded }) {
     return (
         <Player onMouseMove={activityHandler}>
             {showSettings && (
-                <SubOverlay backgroundHue={media.backgroundHue}>
-                    <HalfPane backgroundHue={media.backgroundHue} backgroundPath={media.backgroundPath}>
-                        <div>Series Title</div>
-                        <div>Episode meta</div>
-                        <div>Description</div>
-                        <div>Button to series details page</div>
+                <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleSettings}>
+                    <HalfPane backgroundHue={media.backgroundHue}>
+                        <PaneEpisodeSettings />
                     </HalfPane>
                 </SubOverlay>
             )}
             {showInfo && (
-                <SubOverlay backgroundHue={media.backgroundHue}>
+                <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleInfo}>
                     <HalfPane backgroundHue={media.backgroundHue} backgroundPath={media.backgroundPath}>
-                        <div>Series Title</div>
-                        <div>Episode meta</div>
-                        <div>Description</div>
-                        <div>Button to series details page</div>
+                        <PaneEpisodeTitle
+                            isSingle={isSingle}
+                            series={media}
+                            seasonNum={season.number}
+                            episodeNum={episode.number}
+                            episodeName={episode.name}
+                        />
+                        <PaneEpisodeDetail
+                            hasFocus
+                            isSingle={isSingle}
+                            media={media}
+                            onClickDetails={() => {
+                                history.push(media.route);
+                            }}
+                        />
                     </HalfPane>
                 </SubOverlay>
             )}

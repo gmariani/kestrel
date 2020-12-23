@@ -29,6 +29,8 @@ const propTypes = {
     justifyContent: PropTypes.string,
     justifyItems: PropTypes.string,
     justifySelf: PropTypes.string,
+    onClick: PropTypes.func,
+    onClickCapture: PropTypes.func,
 };
 
 function FlexItem({
@@ -42,6 +44,8 @@ function FlexItem({
     justifyContent,
     justifyItems,
     justifySelf,
+    onClick,
+    onClickCapture,
 }) {
     return (
         <Container
@@ -53,7 +57,9 @@ function FlexItem({
             alignSelf={alignSelf}
             justifyContent={justifyContent}
             justifyItems={justifyItems}
-            justifySelf={justifySelf}>
+            justifySelf={justifySelf}
+            onClick={onClick}
+            onClickCapture={onClickCapture}>
             {children}
         </Container>
     );

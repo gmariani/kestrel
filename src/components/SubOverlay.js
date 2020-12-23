@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import FlexRow from './FlexRow';
 
-// TODO overlay is in series color
 const Container = styled(FlexRow)`
     background-color: hsla(var(--hue), 50%, 40%, 0.5);
     top: 0px;
@@ -23,11 +22,12 @@ const Container = styled(FlexRow)`
 const propTypes = {
     children: PropTypes.node,
     backgroundHue: PropTypes.number,
+    onClick: PropTypes.func,
 };
 
-function SubOverlay({ children, backgroundHue }) {
+function SubOverlay({ children, backgroundHue, onClick }) {
     return (
-        <Container justifyContent='end' style={{ '--hue': backgroundHue > 0 ? backgroundHue : 0 }}>
+        <Container justifyContent='end' style={{ '--hue': backgroundHue > 0 ? backgroundHue : 0 }} onClick={onClick}>
             {children}
         </Container>
     );

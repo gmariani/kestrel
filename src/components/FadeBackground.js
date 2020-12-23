@@ -26,7 +26,11 @@ const Base = styled(Layer)`
 `;
 
 const Gradient = styled(Layer)`
-    background-image: linear-gradient(180deg, hsla(var(--hue), 50%, 40%, 0) 35%, hsla(var(--hue), 50%, 40%, 1) 70%);
+    background-image: linear-gradient(
+        180deg,
+        hsla(var(--hue), 50%, 40%, 0) ${({ split }) => split / 2}%,
+        hsla(var(--hue), 50%, 40%, 1) ${({ split }) => split}%
+    );
 `;
 
 const Art = styled(Layer)`
@@ -46,15 +50,16 @@ const Scrim = styled(Layer)`
 const propTypes = {
     hue: PropTypes.number,
     base: PropTypes.string,
+    split: PropTypes.number,
     imagePath: PropTypes.string,
 };
 
-const FadeBackground = ({ hue = -1, base = '#292C33', imagePath = '' }) => {
+const FadeBackground = ({ hue = -1, base = '#292C33', split = 70, imagePath = '' }) => {
     return (
         <Container style={{ '--hue': hue > 0 ? hue : 0, '--base': base }}>
             <Base />
             {imagePath !== '' ? <Art src={imagePath} /> : null}
-            <Gradient />
+            <Gradient split={split} />
             <Scrim />
         </Container>
     );

@@ -5,7 +5,7 @@ import FlexCol from './FlexCol';
 import FadeBackground from './FadeBackground';
 
 const Container = styled(FlexCol)`
-    padding: 4rem;
+    padding: 5rem;
     width: 50%;
     position: relative;
 `;
@@ -14,6 +14,8 @@ const Content = styled.div`
     position: relative;
     z-index: 5;
     color: white;
+    font-size: 1.5rem;
+    pointer-events: auto;
 `;
 
 const propTypes = {
@@ -24,9 +26,18 @@ const propTypes = {
 
 function HalfPane({ children, backgroundHue, backgroundPath }) {
     return (
-        <Container>
+        <Container
+            onClick={(e) => {
+                // Only if they click the background
+                if (e.currentTarget.className.includes('HalfPane__Container')) e.stopPropagation();
+            }}>
             <Content>{children}</Content>
-            <FadeBackground hue={backgroundHue} base='hsl(var(--hue), 50%, 40%)' imagePath={backgroundPath} />
+            <FadeBackground
+                hue={backgroundHue}
+                base='hsl(var(--hue), 50%, 40%)'
+                imagePath={backgroundPath}
+                split={40}
+            />
         </Container>
     );
 }

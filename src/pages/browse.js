@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useContent } from '../hooks';
-import { TempContainer, Shadow, ScrimBackground } from '../components';
+import { TempContainer, Shadow, FadeBackground, ScrimBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
 import { toSlug } from '../utils';
 
@@ -52,7 +52,7 @@ export default function Browse() {
                 />
             </TempContainer>
             {/* <Shadow /> */}
-            <ScrimBackground hue={11.2} base='#131c37' />
+            <FadeBackground hue={11.2} base='#182848' split={100} />
         </>
     );
 }

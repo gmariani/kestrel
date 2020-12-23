@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, TempContainer, Gradient, SignInForm, SecurityCode, Footer } from '../components';
 import FirebaseContext from '../context/firebase';
-import * as ROUTES from '../constants/routes';
 
 export default function SignIn() {
     const history = useHistory();

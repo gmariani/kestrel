@@ -22,6 +22,8 @@ const propTypes = {
     justifyContent: PropTypes.string,
     justifyItems: PropTypes.string,
     justifySelf: PropTypes.string,
+    onClick: PropTypes.func,
+    onClickCapture: PropTypes.func,
 };
 
 function FlexCol({
@@ -36,6 +38,8 @@ function FlexCol({
     justifyContent,
     justifyItems,
     justifySelf,
+    onClick,
+    onClickCapture,
 }) {
     return (
         <Container
@@ -48,7 +52,9 @@ function FlexCol({
             alignSelf={alignSelf}
             justifyContent={justifyContent}
             justifyItems={justifyItems}
-            justifySelf={justifySelf}>
+            justifySelf={justifySelf}
+            onClick={onClick}
+            onClickCapture={onClickCapture}>
             {children}
         </Container>
     );
