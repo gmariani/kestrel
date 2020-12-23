@@ -15,7 +15,6 @@ const mediaInterface = PropTypes.shape({
     resolution: PropTypes.string,
     seasons: PropTypes.arrayOf(
         PropTypes.shape({
-            episodeCount: PropTypes.number,
             episodes: PropTypes.arrayOf(
                 PropTypes.shape({
                     duration: PropTypes.string,

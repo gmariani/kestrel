@@ -198,7 +198,6 @@ function PlayerContainer({ media, onEnded }) {
     }, [keyHandler]);
 
     // TODO: Finish settings, add toggles
-    // TODO: Add episode descriptions from TVDB?
     return (
         <Player onMouseMove={activityHandler}>
             {showSettings && (
@@ -210,16 +209,14 @@ function PlayerContainer({ media, onEnded }) {
             )}
             {showInfo && (
                 <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleInfo}>
-                    <HalfPane backgroundHue={media.backgroundHue} backgroundPath={media.backgroundPath}>
-                        <PaneEpisodeDetail
-                            hasFocus
-                            isSingle={isSingle}
-                            media={media}
-                            onClickDetails={() => {
-                                history.push(media.route);
-                            }}
-                        />
-                    </HalfPane>
+                    <PaneEpisodeDetail
+                        hasFocus
+                        isSingle={isSingle}
+                        media={media}
+                        onClickDetails={() => {
+                            history.push(media.route);
+                        }}
+                    />
                 </SubOverlay>
             )}
             <PlayerOverlay>

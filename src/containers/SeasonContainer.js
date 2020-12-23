@@ -67,7 +67,7 @@ function SeasonContainer({ hasFocus = false, seasons, onClick }) {
                         // eslint-disable-next-line react/no-array-index-key
                         key={i}
                         title={season.name}
-                        episodeCount={season.episodeCount}
+                        episodeCount={season.episodes.length}
                         className={`season ${i === selectedSeason ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
                         onClick={() => onClick(i)}
                     />

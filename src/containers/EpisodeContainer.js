@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 import { Redirect } from 'react-router-dom';
 import { Column, Episode } from '../components';
 import { getEpisodeProgress, padNumber, toSlug } from '../utils';
-import { useFocus } from '../hooks';
+import { useFocus, useTMDB } from '../hooks';
 
 const Container = styled.div`
     display: flex;
@@ -19,18 +19,30 @@ const Container = styled.div`
 
 const propTypes = {
     hasFocus: PropTypes.bool,
+    tmdbId: PropTypes.number,
     episodes: PropTypes.arrayOf(PropTypes.object).isRequired,
+    seasonNumber: PropTypes.number,
     seasonProgress: PropTypes.arrayOf(PropTypes.number),
     routePrefix: PropTypes.string.isRequired,
 };
 
-function EpisodeContainer({ hasFocus = false, episodes = [], seasonProgress = [], routePrefix }) {
+function EpisodeContainer({
+    hasFocus = false,
+    tmdbId,
+    episodes = [],
+    seasonNumber = 1,
+    seasonProgress = [],
+    routePrefix,
+}) {
     // Manage focused element
     const [focusElement, focusKey] = useFocus(
         episodes.map((episode, i) => i),
         'vertical',
         hasFocus
     );
+
+    // Grab thumbnails for episodes
+    const { tmdb } = useTMDB('season', tmdbId, seasonNumber);
 
     // On focusElement change, move element into view
     useEffect(() => {
@@ -54,13 +66,17 @@ function EpisodeContainer({ hasFocus = false, episodes = [], seasonProgress = []
                     const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const episodeSlug = toSlug(episode.name);
                     const episodeProgress = getEpisodeProgress(seasonProgress?.[i], episode.duration);
+                    const episodeThumbnail =
+                        tmdb && tmdb.isLoaded
+                            ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2/${tmdb.data.episodes[i].still_path}`
+                            : episode.thumbnail;
 
                     return (
                         <Episode
                             key={episodeSlug}
                             to={`${routePrefix}${episodeSlug}`}
                             className={`episode ${classSelected} ${classFocused}`}
-                            imagePath={episode.thumbnail}
+                            imagePath={episodeThumbnail}
                             title={episode.name}
                             episodeNumber={padNumber(i + 1)}
                             progress={episodeProgress}

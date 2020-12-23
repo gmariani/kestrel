@@ -38,6 +38,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
             slug: seasonSlug,
             route: `/tv/${mediaSlug}/details/${seasonSlug}`,
             name: seasonRef.name,
+            background: seasonRef?.background,
             episodes,
         };
 

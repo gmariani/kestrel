@@ -5,6 +5,7 @@ import styled from 'styled-components/macro';
 import { FaArrowRight } from 'react-icons/fa';
 import FlexCol from './FlexCol';
 import ButtonLink from './ButtonLink';
+import HalfPane from './HalfPane';
 import mediaInterface from '../interfaces/media';
 import { useFocus, useTMDB } from '../hooks';
 
@@ -43,6 +44,20 @@ const Description = styled.p`
     line-height: 2rem;
     font-weight: 400;
     margin-bottom: 0;
+`;
+
+const Attribution = styled.span`
+    font-size: 1rem;
+    position: absolute;
+    bottom: 0;
+`;
+
+const SVGImg = styled.img`
+    width: auto;
+    height: 0.75rem;
+    pointer-events: none;
+    user-select: none;
+    margin-right: 1rem;
 `;
 
 function getMeta(episodeTitle, seasonNum = 0, episodeNum = 0, isSingle = false) {
@@ -96,27 +111,39 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
     }
 
     return (
-        <Container justifyContent='end'>
-            <Title>{media.name}</Title>
-            <Meta>{getMeta(media.episode.name, media.season.number, media.episode.number, isSingle)}</Meta>
-            {tmdb && tmdb.isLoaded ? (
-                <>
-                    <Description>{tmdb.data.overview}</Description>
-                    <PostMeta>{getPostMeta(tmdb.data?.air_date, media?.contentRating)}</PostMeta>
-                </>
-            ) : (
-                <>
-                    <Description>Loading...</Description>
-                    <PostMeta>{getPostMeta(null, media?.contentRating)}</PostMeta>
-                </>
-            )}
+        <HalfPane
+            backgroundHue={media.backgroundHue}
+            backgroundPath={
+                tmdb && tmdb.isLoaded && tmdb.data?.still_path
+                    ? `https://image.tmdb.org/t/p/original/${tmdb.data?.still_path}`
+                    : media.backgroundPath
+            }>
+            <Container justifyContent='end'>
+                <Title>{media.name}</Title>
+                <Meta>{getMeta(media.episode.name, media.season.number, media.episode.number, isSingle)}</Meta>
+                {tmdb && tmdb.isLoaded ? (
+                    <>
+                        <Description>{tmdb.data.overview}</Description>
+                        <PostMeta>{getPostMeta(tmdb.data?.air_date, media?.contentRating)}</PostMeta>
+                    </>
+                ) : (
+                    <>
+                        <Description>Loading...</Description>
+                        <PostMeta>{getPostMeta(null, media?.contentRating)}</PostMeta>
+                    </>
+                )}
 
-            <FlexCol rowGap='2rem' style={{ marginTop: '2rem' }}>
-                <ButtonLink onClick={onClickDetails} className='selected focused'>
-                    <FaArrowRight /> {isSingle ? 'Movie Details' : `Show Details`}
-                </ButtonLink>
-            </FlexCol>
-        </Container>
+                <FlexCol rowGap='2rem' style={{ marginTop: '2rem' }}>
+                    <ButtonLink onClick={onClickDetails} className='selected focused'>
+                        <FaArrowRight /> {isSingle ? 'Movie Details' : `Show Details`}
+                    </ButtonLink>
+                </FlexCol>
+                <Attribution>
+                    <SVGImg alt='The Movie Database' src={`${process.env.PUBLIC_URL}/tmdb_logo.svg`} /> This product
+                    uses the TMDb API but is not endorsed or certified by TMDb.
+                </Attribution>
+            </Container>
+        </HalfPane>
     );
 }
 

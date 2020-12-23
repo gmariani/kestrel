@@ -54,7 +54,7 @@ export default function Details() {
     const startEpisodeRoute = isSingle
         ? `/${categorySlug}/${mediaSlug}/watch`
         : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(startEpisode.name)}`;
-
+    console.log(media.season);
     return (
         <>
             <TempContainer>
@@ -101,7 +101,9 @@ export default function Details() {
                         <EpisodeContainer
                             hasFocus={focusElement === EPISODES_ELEMENT}
                             lastEpisodeIndex={lastSeasonIndex === season.index ? lastEpisodeIndex : null}
+                            tmdbId={media?.tmdb}
                             episodes={season.episodes}
+                            seasonNumber={season.number}
                             seasonProgress={progress?.[season.index]}
                             routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
                         />
@@ -109,7 +111,7 @@ export default function Details() {
                 </FlexRow>
             </TempContainer>
             <Shadow opacity={0.9} />
-            <ScrimBackground hue={media.backgroundHue} imagePath={media.backgroundPath} />
+            <ScrimBackground hue={media.backgroundHue} imagePath={media.season.background ?? media.backgroundPath} />
         </>
     );
 }
