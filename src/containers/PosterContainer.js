@@ -67,19 +67,21 @@ function PosterContainer({ hasFocus, selectedCategory, posters }) {
 
     return (
         <Row>
-            {posters.map((poster) => (
-                <Poster
-                    key={poster.docId}
-                    imagePath={poster.posterPath}
-                    title={poster.name}
-                    year={poster.year}
-                    genres={poster.genres}
-                    // prettier-ignore
-                    className={`${poster.docId === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                    //  to={`${ROUTES.DETAILS}${poster.docId}`}
-                    to={`/${toSlug(selectedCategory)}/${toSlug(poster.name)}/details`}
-                />
-            ))}
+            {posters.map((poster) => {
+                return (
+                    <Poster
+                        key={poster.docId}
+                        imagePath={poster.posterPath}
+                        title={poster.name}
+                        year={poster?.year ?? (poster.seasons ? poster.seasons[0]?.year : null)}
+                        genres={poster.genres}
+                        // prettier-ignore
+                        className={`${poster.docId === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
+                        //  to={`${ROUTES.DETAILS}${poster.docId}`}
+                        to={`/${toSlug(selectedCategory)}/${toSlug(poster.name)}/details`}
+                    />
+                );
+            })}
         </Row>
     );
 }

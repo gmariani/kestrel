@@ -21,6 +21,16 @@ import {
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage } from '../hooks';
 
+function getFileName(fullPath) {
+    // const startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+    // const filename = fullPath.substring(startIndex);
+    // if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+    //     filename = filename.substring(1);
+    // }
+    // return fullPath.split(/(\\|\/)/g).pop();
+    return fullPath.match(/^.*?([^\\/.]*)[^\\/]*$/)[1];
+}
+
 const propTypes = {
     media: mediaInterface,
     onEnded: PropTypes.func,
@@ -293,7 +303,7 @@ function PlayerContainer({ media, onEnded }) {
                         tracks: [
                             {
                                 kind: 'subtitles',
-                                src: episode.subPath,
+                                src: episode?.subPath ?? `${getFileName(episode.filePath)}.vtt}`,
                                 srcLang: 'en',
                                 default: true,
                             },

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useContent } from '../hooks';
-import { TempContainer, Shadow, FadeBackground, ScrimBackground } from '../components';
+import { TempContainer, Shadow, FadeBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
 import { toSlug } from '../utils';
 
@@ -48,7 +48,7 @@ export default function Browse() {
                 <PosterContainer
                     hasFocus={focusElements[focus] === 'posters'}
                     selectedCategory={selectedCategory}
-                    posters={media.filter((poster) => selectedCategory === toSlug(poster.category))}
+                    posters={media.filter((series) => selectedCategory === toSlug(series.category))}
                 />
             </TempContainer>
             {/* <Shadow /> */}

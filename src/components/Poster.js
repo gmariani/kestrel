@@ -5,7 +5,7 @@ import { Link as ReachRouterLink } from 'react-router-dom';
 import simpleSvgPlaceholder from '@cloudfour/simple-svg-placeholder';
 
 const Container = styled(ReachRouterLink)`
-    max-width: 466px;
+    max-width: 400px;
     transition: all 0.2s ease-in-out;
     &:focus,
     &.focused.selected,
@@ -64,7 +64,7 @@ function Poster({ imagePath, to, title = 'No Title', year = 1900, genres = [], c
 
     return (
         <Container to={to} className={className}>
-            <Image src={imagePath ?? placeholderPath} height='700' width='466' />
+            <Image src={imagePath ?? placeholderPath} height='600' width='400' />
             <Title>
                 {title}
                 <span>({year})</span>

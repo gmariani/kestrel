@@ -144,12 +144,12 @@ function EpisodeDetail({
     return (
         <Container justifyContent='end'>
             <Title>{media.name}</Title>
-            <Description>{media.description}</Description>
+            <Description>{media.season.description}</Description>
             <Meta>
                 {getMetaLabel(
                     isSingle,
                     media?.contentRating,
-                    media?.year,
+                    media.season?.year ?? media?.year,
                     media?.duration,
                     media?.genres,
                     media?.category

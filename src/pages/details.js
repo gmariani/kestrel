@@ -54,7 +54,7 @@ export default function Details() {
     const startEpisodeRoute = isSingle
         ? `/${categorySlug}/${mediaSlug}/watch`
         : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(startEpisode.name)}`;
-    console.log(media.season);
+
     return (
         <>
             <TempContainer>

@@ -38,7 +38,10 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
             slug: seasonSlug,
             route: `/tv/${mediaSlug}/details/${seasonSlug}`,
             name: seasonRef.name,
-            background: seasonRef?.background,
+            year: seasonRef?.year ?? mediaRef?.year,
+            description: seasonRef?.description ?? mediaRef?.description,
+            background: seasonRef?.background ?? mediaRef?.backgroundPath,
+            resolution: seasonRef?.resolution ?? mediaRef?.resolution,
             episodes,
         };
 
@@ -98,7 +101,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
             seasons: isSingle ? null : mediaRef.seasons,
             slug: mediaRef.slug,
             tmdb: mediaRef.tmdb,
-            year: mediaRef.year,
+            year: mediaRef?.year ?? (isSingle ? null : mediaRef.seasons[0]?.year),
 
             season,
             episode,
