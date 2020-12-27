@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Row, Poster } from '../components';
 import * as ROUTES from '../constants/routes';
 import { toSlug } from '../utils';
+import { useAWSCategoryMedia } from '../hooks';
 
 const propTypes = {
     hasFocus: PropTypes.bool,
@@ -19,6 +20,9 @@ const defaultProps = {
 function PosterContainer({ hasFocus, selectedCategory, posters }) {
     const [selectedPoster, setSelectedPoster] = useState('');
     const history = useHistory();
+
+    const awsCategoryMedia = useAWSCategoryMedia(`${selectedCategory}/`);
+    console.log('Browse awsCategoryMedia', awsCategoryMedia);
 
     // Check if selected poster is available in this category, if not
     // reset it to the first poster

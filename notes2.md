@@ -5,6 +5,28 @@ Install firebase
 Install normalize.css
 Create global styles:
 
+Media Structure
+- Initial folders determine the main categories
+  - /animation
+  - /tv
+  - /kids
+- Within each category folder, there must be a folder for each series/movie
+  - /the office
+  - /iron man
+- Within each series/movie folder you can have a background.jpg/png file for the details page background. You can also have a poster.jpg/png file for the browse page poster image.
+- For series folders, you must have a folder for each season (or extras). The name format should be "## - Name". This will determine the order they show up and the label used. (Maybe allow any name and just have an index.json file?)
+- For season folders, you may have a background.jpg/png to override the series image. For each MP4 you may also have a *.vtt file of the same name for subtitles. You may also have a *.jpg/png of the same name for a thumbnail of that episode. If no thumbnail is provided, one can be searched for on TMDB if an ID was provided for the series.
+
+
+-------------------------------
+
+Step 1: Find the subtitle tracks
+mkvmerge -i "Gunbuster - 02.mkv"
+Step 2: Extract the subtitles
+mkvextract tracks "Gunbuster - 02.mkv" 4:"Gunbuster - 02.ssa" #:name.ssa
+Step 3: Convert the .ssa to .vtt
+https://subtitletools.com/convert-to-vtt-online
+Step 4: Convert the MKV to MP4
 
 mkvmerge -i "Gunbuster 2 - 01 - Please Let Me Call You Big Sister!.mkv"
 mkvmerge -i "Gunbuster 2 - 02 - Don't call me Big Sis!.mkv"

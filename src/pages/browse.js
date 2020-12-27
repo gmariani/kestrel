@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useContent } from '../hooks';
+import { useContent, useAWSCategories } from '../hooks';
 import { TempContainer, Shadow, FadeBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
 import { toSlug } from '../utils';
@@ -9,6 +9,8 @@ export default function Browse() {
     // HOOKS //
     const { content: categories } = useContent('categories', 'order');
     const { content: media } = useContent('media');
+    const awsCategories = useAWSCategories();
+    console.log('Browse awsCategories', awsCategories);
     const params = useParams();
 
     // Variables //

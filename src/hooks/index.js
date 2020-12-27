@@ -5,3 +5,5 @@ export { default as useMedia } from './useMedia';
 export { default as useTMDB } from './useTMDB';
 export { default as useLocalStorage } from './useLocalStorage';
 export { default as useFocus } from './useFocus';
+export { default as useAWSCategories } from './useAWSCategories';
+export { default as useAWSCategoryMedia } from './useAWSCategoryMedia';
