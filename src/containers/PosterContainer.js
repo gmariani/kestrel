@@ -3,59 +3,40 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { Row, Poster } from '../components';
 import * as ROUTES from '../constants/routes';
-import { toSlug } from '../utils';
+import { toSlug, capitalize } from '../utils';
 import { useAWSCategoryMedia } from '../hooks';
 
 const propTypes = {
     hasFocus: PropTypes.bool,
     selectedCategory: PropTypes.string,
-    posters: PropTypes.arrayOf(PropTypes.object),
 };
 
-const defaultProps = {
-    hasFocus: false,
-    posters: [],
-};
-
-function PosterContainer({ hasFocus, selectedCategory, posters }) {
+function PosterContainer({ hasFocus = false, selectedCategory }) {
     const [selectedPoster, setSelectedPoster] = useState('');
     const history = useHistory();
-
-    const awsCategoryMedia = useAWSCategoryMedia(`${selectedCategory}/`);
-    console.log('Browse awsCategoryMedia', awsCategoryMedia);
-
-    // Check if selected poster is available in this category, if not
-    // reset it to the first poster
-    const isPosterFound = !!posters.filter((poster) => poster.docId === selectedPoster).length;
-    if (!isPosterFound && posters.length) {
-        setSelectedPoster(posters[0].docId);
-    }
+    const { media: posters, category, baseURL } = useAWSCategoryMedia(`${selectedCategory}/`);
 
     useEffect(() => {
         const onKeyDown = (event) => {
             if (!hasFocus) return;
 
             const keyCode = event.which || event.keyCode;
-            const findPosterIndex = (selectedDocId) => {
-                const foundPosters = posters
-                    .map((poster, i) => ({ docId: poster.docId, index: i }))
-                    .filter((poster) => poster.docId === selectedDocId);
-                return foundPosters.length ? foundPosters[0].index : 0;
-            };
-            const foundIndex = findPosterIndex(selectedPoster);
+            const foundIndex = posters.findIndex((poster) => poster === selectedPoster);
+
             // (13) Enter
             if (keyCode === 13) {
                 history.push(`${ROUTES.DETAILS}${selectedPoster}`);
                 event.preventDefault();
             }
+
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
                 if (keyCode === 37) {
-                    setSelectedPoster(posters[(foundIndex - 1 + posters.length) % posters.length].docId);
+                    setSelectedPoster(posters[(foundIndex - 1 + posters.length) % posters.length]);
                 } else if (keyCode === 38) {
                     //
                 } else if (keyCode === 39) {
-                    setSelectedPoster(posters[(foundIndex + 1) % posters.length].docId);
+                    setSelectedPoster(posters[(foundIndex + 1) % posters.length]);
                 } else if (keyCode === 40) {
                     //
                 }
@@ -71,18 +52,16 @@ function PosterContainer({ hasFocus, selectedCategory, posters }) {
 
     return (
         <Row>
-            {posters.map((poster) => {
+            {posters.map((mediaDirectory) => {
+                const mediaSlug = mediaDirectory.slice(0, -1); // Remove ending slash
                 return (
                     <Poster
-                        key={poster.docId}
-                        imagePath={poster.posterPath}
-                        title={poster.name}
-                        year={poster?.year ?? (poster.seasons ? poster.seasons[0]?.year : null)}
-                        genres={poster.genres}
+                        key={mediaDirectory}
+                        mediaPath={`${baseURL}${category}${mediaDirectory}`}
+                        title={capitalize(mediaSlug.replaceAll('_', ' '))}
                         // prettier-ignore
-                        className={`${poster.docId === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                        //  to={`${ROUTES.DETAILS}${poster.docId}`}
-                        to={`/${toSlug(selectedCategory)}/${toSlug(poster.name)}/details`}
+                        className={`${mediaDirectory === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
+                        to={`/${toSlug(selectedCategory)}/${mediaSlug}/details`}
                     />
                 );
             })}
@@ -91,5 +70,4 @@ function PosterContainer({ hasFocus, selectedCategory, posters }) {
 }
 
 PosterContainer.propTypes = propTypes;
-PosterContainer.defaultProps = defaultProps;
 export default PosterContainer;

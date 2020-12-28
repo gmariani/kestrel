@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
-import simpleSvgPlaceholder from '@cloudfour/simple-svg-placeholder';
+import { useAWSMedia } from '../hooks';
+// import getTMDB from '../utils/getTMDB';
+import LazyImage from './LazyImage';
 
 const Container = styled(ReachRouterLink)`
     max-width: 400px;
@@ -15,7 +17,7 @@ const Container = styled(ReachRouterLink)`
     }
 `;
 
-const Image = styled.img`
+const Image = styled(LazyImage)`
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));
     border-radius: 20px;
     margin-bottom: 0.5rem;
@@ -43,33 +45,68 @@ const SubTitle = styled.p`
     color: #ffffff;
 `;
 
+const TextPlaceHolder = styled.div`
+    width: 100%;
+    height: 2rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0;
+    pointer-events: none;
+`;
+
 const propTypes = {
-    imagePath: PropTypes.string,
+    mediaPath: PropTypes.string,
     title: PropTypes.string,
-    year: PropTypes.number,
-    genres: PropTypes.arrayOf(PropTypes.string),
     to: PropTypes.string.isRequired,
     className: PropTypes.string,
 };
 
-function Poster({ imagePath, to, title = 'No Title', year = 1900, genres = [], className = '' }) {
-    // If no image exists, show this
-    const placeholderPath = simpleSvgPlaceholder({
-        bgColor: '#0F1C3F',
-        textColor: '#7FDBFF',
-        height: 700,
-        width: 466,
-        text: title,
-    });
+// TODO: Lazy load meta.json
+function Poster({ mediaPath, to, title = 'No Title', className = '' }) {
+    // Load meta.json from S3
+    const [meta] = useAWSMedia(mediaPath);
+
+    // Get title as data loads
+    const getTitle = () => {
+        if (meta.isLoaded) {
+            if (meta.error) return <Title>{title}</Title>;
+
+            const year = meta.data?.year ?? (meta.data.seasons ? meta.data.seasons[0]?.year : null);
+            return (
+                <Title>
+                    {meta.data?.name ?? title}
+                    {year && <span>({year})</span>}
+                </Title>
+            );
+        }
+        return <Title>{title}</Title>;
+    };
+
+    // Get subtitle as data loads
+    const getSubTitle = () => {
+        if (meta.isLoaded === true) {
+            if (meta.error) return <SubTitle />;
+            return <SubTitle>{meta.data?.genres.join(', ')}</SubTitle>;
+        }
+        return <TextPlaceHolder />;
+    };
+
+    // If meta.json is incomplete, populate from TMDB
+    // TODO: Maybe do this on the details page?
+    // if (metadata.loaded && metadata.data.tmdb) {
+    //     if (!metadata.data.name || !metadata.data.year || !metadata.data.genres) {
+    //         // const tmdbData = getTMDB(meta.data.tmdb);
+    //         // meta.data.name = '';
+    //         // meta.data.year = 0;
+    //         // meta.data.genres = [];
+    //         // setMeta(meta.data);
+    //     }
+    // }
 
     return (
         <Container to={to} className={className}>
-            <Image src={imagePath ?? placeholderPath} height='600' width='400' />
-            <Title>
-                {title}
-                <span>({year})</span>
-            </Title>
-            <SubTitle>{genres.join(', ')}</SubTitle>
+            <Image src={`${mediaPath}poster.jpg`} height='600' width='400' />
+            {getTitle()}
+            {getSubTitle()}
         </Container>
     );
 }

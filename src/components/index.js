@@ -37,3 +37,4 @@ export { default as FadeBackground } from './FadeBackground';
 export { default as PaneEpisodeTitle } from './PaneEpisodeTitle';
 export { default as PaneEpisodeDetail } from './PaneEpisodeDetail';
 export { default as PaneEpisodeSettings } from './PaneEpisodeSettings';
+export { default as LazyImage } from './LazyImage';

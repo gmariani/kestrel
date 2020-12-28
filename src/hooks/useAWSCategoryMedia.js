@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import S3 from 'aws-sdk/clients/s3';
 
-export default function useAWSCategoryMedia(prefix) {
+export default function useAWSCategoryMedia(category) {
     const [categoryMedia, setCategoryMedia] = useState([]);
     // TODO save results to context
+
+    const baseURL = `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/`;
 
     useEffect(() => {
         const s3Client = new S3({
@@ -17,7 +19,7 @@ export default function useAWSCategoryMedia(prefix) {
         });
 
         // Requires s3:ListBucket
-        s3Client.listObjectsV2({ Delimiter: '/', Prefix: prefix }, (error, data) => {
+        s3Client.listObjectsV2({ Delimiter: '/', Prefix: category }, (error, data) => {
             if (error) {
                 // eslint-disable-next-line no-console
                 console.error(error, error.stack);
@@ -42,10 +44,10 @@ export default function useAWSCategoryMedia(prefix) {
                     }
                 }
                 */
-                setCategoryMedia(data.CommonPrefixes.map((item) => item.Prefix));
+                setCategoryMedia(data.CommonPrefixes.map((item) => item.Prefix.replace(category, '')));
             }
         });
-    }, [prefix]);
+    }, [category]);
 
-    return { categoryMedia };
+    return { media: categoryMedia, category, baseURL };
 }
