@@ -64,7 +64,7 @@ const propTypes = {
 function Poster({ mediaPath, to, title = 'No Title', className = '' }) {
     // Load meta.json from S3
     const [meta] = useAWSMedia(mediaPath);
-
+    console.log(meta);
     // Get title as data loads
     const getTitle = () => {
         if (meta.isLoaded) {
@@ -87,7 +87,7 @@ function Poster({ mediaPath, to, title = 'No Title', className = '' }) {
             if (meta.error) return <SubTitle />;
             return <SubTitle>{meta.data?.genres.join(', ')}</SubTitle>;
         }
-        return <TextPlaceHolder />;
+        return null; // <TextPlaceHolder />;
     };
 
     // If meta.json is incomplete, populate from TMDB

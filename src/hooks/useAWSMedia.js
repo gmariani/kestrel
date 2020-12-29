@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import S3 from 'aws-sdk/clients/s3';
+import useLocalStorage from './useLocalStorage';
 
 export default function useAWSMedia(prefix) {
-    const [meta, setMetadata] = useState({});
+    const jsonURL = `${prefix}meta.json`;
+    const [meta, setMetadata] = useLocalStorage(jsonURL, {});
 
     // TODO save results to context
     const s3Client = new S3({
@@ -16,6 +18,9 @@ export default function useAWSMedia(prefix) {
     });
 
     useEffect(() => {
+        const NOW = new Date().getTime();
+        const TTL = new Date(NOW + 15 * 60000).getTime(); // +15min from now
+
         async function isUrlFound(url) {
             try {
                 const response = await fetch(url, {
@@ -31,7 +36,6 @@ export default function useAWSMedia(prefix) {
         }
 
         async function fetchData() {
-            const jsonURL = `${prefix}meta.json`;
             const isValidUrl = await isUrlFound(jsonURL);
             if (isValidUrl) {
                 fetch(jsonURL)
@@ -41,15 +45,18 @@ export default function useAWSMedia(prefix) {
                             setMetadata({
                                 isLoaded: true,
                                 data: result,
+                                ttl: TTL,
                             });
                         },
                         // Note: it's important to handle errors here
                         // instead of a catch() block so that we don't swallow
                         // exceptions from actual bugs in components.
                         (error) => {
+                            console.log('fetchData error', error);
                             setMetadata({
                                 isLoaded: true,
                                 error,
+                                ttl: TTL,
                             });
                         }
                     );
@@ -57,11 +64,18 @@ export default function useAWSMedia(prefix) {
                 setMetadata({
                     isLoaded: true,
                     error: { message: "File doesn't exist" },
+                    ttl: TTL,
                 });
             }
         }
-        fetchData();
-    }, [prefix]);
+
+        if (meta.isLoaded && meta.ttl > NOW) {
+            // Pull from cache
+        } else {
+            fetchData();
+        }
+        // if (!meta.isLoaded) fetchData();
+    }, [prefix, meta, setMetadata, jsonURL]);
 
     const setMeta = (data) => {
         // Requires atleast two slashes
