@@ -1,7 +1,15 @@
 export { default as capitalize } from './capitalize';
-export { default as toSlug } from './toSlug';
-export { default as padNumber } from './padNumber';
-export { default as getUUID } from './getUUID';
+export { default as getAWSBaseURL } from './getAWSBaseURL';
 export { default as getEpisodeProgress } from './getEpisodeProgress';
+export { default as getFileName } from './getFileName';
+export { default as getLastDirectory } from './getLastDirectory';
+export { default as getPathDepth } from './getPathDepth';
 export { default as getSeries } from './getSeries';
+export { default as getTMDB } from './getTMDB';
+export { default as getUUID } from './getUUID';
+export { default as getVideoMeta } from './getVideoMeta';
+export { default as padNumber } from './padNumber';
+export { default as removeNumbering } from './removeNumbering';
+export { default as toName } from './toName';
+export { default as toSlug } from './toSlug';
 export * from './time';

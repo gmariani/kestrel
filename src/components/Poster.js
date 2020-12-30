@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
 import { useAWSMedia } from '../hooks';
 // import getTMDB from '../utils/getTMDB';
 import LazyImage from './LazyImage';
+import { getAWSBaseURL } from '../utils';
 
 const Container = styled(ReachRouterLink)`
     max-width: 400px;
@@ -45,26 +46,18 @@ const SubTitle = styled.p`
     color: #ffffff;
 `;
 
-const TextPlaceHolder = styled.div`
-    width: 100%;
-    height: 2rem;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 0;
-    pointer-events: none;
-`;
-
 const propTypes = {
-    mediaPath: PropTypes.string,
+    categorySlug: PropTypes.string,
+    mediaSlug: PropTypes.string,
     title: PropTypes.string,
     to: PropTypes.string.isRequired,
     className: PropTypes.string,
 };
 
-// TODO: Lazy load meta.json
-function Poster({ mediaPath, to, title = 'No Title', className = '' }) {
-    // Load meta.json from S3
-    const [meta] = useAWSMedia(mediaPath);
-    console.log(meta);
+function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '' }) {
+    const baseURL = getAWSBaseURL();
+    const meta = useAWSMedia(categorySlug, mediaSlug);
+
     // Get title as data loads
     const getTitle = () => {
         if (meta.isLoaded) {
@@ -85,9 +78,9 @@ function Poster({ mediaPath, to, title = 'No Title', className = '' }) {
     const getSubTitle = () => {
         if (meta.isLoaded === true) {
             if (meta.error) return <SubTitle />;
-            return <SubTitle>{meta.data?.genres.join(', ')}</SubTitle>;
+            return <SubTitle>{meta.data.genres ? meta.data.genres.join(', ') : ''}</SubTitle>;
         }
-        return null; // <TextPlaceHolder />;
+        return null;
     };
 
     // If meta.json is incomplete, populate from TMDB
@@ -104,7 +97,7 @@ function Poster({ mediaPath, to, title = 'No Title', className = '' }) {
 
     return (
         <Container to={to} className={className}>
-            <Image src={`${mediaPath}poster.jpg`} height='600' width='400' />
+            <Image src={`${baseURL}/${categorySlug}/${mediaSlug}/poster.jpg`} height='600' width='400' />
             {getTitle()}
             {getSubTitle()}
         </Container>

@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useContent, useAWSCategories } from '../hooks';
-import { TempContainer, Shadow, FadeBackground } from '../components';
+import { useAWSCategoryMedia, useAWSCategories } from '../hooks';
+import { TempContainer, FadeBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
-import { toSlug } from '../utils';
 
 export default function Browse() {
-    // HOOKS //
-    const { content: categories } = useContent('categories', 'order');
-    const { content: media } = useContent('media');
-    const awsCategories = useAWSCategories();
-    console.log('Browse awsCategories', awsCategories);
-    const params = useParams();
-
-    // Variables //
-    const selectedCategory = params.categorySlug ?? (categories.length ? categories[0].slug : '');
+    const { categorySlug } = useParams();
+    const { categories } = useAWSCategories();
+    const selectedCategory = categorySlug ?? (categories.length ? categories[0] : '');
+    const { media } = useAWSCategoryMedia(`${selectedCategory}/`);
+    console.log('Browse: AWS categories', categories);
+    console.log('Browse: AWS media', media);
 
     // Key listener
     const focusElements = ['header', 'posters'];
@@ -49,11 +45,10 @@ export default function Browse() {
                 />
                 <PosterContainer
                     hasFocus={focusElements[focus] === 'posters'}
+                    media={media}
                     selectedCategory={selectedCategory}
-                    posters={media.filter((series) => selectedCategory === toSlug(series.category))}
                 />
             </TempContainer>
-            {/* <Shadow /> */}
             <FadeBackground hue={11.2} base='#182848' split={100} />
         </>
     );

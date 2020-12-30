@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
-import useContent from './useContent';
+// import useContent from './useContent';
+import useAWSMedia from './useAWSMedia';
 import { toSlug } from '../utils';
 
-export default function useMedia(mediaSlug, seasonName, episodeName) {
-    const { content, loaded } = useContent('media');
+export default function useMedia(categorySlug, mediaSlug, seasonName, episodeName) {
+    // const { content, loaded } = useContent('media');
+    const [meta] = useAWSMedia(
+        `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${categorySlug}/${mediaSlug}/`
+    );
     const [media, setMedia] = useState({
         loaded: false,
         isSingle: true,
@@ -14,11 +18,11 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
     });
 
     useEffect(() => {
-        if (!loaded) return;
+        if (!meta.isLoaded) return;
 
-        const mediaRef = content.find((series) => mediaSlug === toSlug(series.name));
-        const isSingle = !!(mediaRef && mediaRef.filePath);
-        const categorySlug = toSlug(mediaRef.category);
+        const mediaRef = meta; // content.find((series) => mediaSlug === toSlug(series.name));
+        const isSingle = !!(mediaRef && mediaRef.type === 'movie');
+        // const categorySlug = toSlug(mediaRef.category);
 
         // Can't use arrow-function as 'this' won't be replaced properly
         function isCurrent(item) {
@@ -82,7 +86,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
         }
 
         setMedia({
-            loaded,
+            loaded: meta.isLoaded,
             isSingle,
             route: `/${categorySlug}/${mediaSlug}/details`,
 
@@ -107,7 +111,7 @@ export default function useMedia(mediaSlug, seasonName, episodeName) {
             episode,
             nextEpisode,
         });
-    }, [loaded, content, mediaSlug, seasonName, episodeName]);
+    }, [meta, categorySlug, mediaSlug, seasonName, episodeName]);
     // console.log('useMedia', media);
     return media;
 }

@@ -3,14 +3,15 @@ import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Header, Logo } from '../components';
 import * as ROUTES from '../constants/routes';
+import { toName } from '../utils';
 
 const propTypes = {
     hasFocus: PropTypes.bool,
     hideMenu: PropTypes.bool,
-    categories: PropTypes.arrayOf(PropTypes.object),
+    categories: PropTypes.arrayOf(PropTypes.string),
     selectedCategory: PropTypes.string,
 };
-
+// TODO show loading spinner while categories load
 function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCategory }) {
     const history = useHistory();
     useEffect(() => {
@@ -19,13 +20,7 @@ function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCateg
 
             const keyCode = event.which || event.keyCode;
             // Convert the category slug to the array index so we can add/subtract
-            const findCategoryIndex = () => {
-                const foundCategories = categories
-                    .map((category, i) => ({ slug: category.slug, index: i }))
-                    .filter((category) => category.slug === selectedCategory);
-                return foundCategories.length ? foundCategories[0].index : 0;
-            };
-            const foundIndex = findCategoryIndex();
+            const foundIndex = categories.find(selectedCategory);
 
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
@@ -60,18 +55,12 @@ function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCateg
                 <Header.Menu>
                     {categories.map((category) => (
                         <Header.MenuLink
-                            key={category.slug}
-                            to={`/browse/${category.slug}`}
+                            key={category}
+                            to={`/browse/${category}`}
                             // prettier-ignore
-                            className={`${category.slug === selectedCategory ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
-                            {category.name}
+                            className={`${category === selectedCategory ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
+                            {toName(category)}
                         </Header.MenuLink>
-                        // <Link
-                        //     key={category.slug}
-                        //     to={`/browse/${category.slug}`}
-                        //     className={category.slug === selectedCategory ? 'selected' : ''}>
-                        //     {category.name}
-                        // </Link>
                     ))}
                 </Header.Menu>
             ) : null}

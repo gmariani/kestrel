@@ -3,25 +3,24 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { Row, Poster } from '../components';
 import * as ROUTES from '../constants/routes';
-import { toSlug, capitalize } from '../utils';
-import { useAWSCategoryMedia } from '../hooks';
+import { toName } from '../utils';
 
 const propTypes = {
+    media: PropTypes.arrayOf(PropTypes.string),
     hasFocus: PropTypes.bool,
     selectedCategory: PropTypes.string,
 };
 
-function PosterContainer({ hasFocus = false, selectedCategory }) {
+function PosterContainer({ media, hasFocus = false, selectedCategory }) {
     const [selectedPoster, setSelectedPoster] = useState('');
     const history = useHistory();
-    const { media: posters, category, baseURL } = useAWSCategoryMedia(`${selectedCategory}/`);
-
+    console.log('PosterContainer', selectedCategory, media);
     useEffect(() => {
         const onKeyDown = (event) => {
             if (!hasFocus) return;
 
             const keyCode = event.which || event.keyCode;
-            const foundIndex = posters.findIndex((poster) => poster === selectedPoster);
+            const foundIndex = media.findIndex((poster) => poster === selectedPoster);
 
             // (13) Enter
             if (keyCode === 13) {
@@ -32,11 +31,11 @@ function PosterContainer({ hasFocus = false, selectedCategory }) {
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
                 if (keyCode === 37) {
-                    setSelectedPoster(posters[(foundIndex - 1 + posters.length) % posters.length]);
+                    setSelectedPoster(media[(foundIndex - 1 + media.length) % media.length]);
                 } else if (keyCode === 38) {
                     //
                 } else if (keyCode === 39) {
-                    setSelectedPoster(posters[(foundIndex + 1) % posters.length]);
+                    setSelectedPoster(media[(foundIndex + 1) % media.length]);
                 } else if (keyCode === 40) {
                     //
                 }
@@ -48,20 +47,20 @@ function PosterContainer({ hasFocus = false, selectedCategory }) {
         return () => {
             document.removeEventListener('keydown', onKeyDown, false);
         };
-    }, [history, hasFocus, selectedPoster, posters]);
+    }, [history, hasFocus, selectedPoster, media]);
 
     return (
         <Row>
-            {posters.map((mediaDirectory) => {
-                const mediaSlug = mediaDirectory.slice(0, -1); // Remove ending slash
+            {media.map((mediaSlug) => {
                 return (
                     <Poster
-                        key={mediaDirectory}
-                        mediaPath={`${baseURL}${category}${mediaDirectory}`}
-                        title={capitalize(mediaSlug.replaceAll('_', ' '))}
+                        key={mediaSlug}
+                        categorySlug={selectedCategory}
+                        mediaSlug={mediaSlug}
+                        title={toName(mediaSlug)}
                         // prettier-ignore
-                        className={`${mediaDirectory === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                        to={`/${toSlug(selectedCategory)}/${mediaSlug}/details`}
+                        className={`${mediaSlug === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
+                        to={`/${selectedCategory}/${mediaSlug}/details`}
                     />
                 );
             })}
