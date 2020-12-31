@@ -20,7 +20,7 @@ function HeaderContainer({ hasFocus, hideMenu = false, categories, selectedCateg
 
             const keyCode = event.which || event.keyCode;
             // Convert the category slug to the array index so we can add/subtract
-            const foundIndex = categories.find(selectedCategory);
+            const foundIndex = categories.findIndex((category) => category === selectedCategory);
 
             if (keyCode >= 37 && keyCode <= 41) {
                 // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow

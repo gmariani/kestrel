@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { Row, Poster } from '../components';
+import { Row, Poster, Loading } from '../components';
 import * as ROUTES from '../constants/routes';
 import { toName } from '../utils';
 
 const propTypes = {
     media: PropTypes.arrayOf(PropTypes.string),
+    mediaCategory: PropTypes.string,
     hasFocus: PropTypes.bool,
     selectedCategory: PropTypes.string,
 };
 
-function PosterContainer({ media, hasFocus = false, selectedCategory }) {
+function PosterContainer({ media, mediaCategory, hasFocus = false, selectedCategory }) {
     const [selectedPoster, setSelectedPoster] = useState('');
     const history = useHistory();
-    console.log('PosterContainer', selectedCategory, media);
     useEffect(() => {
         const onKeyDown = (event) => {
             if (!hasFocus) return;
@@ -48,6 +48,16 @@ function PosterContainer({ media, hasFocus = false, selectedCategory }) {
             document.removeEventListener('keydown', onKeyDown, false);
         };
     }, [history, hasFocus, selectedPoster, media]);
+
+    // If switching categories, wait until 'media' has loaded and matches the selected category
+    if (mediaCategory !== null && mediaCategory !== selectedCategory) {
+        // TODO show spinner
+        return (
+            <Row>
+                <Loading />
+            </Row>
+        );
+    }
 
     return (
         <Row>

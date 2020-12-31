@@ -8,9 +8,10 @@ export default function Browse() {
     const { categorySlug } = useParams();
     const { categories } = useAWSCategories();
     const selectedCategory = categorySlug ?? (categories.length ? categories[0] : '');
-    const { media } = useAWSCategoryMedia(`${selectedCategory}/`);
+    const { media, category: mediaCategory } = useAWSCategoryMedia(`${selectedCategory}/`);
     console.log('Browse: AWS categories', categories);
     console.log('Browse: AWS media', media);
+    console.log('Browse:', `selectedCategory: ${selectedCategory} mediaCategory: ${mediaCategory}`);
 
     // Key listener
     const focusElements = ['header', 'posters'];
@@ -46,6 +47,7 @@ export default function Browse() {
                 <PosterContainer
                     hasFocus={focusElements[focus] === 'posters'}
                     media={media}
+                    mediaCategory={mediaCategory}
                     selectedCategory={selectedCategory}
                 />
             </TempContainer>
