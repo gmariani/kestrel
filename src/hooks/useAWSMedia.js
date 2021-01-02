@@ -82,7 +82,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             };
         }
 
-        async function getTVJSON(localBaseURL, contents) {
+        function getTVJSON(localBaseURL, contents) {
             const directories = contents.filter((item) => item.Key.endsWith('/')).map((item) => item.Key);
             const rootDir = directories.shift().slice(0, -1);
             const category = rootDir.split('/')[0];
@@ -92,22 +92,19 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                 .map((item) => item.Key);
             const posterFile = rootfiles.find((file) => file.includes('poster.'));
             const backgroundFile = rootfiles.find((file) => file.includes('background.'));
-            const mediafiles = contents.filter(
-                (item) =>
-                    !item.Key.endsWith('/') &&
-                    getPathDepth(item.Key) > 2 &&
-                    (item.Key.endsWith('.mp4') || item.Key.endsWith('.m4v') || item.Key.endsWith('.vtt'))
-            );
+            const mediafiles = contents
+                .map((item) => item.Key)
+                .filter((item) => !item.endsWith('/') && getPathDepth(item) > 2);
 
             const seasons = directories.map((directory, index) => {
                 const seasonName = toName(removeNumbering(getLastDirectory(directory)));
-                const seasonBackgroundFile = mediafiles.find((file) => file.includes('background.'));
-                const seasonEpisodes = mediafiles
-                    .map((item) => item.Key)
-                    .filter((item) => item.includes(directory) && !item.endsWith('.vtt'));
-                const seasonSubtitles = mediafiles
-                    .map((item) => item.Key)
-                    .filter((item) => item.includes(directory) && item.endsWith('.vtt'));
+                const seasonBackgroundFile = mediafiles.find(
+                    (item) => item.includes(directory) && item.includes('background.')
+                );
+                const seasonEpisodes = mediafiles.filter(
+                    (item) => item.includes(directory) && (item.endsWith('.mp4') || item.endsWith('.m4v'))
+                );
+                const seasonSubtitles = mediafiles.filter((item) => item.includes(directory) && item.endsWith('.vtt'));
 
                 // const videoMeta = seasonEpisodes.length > 0 ? await getVideoMeta(seasonEpisodes[0]) : null;
                 // const resolution = videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd'
@@ -135,8 +132,8 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                     seasonNumber: index + 1,
                     // year
                 };
-                if (backgroundFile) {
-                    season.background = `${localBaseURL}/${seasonBackgroundFile.Key}`;
+                if (seasonBackgroundFile) {
+                    season.background = `${localBaseURL}/${seasonBackgroundFile}`;
                 }
                 return season;
             });
