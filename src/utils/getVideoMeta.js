@@ -20,7 +20,7 @@ const getVideoMeta = (fileURL) =>
     });
 export default getVideoMeta;
 
-// function validateFile(fileURL) {
+// function validateFile(fileURL, ) {
 //     const video = document.createElement('video');
 //     video.preload = 'metadata';
 //     video.onloadedmetadata = function () {

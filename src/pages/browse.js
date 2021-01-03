@@ -9,9 +9,9 @@ export default function Browse() {
     const { categories } = useAWSCategories();
     const selectedCategory = categorySlug ?? (categories.length ? categories[0] : '');
     const { media, category: mediaCategory } = useAWSCategoryMedia(`${selectedCategory}/`);
-    console.log('Browse: AWS categories', categories);
-    console.log('Browse: AWS media', media);
-    console.log('Browse:', `selectedCategory: ${selectedCategory} mediaCategory: ${mediaCategory}`);
+    // console.log('Browse: AWS categories', categories);
+    // console.log('Browse: AWS media', media);
+    // console.log('Browse:', `selectedCategory: ${selectedCategory} mediaCategory: ${mediaCategory}`);
 
     // Key listener
     const focusElements = ['header', 'posters'];
