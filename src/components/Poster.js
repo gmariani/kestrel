@@ -57,7 +57,7 @@ const propTypes = {
 function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '' }) {
     const baseURL = getAWSBaseURL();
     const meta = useAWSMedia(categorySlug, mediaSlug);
-
+    console.log('Poster', mediaSlug, meta);
     // Get title as data loads
     const getTitle = () => {
         if (meta.isLoaded) {
@@ -71,7 +71,7 @@ function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '
                 </Title>
             );
         }
-        return <Title>{title}</Title>;
+        return <Title>{title} (Loading)</Title>;
     };
 
     // Get subtitle as data loads

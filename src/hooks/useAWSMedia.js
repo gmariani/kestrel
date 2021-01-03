@@ -17,9 +17,9 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
     const BASE_URL = getAWSBaseURL();
     const keyPrefix = `${categorySlug}/${mediaSlug}`;
     const META_JSON = 'meta.json';
-    // const [meta, setMetadata] = useLocalStorage(`${BASE_URL}/${keyPrefix}/${META_JSON}`, {isLoaded:false});
     const status = useRef(null);
-    const [meta, setMetadata] = useState({ isLoaded: false });
+    const [meta, setMetadata] = useLocalStorage(`${BASE_URL}/${keyPrefix}/${META_JSON}`, { isLoaded: false });
+    // const [meta, setMetadata] = useState({ isLoaded: false });
 
     const S3_CLIENT = useMemo(
         () =>
@@ -108,11 +108,11 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         function loadCache(onSuccess, onFailure) {
             if (meta.isLoaded && meta.ttl > NOW) {
                 // Pull from cache
-                console.log('loadCache', keyPrefix, 'success');
+                // console.log('loadCache', keyPrefix, 'success');
                 if (onSuccess) onSuccess();
             } else if (status.current === null) {
                 // Don't try to fetch more than one time
-                console.log('loadCache', keyPrefix, 'failure');
+                // console.log('loadCache', keyPrefix, 'failure');
                 if (onFailure) onFailure();
             }
         }
@@ -222,7 +222,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                     // console.log('getSeason', path);
                     return getVideoMeta(`${BASE_URL}/${path}`)
                         .then((videoMeta) => {
-                            console.log('getSeason', path, videoMeta);
+                            // console.log('getSeason', path, videoMeta);
                             const ep = {
                                 duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
                                 name: toName(removeNumbering(getFileName(path))),
