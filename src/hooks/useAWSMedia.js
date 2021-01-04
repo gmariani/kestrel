@@ -17,33 +17,35 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
     const BASE_URL = getAWSBaseURL();
     const keyPrefix = `${categorySlug}/${mediaSlug}`;
     const META_JSON = 'meta.json';
-    const status = useRef(null);
-    const [meta, setMetadata] = useLocalStorage(`${BASE_URL}/${keyPrefix}/${META_JSON}`, { isLoaded: false });
-    // const [meta, setMetadata] = useState({ isLoaded: false });
-
-    const S3_CLIENT = useMemo(
-        () =>
-            new S3({
-                apiVersion: '2006-03-01',
-                region: process.env.REACT_APP_AWS_DEFAULT_REGION,
-                credentials: {
-                    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-                    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
-                },
-                params: { Bucket: process.env.REACT_APP_AWS_BUCKET },
-            }),
-        []
-    );
+    // Don't update the state if component has already been unloaded by React
+    // https://juliangaramendy.dev/blog/use-promise-subscription
+    // https://stackoverflow.com/questions/56610116/best-practice-to-prevent-state-update-warning-for-unmounted-component-from-a-han
+    const mounted = useRef(true);
+    const status = useRef('unloaded');
+    // const [meta, setMetadata] = useLocalStorage(`${BASE_URL}/${keyPrefix}/${META_JSON}`, { isLoaded: false });
+    const [meta, setMetadata] = useState({ isLoaded: false });
 
     useEffect(() => {
+        // each useEffect can return a cleanup function
+        return () => {
+            mounted.current = false;
+        };
+    }, []); // no extra deps => the cleanup function run this on component unmount
+
+    useEffect(() => {
+        // console.log('useEffect', keyPrefix);
         const NOW = new Date().getTime();
         const TTL = new Date(NOW + 15 * 60000).getTime(); // +15 min from now
         const ERROR_TTL = new Date(NOW + 5 * 60000).getTime(); // +5 min from now
-
-        // Don't update the state if component has already been unloaded by React
-        // https://juliangaramendy.dev/blog/use-promise-subscription
-        // eslint-disable-next-line prefer-const
-        let isSubscribed = true;
+        const S3_CLIENT = new S3({
+            apiVersion: '2006-03-01',
+            region: process.env.REACT_APP_AWS_DEFAULT_REGION,
+            credentials: {
+                accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+            },
+            params: { Bucket: process.env.REACT_APP_AWS_BUCKET },
+        });
 
         function putJSON(prefix, data) {
             return S3_CLIENT.putObject({
@@ -60,9 +62,9 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         }
 
         function onComplete(data) {
-            status.current = 'ready';
-            console.log('onComplete', keyPrefix, data);
-            if (isSubscribed) {
+            status.current = 'loaded';
+            console.log('onComplete', mounted.current, keyPrefix, data);
+            if (mounted.current) {
                 setMetadata({
                     isLoaded: true,
                     data,
@@ -72,9 +74,9 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         }
 
         function onError(error) {
-            status.current = null;
-            console.log('onError', keyPrefix, error);
-            if (isSubscribed) {
+            status.current = 'unloaded';
+            // console.log('onError', mounted.current, keyPrefix, error);
+            if (mounted.current) {
                 setMetadata({
                     isLoaded: true,
                     error,
@@ -109,8 +111,8 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             if (meta.isLoaded && meta.ttl > NOW) {
                 // Pull from cache
                 // console.log('loadCache', keyPrefix, 'success');
-                if (onSuccess) onSuccess();
-            } else if (status.current === null) {
+                if (onSuccess) onSuccess(meta);
+            } else if (status.current === 'unloaded') {
                 // Don't try to fetch more than one time
                 // console.log('loadCache', keyPrefix, 'failure');
                 if (onFailure) onFailure();
@@ -124,8 +126,8 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
          * @param {function} onFailure If meta.json file is not loaded or found
          */
         function loadMeta(onSuccess, onFailure) {
-            status.current = 'busy';
-            // console.log('loadMeta', keyPrefix, `${BASE_URL}/${keyPrefix}/${META_JSON}`);
+            status.current = 'loading';
+            console.log('loadMeta', keyPrefix, `${BASE_URL}/${keyPrefix}/${META_JSON}`);
             fetch(`${BASE_URL}/${keyPrefix}/${META_JSON}`)
                 .then((res) => res.json())
                 .then((result) => {
@@ -134,7 +136,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                 })
                 .catch((error) => {
                     // eslint-disable-next-line no-console
-                    console.error('loadMeta', keyPrefix, error);
+                    // console.error('loadMeta', keyPrefix, error);
                     if (onFailure) onFailure(error);
                 });
         }
@@ -146,6 +148,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
          * @param {function} onFailure If there was an error with S3
          */
         function indexMeta(onSuccess, onFailure) {
+            status.current = 'initializing';
             S3_CLIENT.listObjectsV2({ Prefix: keyPrefix })
                 .promise()
                 .then((data) => {
@@ -215,47 +218,88 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                 (path) => path.includes(directory) && (path.endsWith('.mp4') || path.endsWith('.m4v'))
             );
             const seasonSubtitles = mediaFiles.filter((path) => path.includes(directory) && path.endsWith('.vtt'));
-
-            return Promise.all(
-                seasonEpisodes.map((path) => {
+            const accumulatorEpisodes = [];
+            return seasonEpisodes
+                .reduce((accumulatorPromise, path) => {
+                    console.log(`getVideoMeta for ${path}`);
                     const fileName = getFileName(path);
                     // console.log('getSeason', path);
-                    return getVideoMeta(`${BASE_URL}/${path}`)
-                        .then((videoMeta) => {
-                            // console.log('getSeason', path, videoMeta);
-                            const ep = {
-                                duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
-                                name: toName(removeNumbering(getFileName(path))),
-                                resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
-                                filePath: `${BASE_URL}/${path}`,
-                            };
-                            // Corresponding subtitles exist? Add them in
-                            if (seasonSubtitles.includes(`${directory}${fileName}.vtt`)) {
-                                ep.subPath = `${BASE_URL}/${directory}${fileName}.vtt`;
-                            }
-                            return ep;
-                        })
-                        .catch((error) => {
-                            // eslint-disable-next-line no-console
-                            console.error('getSeason error', error);
-                        });
-                })
-            ).then((episodes) => {
-                const resolution = episodes.length > 0 ? episodes[0].resolution : 'sd';
-                return {
-                    background: backgroundFile,
-                    description: '',
-                    episodeCount: episodes.length,
-                    episodes,
-                    name,
-                    resolution,
-                    seasonNumber: seasonIndex + 1,
-                    // year
-                };
-            });
 
-            // getVideoMeta(primaryFile)
-            //     .then((videoMeta) => {
+                    return accumulatorPromise.then(() => {
+                        return getVideoMeta(`${BASE_URL}/${path}`)
+                            .then((videoMeta) => {
+                                console.log('getVideoMeta', path, videoMeta);
+                                const ep = {
+                                    duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
+                                    name: toName(removeNumbering(getFileName(path))),
+                                    resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
+                                    filePath: `${BASE_URL}/${path}`,
+                                };
+                                // Corresponding subtitles exist? Add them in
+                                if (seasonSubtitles.includes(`${directory}${fileName}.vtt`)) {
+                                    ep.subPath = `${BASE_URL}/${directory}${fileName}.vtt`;
+                                }
+                                accumulatorEpisodes.push(ep);
+                                return ep;
+                            })
+                            .catch((error) => {
+                                // eslint-disable-next-line no-console
+                                console.error('getVideoMeta error', error);
+                            });
+                    });
+                }, Promise.resolve())
+                .then((lastEpisode) => {
+                    console.log('episodes', lastEpisode, accumulatorEpisodes);
+                    const resolution = accumulatorEpisodes.length > 0 ? accumulatorEpisodes[0].resolution : 'sd';
+                    return {
+                        background: backgroundFile,
+                        description: '',
+                        episodeCount: accumulatorEpisodes.length,
+                        episodes: accumulatorEpisodes,
+                        name,
+                        resolution,
+                        seasonNumber: seasonIndex + 1,
+                        // year
+                    };
+                });
+
+            // return Promise.all(
+            //     seasonEpisodes.map((path) => {
+            //         const fileName = getFileName(path);
+            //         console.log('getSeason', path);
+            //         return getVideoMeta(`${BASE_URL}/${path}`)
+            //             .then((videoMeta) => {
+            //                 console.log('getVideoMeta', path, videoMeta);
+            //                 const ep = {
+            //                     duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
+            //                     name: toName(removeNumbering(getFileName(path))),
+            //                     resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
+            //                     filePath: `${BASE_URL}/${path}`,
+            //                 };
+            //                 // Corresponding subtitles exist? Add them in
+            //                 if (seasonSubtitles.includes(`${directory}${fileName}.vtt`)) {
+            //                     ep.subPath = `${BASE_URL}/${directory}${fileName}.vtt`;
+            //                 }
+            //                 return ep;
+            //             })
+            //             .catch((error) => {
+            //                 // eslint-disable-next-line no-console
+            //                 console.error('getVideoMeta error', error);
+            //             });
+            //     })
+            // ).then((episodes) => {
+            //     const resolution = episodes.length > 0 ? episodes[0].resolution : 'sd';
+            //     return {
+            //         background: backgroundFile,
+            //         description: '',
+            //         episodeCount: episodes.length,
+            //         episodes,
+            //         name,
+            //         resolution,
+            //         seasonNumber: seasonIndex + 1,
+            //         // year
+            //     };
+            // });
         }
 
         /**
@@ -403,26 +447,31 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
         // We pass null for onSuccess as useLocalStorage has already loaded the
         // data if it validates. We only worry if it didn't find it.
-        loadCache(null, () => {
-            // onError, call loadMeta
-            loadMeta(onComplete, () => {
-                // onError, call indexMeta
-                indexMeta((fileIndex) => {
-                    generateWhich(
-                        fileIndex,
-                        (data) => {
-                            putJSON(keyPrefix, data);
-                            onComplete(data);
-                        },
-                        onError
-                    );
-                }, onError);
-            });
-        });
-
-        // eslint-disable-next-line no-return-assign
-        return () => (isSubscribed = false);
-    }, [meta, setMetadata, BASE_URL, META_JSON, S3_CLIENT, keyPrefix]);
+        loadCache(
+            (data) => {
+                // console.log('asdfasdf', data);
+                // onComplete(data);
+            },
+            () => {
+                // onError, call loadMeta
+                loadMeta(onComplete, () => {
+                    console.info(keyPrefix, 'meta.json not found, initializing...');
+                    // onError, call indexMeta
+                    indexMeta((fileIndex) => {
+                        generateWhich(
+                            fileIndex,
+                            (data) => {
+                                putJSON(keyPrefix, data);
+                                onComplete(data);
+                            },
+                            onError
+                        );
+                    }, onError);
+                });
+            }
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // const setMeta = (data) => {
     //     // Requires atleast two slashes

@@ -8,8 +8,8 @@ import CreditsContainer from '../containers/CreditsContainer';
 // TODO get tokenized s3 links
 
 export default function Watch() {
-    const { mediaSlug, seasonSlug, episodeSlug } = useParams();
-    const media = useMedia(mediaSlug, seasonSlug, episodeSlug);
+    const { categorySlug, mediaSlug, seasonSlug, episodeSlug } = useParams();
+    const media = useMedia(categorySlug, mediaSlug, seasonSlug, episodeSlug);
     const [ended, setEnded] = useState(false);
 
     if (!media.loaded) return <Loading visible />;

@@ -67,8 +67,8 @@ function EpisodeContainer({
                     const episodeSlug = toSlug(episode.name);
                     const episodeProgress = getEpisodeProgress(seasonProgress?.[i], episode.duration);
                     const episodeThumbnail =
-                        tmdb && tmdb.isLoaded
-                            ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2/${tmdb.data.episodes[i].still_path}`
+                        tmdb.success === true
+                            ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2/${tmdb.episodes[i].still_path}`
                             : episode.thumbnail;
 
                     return (

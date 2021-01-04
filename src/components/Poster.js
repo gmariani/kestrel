@@ -62,7 +62,6 @@ function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '
     const getTitle = () => {
         if (meta.isLoaded) {
             if (meta.error) return <Title>{title}</Title>;
-
             const year = meta.data?.year ?? (meta.data.seasons ? meta.data.seasons[0]?.year : null);
             return (
                 <Title>

@@ -8,7 +8,7 @@ import { getEpisodeProgress, toSlug } from '../utils';
 export default function Details() {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
-    const media = useMedia(mediaSlug, seasonSlug);
+    const media = useMedia(categorySlug, mediaSlug, seasonSlug);
     const { isSingle, season } = media;
 
     // Get previous played history, if no history select first episode of first season
@@ -33,6 +33,10 @@ export default function Details() {
 
     // If no season is selected and previous season exists, redirect to that
     if (media.seasons && seasonSlug === undefined && lastSeasonIndex !== undefined) {
+        console.log(
+            'Redirect to',
+            `/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`
+        );
         return (
             <Redirect
                 to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`}
@@ -46,6 +50,11 @@ export default function Details() {
     }
 
     // Get start (last/initial) episode meta
+    console.log(
+        isSingle,
+        media?.seasons[lastSeasonIndex],
+        media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex]
+    );
     const startEpisode = isSingle ? media : media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex];
     const startEpisodeProgress = getEpisodeProgress(
         progress?.[lastSeasonIndex]?.[lastEpisodeIndex],
@@ -101,7 +110,7 @@ export default function Details() {
                         <EpisodeContainer
                             hasFocus={focusElement === EPISODES_ELEMENT}
                             lastEpisodeIndex={lastSeasonIndex === season.index ? lastEpisodeIndex : null}
-                            tmdbId={media?.tmdb}
+                            tmdbId={media.tmdb}
                             episodes={season.episodes}
                             seasonNumber={season.number}
                             seasonProgress={progress?.[season.index]}

@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
-// import useContent from './useContent';
 import useAWSMedia from './useAWSMedia';
 import { toSlug } from '../utils';
 
-export default function useMedia(categorySlug, mediaSlug, seasonName, episodeName) {
-    // const { content, loaded } = useContent('media');
-    const [meta] = useAWSMedia(
-        `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${categorySlug}/${mediaSlug}/`
-    );
+export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeName) {
+    const meta = useAWSMedia(categorySlug, mediaSlug);
+    console.log('useMedia', categorySlug, mediaSlug, meta);
     const [media, setMedia] = useState({
         loaded: false,
         isSingle: true,
@@ -20,7 +17,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonName, episodeNam
     useEffect(() => {
         if (!meta.isLoaded) return;
 
-        const mediaRef = meta; // content.find((series) => mediaSlug === toSlug(series.name));
+        const mediaRef = meta.data; // content.find((series) => mediaSlug === toSlug(series.name));
         const isSingle = !!(mediaRef && mediaRef.type === 'movie');
         // const categorySlug = toSlug(mediaRef.category);
 
@@ -30,7 +27,6 @@ export default function useMedia(categorySlug, mediaSlug, seasonName, episodeNam
         }
 
         // Season
-        const seasonSlug = toSlug(seasonName);
         let seasonIndex = isSingle ? 0 : mediaRef.seasons.findIndex(isCurrent, seasonSlug);
         // If we can't find the season, pick the first one
         if (seasonIndex === -1) seasonIndex = 0;
@@ -90,7 +86,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonName, episodeNam
             isSingle,
             route: `/${categorySlug}/${mediaSlug}/details`,
 
-            id: mediaRef.docId,
+            id: `/${categorySlug}/${mediaSlug}`, // mediaRef.docId,
             backgroundHue: mediaRef.backgroundHue,
             backgroundPath: mediaRef.backgroundPath,
             category: mediaRef.category,
@@ -111,7 +107,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonName, episodeNam
             episode,
             nextEpisode,
         });
-    }, [meta, categorySlug, mediaSlug, seasonName, episodeName]);
+    }, [meta, categorySlug, mediaSlug, seasonSlug, episodeName]);
     // console.log('useMedia', media);
     return media;
 }

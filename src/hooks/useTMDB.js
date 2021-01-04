@@ -5,6 +5,14 @@ export default function useTMDB(type = 'tv', id, seasonNumber, episodeNumber) {
     const apiKey = process.env.REACT_APP_TMDB_KEY;
 
     useEffect(() => {
+        if (!id) {
+            setTMDB({
+                success: false,
+                status_message: `Invalid id: "${id}"`,
+            });
+            return;
+        }
+
         const getTypeURL = () => {
             switch (type) {
                 case 'movie':
@@ -23,18 +31,22 @@ export default function useTMDB(type = 'tv', id, seasonNumber, episodeNumber) {
             .then((res) => res.json())
             .then(
                 (result) => {
-                    setTMDB({
-                        isLoaded: true,
-                        data: result,
-                    });
+                    if (result.success === false) {
+                        setTMDB({ ...result });
+                    } else {
+                        setTMDB({
+                            success: true,
+                            ...result,
+                        });
+                    }
                 },
                 // Note: it's important to handle errors here
                 // instead of a catch() block so that we don't swallow
                 // exceptions from actual bugs in components.
                 (error) => {
                     setTMDB({
-                        isLoaded: true,
-                        error,
+                        success: false,
+                        ...error,
                     });
                 }
             );
