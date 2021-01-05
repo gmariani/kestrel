@@ -140,10 +140,10 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
     return (
         <HalfPane
             backgroundHue={media.backgroundHue}
-            backgroundPath={
+            backgroundURL={
                 tmdb.success === true && tmdb?.still_path
                     ? `https://image.tmdb.org/t/p/original/${tmdb?.still_path}`
-                    : media.backgroundPath
+                    : media.backgroundURL
             }>
             <Container justifyContent='end'>
                 <Title>{media.name}</Title>

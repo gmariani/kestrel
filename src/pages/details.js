@@ -120,7 +120,7 @@ export default function Details() {
                 </FlexRow>
             </TempContainer>
             <Shadow opacity={0.9} />
-            <ScrimBackground hue={media.backgroundHue} imagePath={media.season.background ?? media.backgroundPath} />
+            <ScrimBackground hue={media.backgroundHue} imagePath={media.season.backgroundURL ?? media.backgroundURL} />
         </>
     );
 }

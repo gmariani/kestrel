@@ -281,7 +281,7 @@ function PlayerContainer({ media, onEnded }) {
                 style={{ overflow: 'hidden' }}
                 playing={playing}
                 // controls={true}
-                url={episode.filePath}
+                url={episode.fileURL}
                 width='100%'
                 height='100%'
                 onBuffer={() => setBuffering(true)}
@@ -303,7 +303,7 @@ function PlayerContainer({ media, onEnded }) {
                         tracks: [
                             {
                                 kind: 'subtitles',
-                                src: episode?.subPath ?? `${getFileName(episode.filePath)}.vtt}`,
+                                src: episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`,
                                 srcLang: 'en',
                                 default: true,
                             },

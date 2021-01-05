@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const mediaInterface = PropTypes.shape({
     docId: PropTypes.string,
     backgroundHue: PropTypes.number,
-    backgroundPath: PropTypes.string,
+    backgroundURL: PropTypes.string,
     category: PropTypes.string,
     contentRating: PropTypes.string,
     description: PropTypes.string,
@@ -11,14 +11,14 @@ const mediaInterface = PropTypes.shape({
     genres: PropTypes.arrayOf(PropTypes.string),
     imdb: PropTypes.string,
     name: PropTypes.string,
-    posterPath: PropTypes.string,
+    posterURL: PropTypes.string,
     resolution: PropTypes.string,
     seasons: PropTypes.arrayOf(
         PropTypes.shape({
             episodes: PropTypes.arrayOf(
                 PropTypes.shape({
                     duration: PropTypes.string,
-                    filePath: PropTypes.string,
+                    fileURL: PropTypes.string,
                     thumbnail: PropTypes.string,
                     name: PropTypes.string,
                 })

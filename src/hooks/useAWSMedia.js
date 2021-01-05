@@ -172,10 +172,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         function getSingleMedia(fileIndex) {
             return fileIndex
                 .map((item) => item.Key)
-                .find(
-                    (filePath) =>
-                        getPathDepth(filePath) === 2 && (filePath.endsWith('.mp4') || filePath.endsWith('.m4v'))
-                );
+                .find((path) => getPathDepth(path) === 2 && (path.endsWith('.mp4') || path.endsWith('.m4v')));
         }
 
         /**
@@ -233,11 +230,11 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                                     duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
                                     name: toName(removeNumbering(getFileName(path))),
                                     resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
-                                    filePath: `${BASE_URL}/${path}`,
+                                    fileURL: `${BASE_URL}/${path}`,
                                 };
                                 // Corresponding subtitles exist? Add them in
                                 if (seasonSubtitles.includes(`${directory}${fileName}.vtt`)) {
-                                    ep.subPath = `${BASE_URL}/${directory}${fileName}.vtt`;
+                                    ep.subtitleURL = `${BASE_URL}/${directory}${fileName}.vtt`;
                                 }
                                 accumulatorEpisodes.push(ep);
                                 return ep;
@@ -267,7 +264,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         /**
          * Generate the meta.json file for a movie media object.
          *
-         * @param {string} singlePath Filepath to the media file
+         * @param {string} singlePath URL to the media file
          * @param {array} fileIndex Array of file paths
          * @param {function} onSuccess If meta.json is generated successfully
          * @param {function} onFailure If there was an error generating meta.json
@@ -305,16 +302,16 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
                     const data = {
                         backgroundHue: 20,
-                        backgroundPath: backgroundFile,
+                        backgroundURL: backgroundFile,
                         category,
                         contentRating: '',
                         description: '',
                         duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
-                        filePath: primaryFile,
+                        fileURL: primaryFile,
                         genres: [],
                         // imdb
                         name: toName(getFileName(singlePath)),
-                        posterPath: posterFile,
+                        posterURL: posterFile,
                         resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
                         slug: toSlug(getFileName(singlePath)),
                         schema: '1.0',
@@ -323,7 +320,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         type: 'movie',
                     };
                     if (subtitlesFile !== undefined) {
-                        data.subPath = `${BASE_URL}/${subtitlesFile}`;
+                        data.subtitleURL = `${BASE_URL}/${subtitlesFile}`;
                     }
 
                     if (onSuccess) onSuccess(data);
@@ -372,14 +369,14 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                     if (onSuccess)
                         onSuccess({
                             backgroundHue: 20,
-                            backgroundPath: backgroundFile,
+                            backgroundURL: backgroundFile,
                             category,
                             contentRating: '',
                             description: '',
                             genres: [],
                             // imdb
                             name: toName(slug),
-                            posterPath: posterFile,
+                            posterURL: posterFile,
                             // resolution
                             seasons,
                             slug,

@@ -40,7 +40,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             name: seasonRef.name,
             year: seasonRef?.year ?? mediaRef?.year,
             description: seasonRef?.description ?? mediaRef?.description,
-            background: seasonRef?.background ?? mediaRef?.backgroundPath,
+            backgroundURL: seasonRef?.backgroundURL ?? mediaRef?.backgroundURL,
             resolution: seasonRef?.resolution ?? mediaRef?.resolution,
             episodes,
         };
@@ -59,8 +59,8 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
                 slug: episodeSlug,
                 route: isSingle ? `/${categorySlug}/${mediaSlug}/watch` : `/tv/${mediaSlug}/watch/${seasonSlug}/${episodeSlug}`,
                 name: episodeRef.name,
-                filePath: episodeRef.filePath,
-                subPath: episodeRef.subPath,
+                fileURL: episodeRef.fileURL,
+                subtitleURL: episodeRef.subtitleURL,
                 duration: episodeRef.duration,
             }
             : null;
@@ -75,8 +75,8 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
                 slug: toSlug(nextEpisodeRef.name),
                 route: `/${categorySlug}/${mediaSlug}/watch/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
                 name: nextEpisodeRef.name,
-                filePath: nextEpisodeRef.filePath,
-                subPath: nextEpisodeRef.subPath,
+                fileURL: nextEpisodeRef.fileURL,
+                subtitleURL: nextEpisodeRef.subtitleURL,
                 duration: nextEpisodeRef.duration,
             };
         }
@@ -88,7 +88,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
 
             id: `/${categorySlug}/${mediaSlug}`, // mediaRef.docId,
             backgroundHue: mediaRef.backgroundHue,
-            backgroundPath: mediaRef.backgroundPath,
+            backgroundURL: mediaRef.backgroundURL,
             category: mediaRef.category,
             contentRating: mediaRef.contentRating,
             description: mediaRef.description,
@@ -96,7 +96,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             genres: mediaRef.genres,
             imdb: mediaRef.imdb,
             name: mediaRef.name,
-            posterPath: mediaRef.posterPath,
+            posterURL: mediaRef.posterURL,
             resolution: mediaRef.resolution,
             seasons: isSingle ? null : mediaRef.seasons,
             slug: mediaRef.slug,

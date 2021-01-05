@@ -22,10 +22,10 @@ const Content = styled.div`
 const propTypes = {
     children: PropTypes.node,
     backgroundHue: PropTypes.number,
-    backgroundPath: PropTypes.string,
+    backgroundURL: PropTypes.string,
 };
 
-function HalfPane({ children, backgroundHue, backgroundPath }) {
+function HalfPane({ children, backgroundHue, backgroundURL }) {
     return (
         <Container
             onClick={(e) => {
@@ -33,12 +33,7 @@ function HalfPane({ children, backgroundHue, backgroundPath }) {
                 if (e.currentTarget.className.includes('HalfPane__Container')) e.stopPropagation();
             }}>
             <Content>{children}</Content>
-            <FadeBackground
-                hue={backgroundHue}
-                base='hsl(var(--hue), 50%, 40%)'
-                imagePath={backgroundPath}
-                split={40}
-            />
+            <FadeBackground hue={backgroundHue} base='hsl(var(--hue), 50%, 40%)' imagePath={backgroundURL} split={40} />
         </Container>
     );
 }
