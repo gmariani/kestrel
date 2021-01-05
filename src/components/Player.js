@@ -11,8 +11,14 @@ const Container = styled.div`
     & video::cue {
         background-color: transparent;
         color: white;
-        margin-bottom: 2rem;
+        font-family: Verdana;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+    & video::cue(i) {
+        color: yellow;
+    }
+    & video::cue(b) {
+        color: red;
     }
 `;
 

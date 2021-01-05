@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export default function useTMDB(type = 'tv', id, seasonNumber, episodeNumber) {
-    const [tmdb, setTMDB] = useState([]);
+    const [tmdb, setTMDB] = useState({ isLoaded: false });
     const apiKey = process.env.REACT_APP_TMDB_KEY;
 
     useEffect(() => {

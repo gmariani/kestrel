@@ -262,44 +262,6 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         // year
                     };
                 });
-
-            // return Promise.all(
-            //     seasonEpisodes.map((path) => {
-            //         const fileName = getFileName(path);
-            //         console.log('getSeason', path);
-            //         return getVideoMeta(`${BASE_URL}/${path}`)
-            //             .then((videoMeta) => {
-            //                 console.log('getVideoMeta', path, videoMeta);
-            //                 const ep = {
-            //                     duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
-            //                     name: toName(removeNumbering(getFileName(path))),
-            //                     resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
-            //                     filePath: `${BASE_URL}/${path}`,
-            //                 };
-            //                 // Corresponding subtitles exist? Add them in
-            //                 if (seasonSubtitles.includes(`${directory}${fileName}.vtt`)) {
-            //                     ep.subPath = `${BASE_URL}/${directory}${fileName}.vtt`;
-            //                 }
-            //                 return ep;
-            //             })
-            //             .catch((error) => {
-            //                 // eslint-disable-next-line no-console
-            //                 console.error('getVideoMeta error', error);
-            //             });
-            //     })
-            // ).then((episodes) => {
-            //     const resolution = episodes.length > 0 ? episodes[0].resolution : 'sd';
-            //     return {
-            //         background: backgroundFile,
-            //         description: '',
-            //         episodeCount: episodes.length,
-            //         episodes,
-            //         name,
-            //         resolution,
-            //         seasonNumber: seasonIndex + 1,
-            //         // year
-            //     };
-            // });
         }
 
         /**
@@ -335,9 +297,12 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             // Get full media URL
             const primaryFile = `${BASE_URL}/${singlePath}`;
 
+            const subtitlesFile = rootFiles.find((path) => path.endsWith('.vtt'));
+
             getVideoMeta(primaryFile)
                 .then((videoMeta) => {
                     // TODO: pick random hue?
+
                     const data = {
                         backgroundHue: 20,
                         backgroundPath: backgroundFile,
@@ -357,6 +322,9 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         // year
                         type: 'movie',
                     };
+                    if (subtitlesFile !== undefined) {
+                        data.subPath = `${BASE_URL}/${subtitlesFile}`;
+                    }
 
                     if (onSuccess) onSuccess(data);
                 })

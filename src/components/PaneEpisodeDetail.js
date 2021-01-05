@@ -110,28 +110,45 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
         return <Redirect to={media.route} />;
     }
 
+    function getDescription() {
+        if (tmdb.isLoaded === false) {
+            return (
+                <>
+                    <Description>Loading...</Description>
+                    <PostMeta>{getPostMeta(null, media?.contentRating)}</PostMeta>
+                </>
+            );
+        }
+
+        if (tmdb.success === true) {
+            return (
+                <>
+                    <Description>{tmdb.overview}</Description>
+                    <PostMeta>{getPostMeta(tmdb?.air_date, media?.contentRating)}</PostMeta>
+                </>
+            );
+        }
+        return (
+            <>
+                <Description>(No TMDB ID Set) {media.description}</Description>
+                <PostMeta>{getPostMeta(null, media?.contentRating)}</PostMeta>
+            </>
+        );
+    }
+
+    console.log(tmdb);
     return (
         <HalfPane
             backgroundHue={media.backgroundHue}
             backgroundPath={
-                tmdb && tmdb.isLoaded && tmdb.data?.still_path
-                    ? `https://image.tmdb.org/t/p/original/${tmdb.data?.still_path}`
+                tmdb.success === true && tmdb?.still_path
+                    ? `https://image.tmdb.org/t/p/original/${tmdb?.still_path}`
                     : media.backgroundPath
             }>
             <Container justifyContent='end'>
                 <Title>{media.name}</Title>
                 <Meta>{getMeta(media.episode.name, media.season.number, media.episode.number, isSingle)}</Meta>
-                {tmdb && tmdb.isLoaded ? (
-                    <>
-                        <Description>{tmdb.data.overview}</Description>
-                        <PostMeta>{getPostMeta(tmdb.data?.air_date, media?.contentRating)}</PostMeta>
-                    </>
-                ) : (
-                    <>
-                        <Description>Loading...</Description>
-                        <PostMeta>{getPostMeta(null, media?.contentRating)}</PostMeta>
-                    </>
-                )}
+                {getDescription()}
 
                 <FlexCol rowGap='2rem' style={{ marginTop: '2rem' }}>
                     <ButtonLink onClick={onClickDetails} className='selected focused'>

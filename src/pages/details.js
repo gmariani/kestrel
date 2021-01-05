@@ -17,7 +17,8 @@ export default function Details() {
         lastSeasonIndex: 0,
         lastEpisodeIndex: 0,
     });
-    const { lastSeasonIndex, lastEpisodeIndex, progress } = playHistory;
+    let { lastSeasonIndex, lastEpisodeIndex } = playHistory;
+    const { progress } = playHistory;
 
     // Manage focused element
     const SEASONS_ELEMENT = 'seasons';
@@ -50,11 +51,10 @@ export default function Details() {
     }
 
     // Get start (last/initial) episode meta
-    console.log(
-        isSingle,
-        media?.seasons[lastSeasonIndex],
-        media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex]
-    );
+    // console.log(media.id, playHistory);
+    if (media.seasons && media?.seasons[lastSeasonIndex] === undefined) lastSeasonIndex = 0;
+    if (media.seasons && media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex] === undefined)
+        lastEpisodeIndex = 0;
     const startEpisode = isSingle ? media : media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex];
     const startEpisodeProgress = getEpisodeProgress(
         progress?.[lastSeasonIndex]?.[lastEpisodeIndex],
