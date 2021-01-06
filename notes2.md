@@ -47,5 +47,13 @@ https://subtitletools.com/convert-to-vtt-online/5b54e3f53391081d
 https://github.com/pmdevita/SSA-ASStoVTT
 python3 ssatovtt.py "Gunbuster 2 - 01 - Please Let Me Call You Big Sister!.ssa" "Gunbuster 2 - 01 - Please Let Me Call You Big Sister! 2.vtt"
 
+:: Convert SRT/SSA/ASS/SMI/SUB to VTT
+:: https://subtitletools.com/convert-to-vtt-online
+
+:: Convert SUB/IDX to SRT
+:: https://subtitletools.com/convert-sub-idx-to-srt-online
+:: https://convert.jamack.net/en/
+:: https://iamscum.wordpress.com/guides/ocr/ - https://www.nikse.dk/subtitleedit/
+
 Extra MP4 from MKV using VLC
 https://www.howtogeek.com/361973/how-to-convert-mkv-videos-to-mp4/
