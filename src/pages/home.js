@@ -1,5 +1,6 @@
 import React from 'react';
 
 export default function Home() {
-    return <p>hello home</p>;
+    const css = { color: 'white' };
+    return <p style={css}>hello world!</p>;
 }

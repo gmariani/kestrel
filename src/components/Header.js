@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
@@ -6,8 +7,11 @@ import { Link as ReachRouterLink } from 'react-router-dom';
 const Background = styled.div`
     display: flex;
     flex-direction: column;
-    background: url(${({ src }) => (src ? `../images/misc/${src}.jpg` : '../images/misc/home-bg.jpg')}) top left / cover
-        no-repeat;
+    background: url(${({ src }) =>
+            src
+                ? `${process.env.PUBLIC_URL}/images/misc/${src}.jpg`
+                : `${process.env.PUBLIC_URL}/images/misc/home-bg.jpg`})
+        top left / cover no-repeat;
     @media (max-width: 1100px) {
         ${({ dontShowOnSmallViewPort }) => dontShowOnSmallViewPort && `background: none;`}
     }
