@@ -12,6 +12,7 @@ html, body,
     background-color:#000;
     font-family: Tw Cen MT;
     text-rendering: optimizeLegibility;
+    overflow:hidden;
 }
 #root {
     align-items: center;

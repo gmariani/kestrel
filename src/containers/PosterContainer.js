@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { Row, Poster, Loading, FlexRow } from '../components';
-import * as ROUTES from '../constants/routes';
 import { toName } from '../utils';
 
 const propTypes = {
+    containerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.elementType })]),
     media: PropTypes.arrayOf(PropTypes.string),
     mediaCategory: PropTypes.string,
-    hasFocus: PropTypes.bool,
     selectedCategory: PropTypes.string,
 };
 
-function PosterContainer({ media, mediaCategory, hasFocus = false, selectedCategory }) {
+function PosterContainer({ containerRef, media, mediaCategory, selectedCategory }) {
     const history = useHistory();
     const scrollRef = useRef();
 
@@ -27,14 +26,17 @@ function PosterContainer({ media, mediaCategory, hasFocus = false, selectedCateg
     }
 
     return (
-        <FlexRow innerRef={scrollRef} flexWrap='wrap' focusKey='POSTERS' style={{ overflow: 'auto' }}>
+        <FlexRow innerRef={scrollRef} flexWrap='wrap' focusKey='POSTERS'>
             {media.map((mediaSlug) => {
                 const route = `/${selectedCategory}/${mediaSlug}/details`;
                 return (
                     <Poster
                         onBecameFocused={(layout) => {
                             // console.log('Poster.onBecameFocused', route);
-                            scrollRef.current.scrollTo({ left: 0, top: layout.y, behavior: 'smooth' });
+                            // const el = scrollRef.current;
+                            const el = containerRef.current;
+                            // el.scrollTo({ left: 0, top: layout.y, behavior: 'smooth' });
+                            el.style = `top:-${layout.y}px`;
                         }}
                         onEnterPress={() => {
                             // console.log('Poster.onEnterPress', route);
