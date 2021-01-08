@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FlexCol, Header, Logo, Menu, MenuLink } from '../components';
@@ -10,8 +10,8 @@ const propTypes = {
     categories: PropTypes.arrayOf(PropTypes.string),
     selectedCategory: PropTypes.string,
 };
+
 // TODO show loading spinner while categories load
-// eslint-disable-next-line react/prop-types
 function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
     const history = useHistory();
 

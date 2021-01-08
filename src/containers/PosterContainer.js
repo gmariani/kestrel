@@ -13,65 +13,8 @@ const propTypes = {
 };
 
 function PosterContainer({ media, mediaCategory, hasFocus = false, selectedCategory }) {
-    const [selectedPoster, setSelectedPoster] = useState('');
     const history = useHistory();
-    useEffect(() => {
-        // const onKeyDown = (event) => {
-        //     if (!hasFocus) return;
-
-        //     const keyCode = event.which || event.keyCode;
-        //     const foundIndex = media.findIndex((poster) => poster === selectedPoster);
-
-        //     // (13) Enter
-        //     if (keyCode === 13) {
-        //         history.push(`${ROUTES.DETAILS}${selectedPoster}`);
-        //         event.preventDefault();
-        //     }
-
-        //     if (keyCode >= 37 && keyCode <= 41) {
-        //         // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
-        //         if (keyCode === 37) {
-        //             setSelectedPoster(media[(foundIndex - 1 + media.length) % media.length]);
-        //         } else if (keyCode === 38) {
-        //             //
-        //         } else if (keyCode === 39) {
-        //             setSelectedPoster(media[(foundIndex + 1) % media.length]);
-        //         } else if (keyCode === 40) {
-        //             //
-        //         }
-        //         event.preventDefault();
-        //     }
-        // };
-
-        // document.addEventListener('keydown', onKeyDown, false);
-        return () => {
-            // document.removeEventListener('keydown', onKeyDown, false);
-        };
-    }, [history, hasFocus, selectedPoster, media]);
-
-    // On selectedPoster change, move element into view
-    // useEffect(() => {
-    //     const posterRef = document.querySelector('.poster.selected');
-    //     // If no posters exist, don't break
-    //     if (posterRef) posterRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    // }, [selectedPoster]);
-
     const scrollRef = useRef();
-    const onPosterFocused = (layout, { mediaSlug }) => {
-        // eslint-disable-next-line no-console
-        // console.log(
-        //     'Poster.onBecameFocused',
-        //     scrollRef.current,
-        //     { x: 0, y: layout.y, behavior: 'smooth' },
-        //     `/${selectedCategory}/${mediaSlug}/details`
-        // );
-
-        const classID = scrollRef.current.classList[0];
-        const tempRef = document.querySelector(`.${classID}`);
-        // console.log(tempRef, scrollRef.current, tempRef === scrollRef.current);
-        tempRef.scrollTo({ x: 0, y: layout.y, behavior: 'smooth' });
-        // scrollRef.current.scrollTo({ x: 0, y: layout.y, behavior: 'smooth' });
-    };
 
     // If switching categories, wait until 'media' has loaded and matches the selected category
     if (mediaCategory !== null && mediaCategory !== selectedCategory) {
@@ -86,19 +29,23 @@ function PosterContainer({ media, mediaCategory, hasFocus = false, selectedCateg
     return (
         <FlexRow innerRef={scrollRef} flexWrap='wrap' focusKey='POSTERS' style={{ overflow: 'auto' }}>
             {media.map((mediaSlug) => {
+                const route = `/${selectedCategory}/${mediaSlug}/details`;
                 return (
                     <Poster
-                        onBecameFocused={onPosterFocused}
+                        onBecameFocused={(layout) => {
+                            // console.log('Poster.onBecameFocused', route);
+                            scrollRef.current.scrollTo({ left: 0, top: layout.y, behavior: 'smooth' });
+                        }}
                         onEnterPress={() => {
-                            // console.log('Poster.onEnterPress', `/${selectedCategory}/${mediaSlug}/details`);
-                            history.replace(`/${selectedCategory}/${mediaSlug}/details`);
+                            // console.log('Poster.onEnterPress', route);
+                            history.push(route);
                         }}
                         focusKey={`POSTERS-${mediaSlug.toUpperCase()}`}
                         key={mediaSlug}
                         categorySlug={selectedCategory}
                         mediaSlug={mediaSlug}
                         title={toName(mediaSlug)}
-                        to={`/${selectedCategory}/${mediaSlug}/details`}
+                        to={route}
                     />
                 );
             })}
