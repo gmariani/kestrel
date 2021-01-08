@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import FlexItem from './FlexItem';
 
 const Container = styled(FlexItem)`
@@ -16,6 +17,7 @@ const propTypes = {
     className: PropTypes.string,
     columnGap: PropTypes.string,
     flexGrow: PropTypes.number,
+    flexWrap: PropTypes.string,
     alignContent: PropTypes.string,
     alignItems: PropTypes.string,
     alignSelf: PropTypes.string,
@@ -24,41 +26,56 @@ const propTypes = {
     justifySelf: PropTypes.string,
     onClick: PropTypes.func,
     onClickCapture: PropTypes.func,
+    hasFocusedChild: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    innerRef: PropTypes.object,
 };
 
-function FlexRow({
-    children,
-    style,
-    className,
-    columnGap = '1rem',
-    flexGrow,
-    alignContent,
-    alignItems,
-    alignSelf,
-    justifyContent,
-    justifyItems,
-    justifySelf,
-    onClick,
-    onClickCapture,
-}) {
-    return (
-        <Container
-            style={style}
-            className={className}
-            columnGap={columnGap}
-            flexGrow={flexGrow}
-            alignContent={alignContent}
-            alignItems={alignItems}
-            alignSelf={alignSelf}
-            justifyContent={justifyContent}
-            justifyItems={justifyItems}
-            justifySelf={justifySelf}
-            onClick={onClick}
-            onClickCapture={onClickCapture}>
-            {children}
-        </Container>
-    );
-}
+const FlexRow = React.forwardRef(
+    (
+        {
+            children,
+            style,
+            className,
+            columnGap = '1rem',
+            flexGrow,
+            flexWrap,
+            alignContent,
+            alignItems,
+            alignSelf,
+            justifyContent,
+            justifyItems,
+            justifySelf,
+            onClick,
+            onClickCapture,
+            hasFocusedChild,
+            innerRef,
+        },
+        ref
+    ) => {
+        return (
+            <Container
+                ref={innerRef}
+                style={style}
+                className={`${className ?? ''} ${hasFocusedChild ? 'focused' : ''}`}
+                columnGap={columnGap}
+                flexGrow={flexGrow}
+                flexWrap={flexWrap}
+                alignContent={alignContent}
+                alignItems={alignItems}
+                alignSelf={alignSelf}
+                justifyContent={justifyContent}
+                justifyItems={justifyItems}
+                justifySelf={justifySelf}
+                onClick={onClick}
+                onClickCapture={onClickCapture}>
+                {children}
+            </Container>
+        );
+    }
+);
 
 FlexRow.propTypes = propTypes;
-export default FlexRow;
+export default withFocusable({
+    trackChildren: true,
+})(FlexRow);

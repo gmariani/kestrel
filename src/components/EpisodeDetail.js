@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { FaPlay, FaHistory } from 'react-icons/fa';
-import Link from './Link';
 import FlexCol from './FlexCol';
 import FlexRow from './FlexRow';
 import ProgressBar from './ProgressBar';

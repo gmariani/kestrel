@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { Credits, FlexCol, FlexRow, Link, ButtonLink, CreditsPreview, EpisodeTitle } from '../components';
+import { Credits, FlexCol, FlexRow, ButtonLink, EpisodeTitle } from '../components';
 import mediaInterface from '../interfaces/media';
 
 const propTypes = {

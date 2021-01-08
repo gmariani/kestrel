@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import S3 from 'aws-sdk/clients/s3';
-import useLocalStorage from './useLocalStorage';
+// import useLocalStorage from './useLocalStorage';
 import {
     toName,
     getAWSBaseURL,
@@ -63,7 +63,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
         function onComplete(data) {
             status.current = 'loaded';
-            console.log('onComplete', mounted.current, keyPrefix, data);
+            // console.log('onComplete', mounted.current, keyPrefix, data);
             if (mounted.current) {
                 setMetadata({
                     isLoaded: true,
@@ -127,7 +127,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
          */
         function loadMeta(onSuccess, onFailure) {
             status.current = 'loading';
-            console.log('loadMeta', keyPrefix, `${BASE_URL}/${keyPrefix}/${META_JSON}`);
+            // console.log('loadMeta', keyPrefix, `${BASE_URL}/${keyPrefix}/${META_JSON}`);
             fetch(`${BASE_URL}/${keyPrefix}/${META_JSON}`)
                 .then((res) => res.json())
                 .then((result) => {
@@ -245,8 +245,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                             });
                     });
                 }, Promise.resolve())
-                .then((lastEpisode) => {
-                    console.log('episodes', lastEpisode, accumulatorEpisodes);
+                .then((/* lastEpisode */) => {
                     const resolution = accumulatorEpisodes.length > 0 ? accumulatorEpisodes[0].resolution : 'sd';
                     return {
                         background: backgroundFile,
@@ -413,7 +412,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         // We pass null for onSuccess as useLocalStorage has already loaded the
         // data if it validates. We only worry if it didn't find it.
         loadCache(
-            (data) => {
+            () => {
                 // console.log('asdfasdf', data);
                 // onComplete(data);
             },

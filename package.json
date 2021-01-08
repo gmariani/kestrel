@@ -5,6 +5,7 @@
     "homepage": "https://mariani.life/kestrel/",
     "dependencies": {
         "@cloudfour/simple-svg-placeholder": "^1.0.2",
+        "@noriginmedia/react-spatial-navigation": "^2.12.5",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.5.0",
         "@testing-library/user-event": "^7.2.1",

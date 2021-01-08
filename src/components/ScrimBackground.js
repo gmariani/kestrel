@@ -41,14 +41,14 @@ const Art = styled(Layer)`
     opacity: 0.6;
 `;
 
-const Highlight = styled(Layer)`
-    opacity: 0.65;
-    background-image: radial-gradient(
-        ellipse at left top,
-        hsla(var(--hue), 100%, 60%, 1) 10%,
-        hsla(var(--hue), 100%, 60%, 0) 70%
-    );
-`;
+// const Highlight = styled(Layer)`
+//     opacity: 0.65;
+//     background-image: radial-gradient(
+//         ellipse at left top,
+//         hsla(var(--hue), 100%, 60%, 1) 10%,
+//         hsla(var(--hue), 100%, 60%, 0) 70%
+//     );
+// `;
 
 const Scrim = styled(Layer)`
     opacity: 0.1;

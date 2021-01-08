@@ -14,7 +14,6 @@ import {
     FlexCol,
     SubOverlay,
     HalfPane,
-    PaneEpisodeTitle,
     PaneEpisodeDetail,
     PaneEpisodeSettings,
 } from '../components';

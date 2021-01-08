@@ -7,7 +7,6 @@ const getVideoMeta = (fileURL) =>
             const video = document.createElement('video');
             video.preload = 'metadata';
             video.onloadedmetadata = () => {
-                console.log('onloadedmetadata', video);
                 resolve({ duration: video.duration, height: video.videoHeight, width: video.videoWidth });
             };
             video.onerror = () => {

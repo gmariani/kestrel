@@ -89,7 +89,7 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
     // Manage focused element
     const WATCH_ELEMENT = 'watch';
     const focusElements = [WATCH_ELEMENT];
-    const [focusElement, focusKey] = useFocus(focusElements, 'vertical', hasFocus);
+    const [, focusKey] = useFocus(focusElements, 'vertical', hasFocus);
 
     const { tmdb } = useTMDB(isSingle ? 'movie' : 'episode', media.tmdb, media.season.number, media.episode.number);
     // data.name
@@ -136,7 +136,6 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
         );
     }
 
-    console.log(tmdb);
     return (
         <HalfPane
             backgroundHue={media.backgroundHue}

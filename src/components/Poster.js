@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import { useAWSMedia } from '../hooks';
 // import getTMDB from '../utils/getTMDB';
 import LazyImage from './LazyImage';
@@ -11,7 +12,7 @@ const Container = styled(ReachRouterLink)`
     max-width: 400px;
     transition: all 0.2s ease-in-out;
     &:focus,
-    &.focused.selected,
+    &.focused,
     &:hover {
         text-decoration: none;
         transform: scale(1.05);
@@ -47,17 +48,18 @@ const SubTitle = styled.p`
 `;
 
 const propTypes = {
+    focused: PropTypes.bool,
     categorySlug: PropTypes.string,
     mediaSlug: PropTypes.string,
     title: PropTypes.string,
     to: PropTypes.string.isRequired,
-    className: PropTypes.string,
 };
 
-function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '' }) {
+function Poster({ focused, categorySlug, mediaSlug, to, title = 'No Title' }) {
     const baseURL = getAWSBaseURL();
     const meta = useAWSMedia(categorySlug, mediaSlug);
-    console.log('Poster', mediaSlug, meta);
+    // console.log('Poster', `focused: ${focused}`, mediaSlug);
+
     // Get title as data loads
     const getTitle = () => {
         if (meta.isLoaded) {
@@ -95,7 +97,7 @@ function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '
     // }
 
     return (
-        <Container to={to} className={className}>
+        <Container to={to} className={focused ? 'focused' : ''}>
             <Image src={`${baseURL}/${categorySlug}/${mediaSlug}/poster.jpg`} height='600' width='400' />
             {getTitle()}
             {getSubTitle()}
@@ -104,4 +106,4 @@ function Poster({ categorySlug, mediaSlug, to, title = 'No Title', className = '
 }
 
 Poster.propTypes = propTypes;
-export default Poster;
+export default withFocusable()(Poster);

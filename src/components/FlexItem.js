@@ -6,6 +6,7 @@ const Container = styled.div`
     display: flex;
 
     ${(props) => props.flexGrow && `flex-grow:${props.flexGrow};`}
+    ${(props) => props.flexWrap && `flex-wrap:${props.flexWrap};`}
 
     ${(props) => props.alignContent && `align-content:${props.alignContent};`}
     ${(props) => props.justifyContent && `justify-content:${props.justifyContent};`}
@@ -23,6 +24,7 @@ const propTypes = {
     style: PropTypes.object,
     className: PropTypes.string,
     flexGrow: PropTypes.number,
+    flexWrap: PropTypes.string,
     alignContent: PropTypes.string,
     alignItems: PropTypes.string,
     alignSelf: PropTypes.string,
@@ -33,37 +35,45 @@ const propTypes = {
     onClickCapture: PropTypes.func,
 };
 
-function FlexItem({
-    children,
-    style,
-    className,
-    flexGrow,
-    alignContent,
-    alignItems,
-    alignSelf,
-    justifyContent,
-    justifyItems,
-    justifySelf,
-    onClick,
-    onClickCapture,
-}) {
-    return (
-        <Container
-            style={style}
-            className={className}
-            flexGrow={flexGrow}
-            alignContent={alignContent}
-            alignItems={alignItems}
-            alignSelf={alignSelf}
-            justifyContent={justifyContent}
-            justifyItems={justifyItems}
-            justifySelf={justifySelf}
-            onClick={onClick}
-            onClickCapture={onClickCapture}>
-            {children}
-        </Container>
-    );
-}
+const FlexItem = React.forwardRef(
+    (
+        {
+            children,
+            style,
+            className,
+            flexGrow,
+            flexWrap,
+            alignContent,
+            alignItems,
+            alignSelf,
+            justifyContent,
+            justifyItems,
+            justifySelf,
+            onClick,
+            onClickCapture,
+        },
+        ref
+    ) => {
+        return (
+            <Container
+                ref={ref}
+                style={style}
+                className={className}
+                flexGrow={flexGrow}
+                flexWrap={flexWrap}
+                alignContent={alignContent}
+                alignItems={alignItems}
+                alignSelf={alignSelf}
+                justifyContent={justifyContent}
+                justifyItems={justifyItems}
+                justifySelf={justifySelf}
+                onClick={onClick}
+                onClickCapture={onClickCapture}>
+                {children}
+            </Container>
+        );
+    }
+);
 
 FlexItem.propTypes = propTypes;
 export default FlexItem;
