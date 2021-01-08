@@ -43,7 +43,7 @@ function EpisodeContainer({
 
     // Grab thumbnails for episodes
     const { tmdb } = useTMDB('season', tmdbId, seasonNumber);
-
+    console.log(tmdb);
     // On focusElement change, move element into view
     useEffect(() => {
         const episodeRef = document.querySelector('.episode.selected');
@@ -66,11 +66,12 @@ function EpisodeContainer({
                     const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const episodeSlug = toSlug(episode.name);
                     const episodeProgress = getEpisodeProgress(seasonProgress?.[i], episode.duration);
+                    // console.log(tmdb.success, tmdb.episodes, i, tmdb.episodes?.[i]?.still_path);
                     const episodeThumbnail =
-                        tmdb.success === true
+                        tmdb.success === true && tmdb.episodes && tmdb.episodes[i]
                             ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2/${tmdb.episodes[i].still_path}`
                             : episode.thumbnail;
-
+                    console.log(episodeThumbnail);
                     return (
                         <Episode
                             key={episodeSlug}

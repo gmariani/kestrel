@@ -55,7 +55,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
         const episode = episodeRef
             ? {
                 index: episodeIndex,
-                number: episodeIndex + 1,
+                number: episodeRef.episodeNumber ?? episodeIndex + 1,
                 slug: episodeSlug,
                 route: isSingle ? `/${categorySlug}/${mediaSlug}/watch` : `/tv/${mediaSlug}/watch/${seasonSlug}/${episodeSlug}`,
                 name: episodeRef.name,
@@ -71,7 +71,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
         if (nextEpisodeRef) {
             nextEpisode = {
                 index: episodeIndex + 1,
-                number: episodeIndex + 2,
+                number: nextEpisodeRef.episodeNumber ?? episodeIndex + 2,
                 slug: toSlug(nextEpisodeRef.name),
                 route: `/${categorySlug}/${mediaSlug}/watch/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
                 name: nextEpisodeRef.name,

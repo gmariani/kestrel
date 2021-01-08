@@ -63,7 +63,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
         function onComplete(data) {
             status.current = 'loaded';
-            // console.log('onComplete', mounted.current, keyPrefix, data);
+            console.log('onComplete', mounted.current, keyPrefix, data);
             if (mounted.current) {
                 setMetadata({
                     isLoaded: true,
@@ -217,19 +217,21 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const seasonSubtitles = mediaFiles.filter((path) => path.includes(directory) && path.endsWith('.vtt'));
             const accumulatorEpisodes = [];
             return seasonEpisodes
-                .reduce((accumulatorPromise, path) => {
-                    console.log(`getVideoMeta for ${path}`);
+                .reduce((accumulatorPromise, path, index) => {
+                    console.log(`accumulatorPromise for ${path}`);
                     const fileName = getFileName(path);
                     // console.log('getSeason', path);
 
                     return accumulatorPromise.then(() => {
+                        console.log('call getVideoMeta', path);
                         return getVideoMeta(`${BASE_URL}/${path}`)
                             .then((videoMeta) => {
-                                console.log('getVideoMeta', path, videoMeta);
+                                console.log('getVideoMeta result', path, videoMeta);
                                 const ep = {
                                     duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
                                     name: toName(removeNumbering(getFileName(path))),
                                     resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
+                                    episodeNumber: index + 1,
                                     fileURL: `${BASE_URL}/${path}`,
                                 };
                                 // Corresponding subtitles exist? Add them in
@@ -248,14 +250,14 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                 .then((/* lastEpisode */) => {
                     const resolution = accumulatorEpisodes.length > 0 ? accumulatorEpisodes[0].resolution : 'sd';
                     return {
-                        background: backgroundFile,
+                        backgroundURL: backgroundFile,
                         description: '',
                         episodeCount: accumulatorEpisodes.length,
                         episodes: accumulatorEpisodes,
                         name,
                         resolution,
                         seasonNumber: seasonIndex + 1,
-                        // year
+                        year: null,
                     };
                 });
         }
@@ -308,15 +310,15 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
                         fileURL: primaryFile,
                         genres: [],
-                        // imdb
+                        imdb: '',
                         name: toName(getFileName(singlePath)),
                         posterURL: posterFile,
                         resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
                         slug: toSlug(getFileName(singlePath)),
                         schema: '1.0',
-                        // tmdb
-                        // year
+                        tmdb: '',
                         type: 'movie',
+                        year: null,
                     };
                     if (subtitlesFile !== undefined) {
                         data.subtitleURL = `${BASE_URL}/${subtitlesFile}`;
@@ -363,8 +365,32 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             // Get the background image file if it exists
             const backgroundFile = getBackgroundFile(rootFiles);
 
-            Promise.all(directories.map((directory, index) => getSeason(directory, index, mediaFiles)))
+            const accumulatorSeasons = [];
+            const seasonPromises = directories.reduce((accumulatorPromise, directory, index) => {
+                // console.log(`accumulatorPromise for ${directory}`);
+                return accumulatorPromise.then(() => {
+                    // console.log('call getSeason', directory, index);
+                    return getSeason(directory, index, mediaFiles)
+                        .then((seasonMeta) => {
+                            // console.log('getSeason result', directory, seasonMeta);
+                            accumulatorSeasons.push(seasonMeta);
+                            return seasonMeta;
+                        })
+                        .catch((error) => {
+                            // eslint-disable-next-line no-console
+                            console.error('getSeason error', error);
+                        });
+                });
+            }, Promise.resolve());
+
+            // Promise.all(directories.map((directory, index) => getSeason(directory, index, mediaFiles)))
+            seasonPromises
+                .then((/* lastSeason */) => {
+                    console.log('accumulatorSeasons', accumulatorSeasons);
+                    return accumulatorSeasons;
+                })
                 .then((seasons) => {
+                    console.log('seasons', seasons);
                     if (onSuccess)
                         onSuccess({
                             backgroundHue: 20,
@@ -373,16 +399,16 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                             contentRating: '',
                             description: '',
                             genres: [],
-                            // imdb
+                            imdb: '',
                             name: toName(slug),
                             posterURL: posterFile,
                             // resolution
                             seasons,
                             slug,
                             schema: '1.0',
-                            // tmdb
-                            // year
+                            tmdb: '',
                             type: 'tv',
+                            year: null,
                         });
                 })
                 .catch((error) => {

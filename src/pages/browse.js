@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAWSCategoryMedia, useAWSCategories } from '../hooks';
 import { TempContainer, FadeBackground } from '../components';
@@ -9,10 +9,11 @@ export default function Browse() {
     const { categories } = useAWSCategories();
     const selectedCategory = categorySlug ?? (categories.length ? categories[0] : '');
     const { media, category: mediaCategory } = useAWSCategoryMedia(`${selectedCategory}/`);
+    const containerRef = useRef();
     // console.log('Browse: AWS categories', categories);
     // console.log('Browse: AWS media', media);
     // console.log('Browse:', `selectedCategory: ${selectedCategory} mediaCategory: ${mediaCategory}`);
-    const containerRef = useRef();
+
     return (
         <>
             <TempContainer ref={containerRef}>

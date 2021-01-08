@@ -141,7 +141,7 @@ function EpisodeDetail({
     }
 
     return (
-        <Container justifyContent='end'>
+        <Container justifyContent='start'>
             <Title>{media.name}</Title>
             <Description>{media.season.description}</Description>
             <Meta>
