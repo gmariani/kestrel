@@ -73,10 +73,10 @@ const Container = styled(ReachRouterLink)`
 const Thumbnail = styled.div`
     width: 30%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(100, 100, 100, 0.5);
+    background-image: none;
     border-top-left-radius: 2rem;
     border-bottom-left-radius: 2rem;
-    background-image: ${({ src }) => `url(${src});`};
     background-size: cover;
     background-position: center;
     /* Fix slight pixel render error */
@@ -120,11 +120,12 @@ function Episode({
         progress.percent > 0
             ? `${secondsToHuman(progress.totalSeconds - progress.currentSeconds)} left`
             : secondsToHuman(progress.totalSeconds);
-
-    // Title and Meta have classnames so we can target them at the parent level with CSS
+    const ref = React.createRef();
+    const style = imagePath ? { backgroundImage: `url('${imagePath}')` } : {};
+    console.log(ref, title, style);
     return (
         <Container to={to} className={className}>
-            {imagePath && <Thumbnail src={imagePath} />}
+            {imagePath && <Thumbnail ref={ref} style={style} />}
             <Info>
                 <Meta>
                     <div>Episode {episodeNumber}</div>

@@ -65,13 +65,22 @@ function EpisodeContainer({
                     const classSelected = isSelected ? 'selected' : '';
                     const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const episodeSlug = toSlug(episode.name);
+                    const episodeNumber = Array.isArray(episode.episodeNumber)
+                        ? episode.episodeNumber.map((num) => padNumber(num)).join(' & ')
+                        : padNumber(episode.episodeNumber ?? padNumber(i + 1)); // padNumber(i + 1)
                     const episodeProgress = getEpisodeProgress(seasonProgress?.[i], episode.duration);
-                    // console.log(tmdb.success, tmdb.episodes, i, tmdb.episodes?.[i]?.still_path);
+
+                    // TMDB is zero based index
+                    const episodeTMDBNumber =
+                        (Array.isArray(episode.episodeNumber)
+                            ? episode.episodeNumber[0]
+                            : episode.episodeNumber ?? i + 1) - 1;
+
                     const episodeThumbnail =
-                        tmdb.success === true && tmdb.episodes && tmdb.episodes[i]
-                            ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2/${tmdb.episodes[i].still_path}`
+                        tmdb.success === true && tmdb.episodes && tmdb.episodes[episodeTMDBNumber]
+                            ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2${tmdb.episodes[episodeTMDBNumber].still_path}`
                             : episode.thumbnail;
-                    console.log(episodeThumbnail);
+
                     return (
                         <Episode
                             key={episodeSlug}
@@ -79,7 +88,7 @@ function EpisodeContainer({
                             className={`episode ${classSelected} ${classFocused}`}
                             imagePath={episodeThumbnail}
                             title={episode.name}
-                            episodeNumber={padNumber(i + 1)}
+                            episodeNumber={episodeNumber}
                             progress={episodeProgress}
                         />
                     );
