@@ -24,6 +24,7 @@ const Meta = styled.div`
 const Container = styled(ReachRouterLink)`
     background-color: black;
     border-width: 0;
+    border-style: solid;
     border-color: transparent;
     border-radius: 2rem;
     cursor: pointer;
@@ -71,17 +72,19 @@ const Container = styled(ReachRouterLink)`
     }
 `;
 
-const Thumbnail = styled.div`
+const ThumbnailContainer = styled.div`
     width: 30%;
-    height: 100%;
     background-color: rgba(100, 100, 100, 0.5);
-    background-image: none;
     border-top-left-radius: 2rem;
     border-bottom-left-radius: 2rem;
-    background-size: cover;
-    background-position: center;
     /* Fix slight pixel render error */
     transform: translateX(-1px);
+    overflow: hidden;
+`;
+const ThumbnailImage = styled.img`
+    height: 100%;
+    width: auto;
+    object-fit: cover;
 `;
 
 const Info = styled.div`
@@ -131,9 +134,14 @@ function Episode({
 
     function getThumbnail() {
         if (imagePath) {
-            const style = { backgroundImage: `url('${imagePath}')` };
             const ref = React.createRef(null);
-            const result = <Thumbnail ref={ref} style={style} />;
+            // const style = { backgroundImage: `url('${imagePath}')` };
+            // const result = <Thumbnail ref={ref} style={style} />;
+            const result = (
+                <ThumbnailContainer>
+                    <ThumbnailImage ref={ref} src={imagePath} />
+                </ThumbnailContainer>
+            );
             console.log('getThumbnail showing', realFocusKey, ref);
             return result;
         }
