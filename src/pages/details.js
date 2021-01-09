@@ -54,7 +54,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
     });
 
     useEffect(() => {
-        console.log('Details.setFocus ACTION-PLAY', hasFocusedChild, focused);
+        // Set initial focus inorder to jumpstart spacial navigation
         if (!hasFocusedChild) setFocus('ACTION-PLAY');
     });
 
@@ -74,6 +74,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
         );
     }
 
+    // TODO set escape to go back
     // Go back to the browse screen
     // if (focusKey === 'Escape') {
     //     return <Redirect to='/browse' />;

@@ -37,7 +37,6 @@ function SeasonContainer({ setFocus, seasons, onClick }) {
                 rowGap='1.5rem'
                 justifyContent='start'
                 onMouseEnter={() => {
-                    console.log('setfocus?');
                     setFocus();
                 }}
                 focusKey='SEASONS'>

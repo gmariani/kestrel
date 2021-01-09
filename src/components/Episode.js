@@ -92,7 +92,6 @@ const Info = styled.div`
 `;
 
 const propTypes = {
-    setFocus: PropTypes.func,
     focused: PropTypes.bool,
     selected: PropTypes.bool,
     realFocusKey: PropTypes.string,
@@ -105,7 +104,6 @@ const propTypes = {
         currentSeconds: PropTypes.number,
         totalSeconds: PropTypes.number,
     }),
-    className: PropTypes.string,
 };
 const defaultProgress = {
     percent: 0,
@@ -114,7 +112,6 @@ const defaultProgress = {
 };
 
 function Episode({
-    setFocus,
     focused,
     selected,
     realFocusKey,
@@ -123,7 +120,6 @@ function Episode({
     title = 'No Title',
     episodeNumber = '0',
     progress = defaultProgress,
-    className = '',
 }) {
     // console.log('Episode', `focused: ${focused}`, `selected: ${selected}`, realFocusKey);
     const timer =
@@ -132,11 +128,21 @@ function Episode({
             : secondsToHuman(progress.totalSeconds);
 
     // Use style attribute to avoid mutating the css class
-    const style = imagePath ? { backgroundImage: `url('${imagePath}')` } : {};
 
+    function getThumbnail() {
+        if (imagePath) {
+            const style = { backgroundImage: `url('${imagePath}')` };
+            const ref = React.createRef(null);
+            const result = <Thumbnail ref={ref} style={style} />;
+            console.log('getThumbnail showing', realFocusKey, ref);
+            return result;
+        }
+        // console.log('getThumbnail hidden', realFocusKey);
+        return null;
+    }
     return (
         <Container to={to} className={`episode ${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`}>
-            {imagePath && <Thumbnail style={style} />}
+            {getThumbnail()}
             <Info>
                 <Meta>
                     <div>Episode {episodeNumber}</div>
@@ -144,7 +150,7 @@ function Episode({
                 </Meta>
                 <Title>{title}</Title>
                 {progress.percent > 0 ? (
-                    <ProgressBar value={progress.percent} theme={className.includes('selected') ? 'dark' : 'light'} />
+                    <ProgressBar value={progress.percent} theme={selected ? 'dark' : 'light'} />
                 ) : null}
             </Info>
         </Container>

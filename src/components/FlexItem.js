@@ -56,7 +56,6 @@ const FlexItem = React.forwardRef(
         },
         ref
     ) => {
-        console.log('onMouseEnter', onMouseEnter);
         return (
             <Container
                 ref={ref}

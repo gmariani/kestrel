@@ -44,7 +44,6 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
                 rowGap='1.5rem'
                 justifyContent='start'
                 onMouseEnter={() => {
-                    console.log('setfocus?');
                     setFocus();
                 }}
                 focusKey='EPISODES'>
@@ -62,7 +61,10 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
                             : episode.episodeNumber ?? i + 1) - 1;
 
                     const episodeThumbnail =
-                        tmdb.success === true && tmdb.episodes && tmdb.episodes[episodeTMDBNumber]
+                        tmdb.success === true &&
+                        tmdb.episodes &&
+                        tmdb.episodes[episodeTMDBNumber] &&
+                        tmdb.episodes[episodeTMDBNumber].still_path
                             ? `https://image.tmdb.org/t/p/w227_and_h127_bestv2${tmdb.episodes[episodeTMDBNumber].still_path}`
                             : episode.thumbnail;
 
