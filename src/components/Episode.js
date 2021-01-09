@@ -97,7 +97,6 @@ const Info = styled.div`
 const propTypes = {
     focused: PropTypes.bool,
     selected: PropTypes.bool,
-    realFocusKey: PropTypes.string,
     imagePath: PropTypes.string,
     to: PropTypes.string,
     title: PropTypes.string,
@@ -117,7 +116,6 @@ const defaultProgress = {
 function Episode({
     focused,
     selected,
-    realFocusKey,
     imagePath,
     to,
     title = 'No Title',
@@ -130,22 +128,15 @@ function Episode({
             ? `${secondsToHuman(progress.totalSeconds - progress.currentSeconds)} left`
             : secondsToHuman(progress.totalSeconds);
 
-    // Use style attribute to avoid mutating the css class
-
     function getThumbnail() {
         if (imagePath) {
-            const ref = React.createRef(null);
-            // const style = { backgroundImage: `url('${imagePath}')` };
-            // const result = <Thumbnail ref={ref} style={style} />;
             const result = (
                 <ThumbnailContainer>
-                    <ThumbnailImage ref={ref} src={imagePath} />
+                    <ThumbnailImage src={imagePath} />
                 </ThumbnailContainer>
             );
-            console.log('getThumbnail showing', realFocusKey, ref);
             return result;
         }
-        // console.log('getThumbnail hidden', realFocusKey);
         return null;
     }
     return (

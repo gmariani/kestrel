@@ -14,6 +14,9 @@ const Container = styled.div`
     flex: 1;
     padding-right: 1rem;
     padding-left: 1rem;
+`;
+
+const Column = styled(FlexCol)`
     overflow: hidden;
 `;
 
@@ -40,7 +43,7 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
 
     return (
         <Container>
-            <FlexCol
+            <Column
                 rowGap='1.5rem'
                 justifyContent='start'
                 onMouseEnter={() => {
@@ -88,7 +91,7 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
                         />
                     );
                 })}
-            </FlexCol>
+            </Column>
         </Container>
     );
 }

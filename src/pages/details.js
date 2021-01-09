@@ -2,10 +2,15 @@ import React, { useEffect } from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import PropTypes from 'prop-types';
+import styled from 'styled-components/macro';
 import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
 import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../containers';
 import { useMedia, useLocalStorage } from '../hooks';
 import { getEpisodeProgress, toSlug } from '../utils';
+
+const Row = styled(FlexRow)`
+    overflow: hidden;
+`;
 
 const propTypes = {
     navigateByDirection: PropTypes.func,
@@ -98,7 +103,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
         <>
             <TempContainer>
                 <HeaderContainer hideMenu />
-                <FlexRow style={{ height: '100%' }} columnGap='2rem'>
+                <Row style={{ height: '100%' }} columnGap='2rem'>
                     {!isSingle && media.seasons.length > 1 && (
                         <SeasonContainer
                             seasons={media.seasons}
@@ -144,7 +149,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
                             routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
                         />
                     )}
-                </FlexRow>
+                </Row>
             </TempContainer>
             <Shadow opacity={0.9} />
             <ScrimBackground hue={media.backgroundHue} imagePath={media.season.backgroundURL ?? media.backgroundURL} />
