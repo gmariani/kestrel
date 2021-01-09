@@ -120,12 +120,13 @@ function Episode({
         progress.percent > 0
             ? `${secondsToHuman(progress.totalSeconds - progress.currentSeconds)} left`
             : secondsToHuman(progress.totalSeconds);
-    const ref = React.createRef();
+
+    // Use style attribute to avoid mutating the css class
     const style = imagePath ? { backgroundImage: `url('${imagePath}')` } : {};
-    console.log(ref, title, style);
+
     return (
         <Container to={to} className={className}>
-            {imagePath && <Thumbnail ref={ref} style={style} />}
+            {imagePath && <Thumbnail style={style} />}
             <Info>
                 <Meta>
                     <div>Episode {episodeNumber}</div>
