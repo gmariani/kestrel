@@ -27,8 +27,8 @@ function SeasonContainer({ setFocus, seasons, onClick }) {
 
     // Scroll selected season into view
     useEffect(() => {
-        // const episodeRef = document.querySelector('.season.selected');
-        // episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        const episodeRef = document.querySelector('.season.selected');
+        episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }, [selectedSeason]);
 
     return (

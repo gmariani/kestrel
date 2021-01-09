@@ -33,9 +33,9 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
 
     // On focusElement change, move element into view
     useEffect(() => {
-        // const episodeRef = document.querySelector('.episode.selected');
+        const episodeRef = document.querySelector('.episode.selected');
         // If no episodes exist, don't break
-        // if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }, [selectedEpisode]);
 
     return (
