@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
-import { Column, Season } from '../components';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
+import { FlexCol, Season } from '../components';
+import { toSlug } from '../utils';
 
 const Container = styled.div`
     overflow: hidden;
 `;
 
 const propTypes = {
-    hasFocus: PropTypes.bool,
+    setFocus: PropTypes.func,
     seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
     onClick: PropTypes.func,
 };
 
-function SeasonContainer({ hasFocus = false, seasons, onClick }) {
+function SeasonContainer({ setFocus, seasons, onClick }) {
     const [selectedSeason, setSelectedSeason] = useState(0);
-    const numSeasons = seasons.length;
 
     // Check if selected season is available in this series, if not
     // reset it to the first season
@@ -24,58 +25,44 @@ function SeasonContainer({ hasFocus = false, seasons, onClick }) {
         setSelectedSeason(0);
     }
 
-    // Handle focus in a non-standard way
-    const onKeyDown = useCallback(
-        (event) => {
-            const { keyCode } = event;
-            if (!hasFocus) return;
-
-            if (keyCode >= 37 && keyCode <= 41) {
-                // (37) Left Arrow, (38) Up Arrow, (39) Right Arrow, (40) Down Arrow
-                let newSelectedSeason = selectedSeason;
-                if (keyCode === 38) {
-                    newSelectedSeason = (selectedSeason - 1 + numSeasons) % numSeasons;
-                } else if (keyCode === 40) {
-                    newSelectedSeason = (selectedSeason + 1) % numSeasons;
-                }
-                setSelectedSeason(newSelectedSeason);
-                onClick(newSelectedSeason);
-                event.preventDefault();
-            }
-        },
-        [hasFocus, onClick, selectedSeason, setSelectedSeason, numSeasons]
-    );
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDown, false);
-        return () => {
-            document.removeEventListener('keydown', onKeyDown, false);
-        };
-    }, [onKeyDown]);
-
     // Scroll selected season into view
     useEffect(() => {
-        const episodeRef = document.querySelector('.season.selected');
-        episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        // const episodeRef = document.querySelector('.season.selected');
+        // episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }, [selectedSeason]);
 
     return (
         <Container>
-            <Column>
-                {seasons.map((season, i) => (
+            <FlexCol
+                rowGap='1.5rem'
+                justifyContent='start'
+                onMouseEnter={() => {
+                    console.log('setfocus?');
+                    setFocus();
+                }}
+                focusKey='SEASONS'>
+                {seasons.map((season, i) => {
                     // Will not be sorted, or added to dynamically so it's safe to use array index
-                    <Season
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={i}
-                        title={season.name}
-                        episodeCount={season.episodes.length}
-                        className={`season ${i === selectedSeason ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-                        onClick={() => onClick(i)}
-                    />
-                ))}
-            </Column>
+                    return (
+                        <Season
+                            focusKey={`SEASON-${i}`}
+                            key={`${toSlug(season.name).toUpperCase()}`}
+                            onBecameFocused={() => {
+                                // console.log('Season.onBecameFocused', i);
+                                setSelectedSeason(i);
+                                onClick(i);
+                            }}
+                            title={season.name}
+                            episodeCount={season.episodes.length}
+                            selected={i === selectedSeason}
+                            onClick={() => onClick(i)}
+                        />
+                    );
+                })}
+            </FlexCol>
         </Container>
     );
 }
 
 SeasonContainer.propTypes = propTypes;
-export default SeasonContainer;
+export default withFocusable()(SeasonContainer);

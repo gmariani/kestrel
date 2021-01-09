@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import { capitalize } from '../utils';
 
 const SubTitle = styled.span`
@@ -37,15 +38,17 @@ const Container = styled.button`
 `;
 
 const propTypes = {
+    focused: PropTypes.bool,
+    selected: PropTypes.bool,
     title: PropTypes.string.isRequired,
     episodeCount: PropTypes.number,
-    className: PropTypes.string,
     onClick: PropTypes.func,
 };
 
-function Season({ title, episodeCount = 0, className = '', onClick }) {
+function Season({ focused, selected, title, episodeCount = 0, onClick }) {
+    // console.log('Season', `focused: ${focused}`, `selected: ${selected}`, realFocusKey);
     return (
-        <Container className={className} onClick={onClick}>
+        <Container className={`season ${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`} onClick={onClick}>
             {capitalize(title)}
             <SubTitle>{`${episodeCount} ${episodeCount > 1 || episodeCount === 0 ? 'Episodes' : 'Episode'}`}</SubTitle>
         </Container>
@@ -53,4 +56,4 @@ function Season({ title, episodeCount = 0, className = '', onClick }) {
 }
 
 Season.propTypes = propTypes;
-export default Season;
+export default withFocusable()(Season);

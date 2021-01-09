@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
-import { Redirect } from 'react-router-dom';
-import { Column, Episode } from '../components';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
+import { FlexCol, Episode } from '../components';
 import { getEpisodeProgress, padNumber, toSlug } from '../utils';
-import { useFocus, useTMDB } from '../hooks';
+import { useTMDB } from '../hooks';
 
 const Container = styled.div`
     display: flex;
@@ -18,7 +18,7 @@ const Container = styled.div`
 `;
 
 const propTypes = {
-    hasFocus: PropTypes.bool,
+    setFocus: PropTypes.func,
     tmdbId: PropTypes.number,
     episodes: PropTypes.arrayOf(PropTypes.object).isRequired,
     seasonNumber: PropTypes.number,
@@ -26,44 +26,29 @@ const propTypes = {
     routePrefix: PropTypes.string.isRequired,
 };
 
-function EpisodeContainer({
-    hasFocus = false,
-    tmdbId,
-    episodes = [],
-    seasonNumber = 1,
-    seasonProgress = [],
-    routePrefix,
-}) {
-    // Manage focused element
-    const [focusElement, focusKey] = useFocus(
-        episodes.map((episode, i) => i),
-        'vertical',
-        hasFocus
-    );
-
+function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, seasonProgress = [], routePrefix }) {
+    const [selectedEpisode, setSelectedEpisode] = useState(0);
     // Grab thumbnails for episodes
     const { tmdb } = useTMDB('season', tmdbId, seasonNumber);
-    console.log(tmdb);
+
     // On focusElement change, move element into view
     useEffect(() => {
-        const episodeRef = document.querySelector('.episode.selected');
+        // const episodeRef = document.querySelector('.episode.selected');
         // If no episodes exist, don't break
-        if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    }, [focusElement]);
-
-    // Go to watch episode
-    if (focusKey === 'Enter' && episodes.length) {
-        console.log(`Go to ${routePrefix}${toSlug(episodes[focusElement].name)}`);
-        return <Redirect to={`${routePrefix}${toSlug(episodes[focusElement].name)}`} />;
-    }
+        // if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    }, [selectedEpisode]);
 
     return (
         <Container>
-            <Column>
+            <FlexCol
+                rowGap='1.5rem'
+                justifyContent='start'
+                onMouseEnter={() => {
+                    console.log('setfocus?');
+                    setFocus();
+                }}
+                focusKey='EPISODES'>
                 {episodes.map((episode, i) => {
-                    const isSelected = i === focusElement;
-                    const classSelected = isSelected ? 'selected' : '';
-                    const classFocused = isSelected && hasFocus ? 'focused' : '';
                     const episodeSlug = toSlug(episode.name);
                     const episodeNumber = Array.isArray(episode.episodeNumber)
                         ? episode.episodeNumber.map((num) => padNumber(num)).join(' & ')
@@ -83,9 +68,17 @@ function EpisodeContainer({
 
                     return (
                         <Episode
+                            focusKey={`EPISODE-${episodeSlug.toUpperCase()}`}
                             key={episodeSlug}
+                            onBecameFocused={() => {
+                                // console.log('Episode.onBecameFocused', i);
+                                setSelectedEpisode(i);
+                            }}
+                            onEnterPress={() => {
+                                console.log(`Go to watch episode ${routePrefix}${episodeSlug}`);
+                            }}
                             to={`${routePrefix}${episodeSlug}`}
-                            className={`episode ${classSelected} ${classFocused}`}
+                            selected={i === selectedEpisode}
                             imagePath={episodeThumbnail}
                             title={episode.name}
                             episodeNumber={episodeNumber}
@@ -93,10 +86,10 @@ function EpisodeContainer({
                         />
                     );
                 })}
-            </Column>
+            </FlexCol>
         </Container>
     );
 }
 
 EpisodeContainer.propTypes = propTypes;
-export default EpisodeContainer;
+export default withFocusable()(EpisodeContainer);

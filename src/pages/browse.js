@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAWSCategoryMedia, useAWSCategories } from '../hooks';
 import { TempContainer, FadeBackground } from '../components';

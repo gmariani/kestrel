@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { FaPlay, FaHistory } from 'react-icons/fa';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import FlexCol from './FlexCol';
 import FlexRow from './FlexRow';
 import ProgressBar from './ProgressBar';
 import ButtonLink from './ButtonLink';
 import mediaInterface from '../interfaces/media';
 import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
-import { useFocus } from '../hooks';
 
 const Container = styled(FlexCol)`
     font-size: 2rem;
@@ -96,7 +95,6 @@ function getMetaLabel(isSingle = false, contentRating, year, duration, genres, c
 }
 
 const propTypes = {
-    hasFocus: PropTypes.bool,
     isSingle: PropTypes.bool,
     startSeasonIndex: PropTypes.number,
     startEpisodeIndex: PropTypes.number,
@@ -115,7 +113,6 @@ const propTypes = {
 const defaultSeries = { year: 0, genres: [], name: 'No Title', description: '' };
 
 function EpisodeDetail({
-    hasFocus = false,
     isSingle = false,
     media = defaultSeries,
     startSeasonIndex = 0,
@@ -125,20 +122,9 @@ function EpisodeDetail({
     onClickWatch,
     onClickRestart,
 }) {
+    const [selectedButton, setSelectedButton] = useState('ACTION-PLAY');
     const hasProgress = startEpisodeProgress && startEpisodeProgress.percent > 0;
     const hasEpisode = !!startEpisodeRoute;
-
-    // Manage focused element
-    const WATCH_ELEMENT = 'watch';
-    const RESTART_ELEMENT = 'restart';
-    const focusElements = hasProgress ? [WATCH_ELEMENT, RESTART_ELEMENT] : [WATCH_ELEMENT];
-    const [focusElement, focusKey] = useFocus(focusElements, 'vertical', hasFocus);
-
-    // Play the episode on Enter key
-    if (focusKey === 'Enter' && hasEpisode) {
-        if (focusElement === RESTART_ELEMENT) onClickRestart(false);
-        return <Redirect to={startEpisodeRoute} />;
-    }
 
     return (
         <Container justifyContent='start'>
@@ -168,17 +154,31 @@ function EpisodeDetail({
             )}
 
             {hasEpisode && (
-                <FlexCol rowGap='2rem' style={{ marginTop: '2rem' }}>
+                <FlexCol rowGap='2rem' style={{ marginTop: '2rem' }} focusKey='ACTIONS'>
                     <ButtonLink
+                        focusKey='ACTION-PLAY'
                         onClick={onClickWatch}
-                        // prettier-ignore
-                        className={`${hasFocus && focusElement === WATCH_ELEMENT ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}>
+                        onEnterPress={() => {
+                            console.log('onEnterPress onClickWatch()');
+                            // onClickWatch();
+                        }}
+                        onBecameFocused={() => {
+                            setSelectedButton('ACTION-PLAY');
+                        }}
+                        selected={selectedButton === 'ACTION-PLAY'}>
                         <FaPlay /> {getWatchLabel(isSingle, hasProgress, startSeasonIndex, startEpisodeIndex)}
                     </ButtonLink>
                     {hasProgress && (
                         <ButtonLink
-                            // prettier-ignore
-                            className={`${hasFocus && focusElement === RESTART_ELEMENT ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
+                            focusKey='ACTION-RESTART'
+                            onEnterPress={() => {
+                                console.log('onEnterPress onClickRestart()');
+                                // onClickRestart(true)
+                            }}
+                            onBecameFocused={() => {
+                                setSelectedButton('ACTION-RESTART');
+                            }}
+                            selected={selectedButton === 'ACTION-RESTART'}
                             onClick={() => onClickRestart(true)}>
                             <FaHistory /> {isSingle ? 'Restart Movie' : 'Restart Episode'}
                         </ButtonLink>
@@ -190,4 +190,4 @@ function EpisodeDetail({
 }
 
 EpisodeDetail.propTypes = propTypes;
-export default EpisodeDetail;
+export default withFocusable()(EpisodeDetail);

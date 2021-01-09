@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import ProgressBar from './ProgressBar';
 import { secondsToHuman } from '../utils';
 
@@ -91,6 +92,10 @@ const Info = styled.div`
 `;
 
 const propTypes = {
+    setFocus: PropTypes.func,
+    focused: PropTypes.bool,
+    selected: PropTypes.bool,
+    realFocusKey: PropTypes.string,
     imagePath: PropTypes.string,
     to: PropTypes.string,
     title: PropTypes.string,
@@ -109,6 +114,10 @@ const defaultProgress = {
 };
 
 function Episode({
+    setFocus,
+    focused,
+    selected,
+    realFocusKey,
     imagePath,
     to,
     title = 'No Title',
@@ -116,6 +125,7 @@ function Episode({
     progress = defaultProgress,
     className = '',
 }) {
+    // console.log('Episode', `focused: ${focused}`, `selected: ${selected}`, realFocusKey);
     const timer =
         progress.percent > 0
             ? `${secondsToHuman(progress.totalSeconds - progress.currentSeconds)} left`
@@ -125,7 +135,7 @@ function Episode({
     const style = imagePath ? { backgroundImage: `url('${imagePath}')` } : {};
 
     return (
-        <Container to={to} className={className}>
+        <Container to={to} className={`episode ${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`}>
             {imagePath && <Thumbnail style={style} />}
             <Info>
                 <Meta>
@@ -142,4 +152,4 @@ function Episode({
 }
 
 Episode.propTypes = propTypes;
-export default Episode;
+export default withFocusable()(Episode);

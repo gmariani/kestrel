@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 
 const StyledLink = styled.button`
     color: rgba(255, 255, 255, 0.5);
@@ -42,18 +43,22 @@ const StyledLink = styled.button`
 `;
 
 const propTypes = {
+    focused: PropTypes.bool,
+    selected: PropTypes.bool,
+    realFocusKey: PropTypes.string,
     children: PropTypes.node,
     className: PropTypes.string,
     onClick: PropTypes.func,
 };
 
-function ButtonLink({ children, onClick, className = '' }) {
+function ButtonLink({ focused, selected, realFocusKey, children, onClick, className = '' }) {
+    // console.log('ButtonLink', `focused: ${focused}`, `selected: ${selected}`, realFocusKey);
     return (
-        <StyledLink className={className} onClick={onClick}>
+        <StyledLink className={`${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`} onClick={onClick}>
             {children}
         </StyledLink>
     );
 }
 
 ButtonLink.propTypes = propTypes;
-export default ButtonLink;
+export default withFocusable()(ButtonLink);

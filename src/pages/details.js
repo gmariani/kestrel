@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
+import PropTypes from 'prop-types';
 import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
 import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../containers';
-import { useMedia, useLocalStorage, useFocus } from '../hooks';
+import { useMedia, useLocalStorage } from '../hooks';
 import { getEpisodeProgress, toSlug } from '../utils';
 
-export default function Details() {
+const propTypes = {
+    navigateByDirection: PropTypes.func,
+    setFocus: PropTypes.func,
+    focused: PropTypes.bool,
+    hasFocusedChild: PropTypes.bool,
+};
+function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
     const media = useMedia(categorySlug, mediaSlug, seasonSlug);
@@ -20,14 +28,35 @@ export default function Details() {
     let { lastSeasonIndex, lastEpisodeIndex } = playHistory;
     const { progress } = playHistory;
 
-    // Manage focused element
-    const SEASONS_ELEMENT = 'seasons';
-    const DETAILS_ELEMENT = 'details';
-    const EPISODES_ELEMENT = 'episodes';
-    const focusElements = [DETAILS_ELEMENT];
-    if (!isSingle) focusElements.push(EPISODES_ELEMENT);
-    if (!isSingle && media.seasons.length > 1) focusElements.push(SEASONS_ELEMENT);
-    const [focusElement, focusKey] = useFocus(focusElements, 'horizontal');
+    useEffect(() => {
+        // TODO: lodash throttle
+        // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
+
+        function onWheel(event) {
+            event.preventDefault();
+            const { deltaY, deltaX } = event;
+
+            if (deltaY > 1) {
+                navigateByDirection('down');
+            } else if (deltaY < 0) {
+                navigateByDirection('up');
+            } else if (deltaX > 1) {
+                navigateByDirection('right');
+            } else if (deltaX < 1) {
+                navigateByDirection('left');
+            }
+        }
+
+        document.addEventListener('wheel', onWheel, false);
+        return () => {
+            document.removeEventListener('wheel', onWheel, false);
+        };
+    });
+
+    useEffect(() => {
+        console.log('Details.setFocus ACTION-PLAY', hasFocusedChild, focused);
+        if (!hasFocusedChild) setFocus('ACTION-PLAY');
+    });
 
     // If Firebase hasn't replied yet, show loading screen
     if (!media.loaded) return <Loading visible />;
@@ -46,9 +75,9 @@ export default function Details() {
     }
 
     // Go back to the browse screen
-    if (focusKey === 'Escape') {
-        return <Redirect to='/browse' />;
-    }
+    // if (focusKey === 'Escape') {
+    //     return <Redirect to='/browse' />;
+    // }
 
     // Get start (last/initial) episode meta
     // console.log(media.id, playHistory);
@@ -71,7 +100,6 @@ export default function Details() {
                 <FlexRow style={{ height: '100%' }} columnGap='2rem'>
                     {!isSingle && media.seasons.length > 1 && (
                         <SeasonContainer
-                            hasFocus={focusElement === SEASONS_ELEMENT}
                             seasons={media.seasons}
                             onClick={(seasonIndex) => {
                                 history.replace(
@@ -82,7 +110,6 @@ export default function Details() {
                         />
                     )}
                     <EpisodeDetail
-                        hasFocus={focusElement === DETAILS_ELEMENT}
                         isSingle={isSingle}
                         media={media}
                         startSeasonIndex={lastSeasonIndex}
@@ -108,7 +135,6 @@ export default function Details() {
                     />
                     {!isSingle && (
                         <EpisodeContainer
-                            hasFocus={focusElement === EPISODES_ELEMENT}
                             lastEpisodeIndex={lastSeasonIndex === season.index ? lastEpisodeIndex : null}
                             tmdbId={media.tmdb}
                             episodes={season.episodes}
@@ -124,3 +150,6 @@ export default function Details() {
         </>
     );
 }
+
+Details.propTypes = propTypes;
+export default withFocusable({ trackChildren: true })(Details);

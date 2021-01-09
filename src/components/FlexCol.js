@@ -22,6 +22,7 @@ const propTypes = {
     justifyContent: PropTypes.string,
     justifyItems: PropTypes.string,
     justifySelf: PropTypes.string,
+    onMouseEnter: PropTypes.func,
     onClick: PropTypes.func,
     onClickCapture: PropTypes.func,
 };
@@ -38,6 +39,7 @@ function FlexCol({
     justifyContent,
     justifyItems,
     justifySelf,
+    onMouseEnter,
     onClick,
     onClickCapture,
 }) {
@@ -53,6 +55,7 @@ function FlexCol({
             justifyContent={justifyContent}
             justifyItems={justifyItems}
             justifySelf={justifySelf}
+            onMouseEnter={onMouseEnter}
             onClick={onClick}
             onClickCapture={onClickCapture}>
             {children}

@@ -31,6 +31,7 @@ const propTypes = {
     justifyContent: PropTypes.string,
     justifyItems: PropTypes.string,
     justifySelf: PropTypes.string,
+    onMouseEnter: PropTypes.func,
     onClick: PropTypes.func,
     onClickCapture: PropTypes.func,
 };
@@ -49,11 +50,13 @@ const FlexItem = React.forwardRef(
             justifyContent,
             justifyItems,
             justifySelf,
+            onMouseEnter,
             onClick,
             onClickCapture,
         },
         ref
     ) => {
+        console.log('onMouseEnter', onMouseEnter);
         return (
             <Container
                 ref={ref}
@@ -67,6 +70,7 @@ const FlexItem = React.forwardRef(
                 justifyContent={justifyContent}
                 justifyItems={justifyItems}
                 justifySelf={justifySelf}
+                onMouseEnter={onMouseEnter}
                 onClick={onClick}
                 onClickCapture={onClickCapture}>
                 {children}
