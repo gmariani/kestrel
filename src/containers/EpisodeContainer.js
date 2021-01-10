@@ -18,6 +18,9 @@ const Container = styled.div`
 
 const Column = styled(FlexCol)`
     overflow: hidden;
+    padding-top: 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
 `;
 
 const propTypes = {

@@ -19,10 +19,11 @@ const Container = styled.div`
 
 const propTypes = {
     children: PropTypes.node,
+    className: PropTypes.string,
 };
 
-const TempContainer = React.forwardRef(({ children }, ref) => {
-    return <Container ref={ref}>{children}</Container>;
-});
+const TempContainer = ({ children, className }) => {
+    return <Container className={className}>{children}</Container>;
+};
 TempContainer.propTypes = propTypes;
 export default TempContainer;

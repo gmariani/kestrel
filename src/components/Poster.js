@@ -48,6 +48,7 @@ const SubTitle = styled.p`
 `;
 
 const propTypes = {
+    selected: PropTypes.bool,
     focused: PropTypes.bool,
     categorySlug: PropTypes.string,
     mediaSlug: PropTypes.string,
@@ -55,7 +56,7 @@ const propTypes = {
     to: PropTypes.string.isRequired,
 };
 
-function Poster({ focused, categorySlug, mediaSlug, to, title = 'No Title' }) {
+function Poster({ selected, focused, categorySlug, mediaSlug, to, title = 'No Title' }) {
     const baseURL = getAWSBaseURL();
     const meta = useAWSMedia(categorySlug, mediaSlug);
     // console.log('Poster', `focused: ${focused}`, mediaSlug);
@@ -97,7 +98,7 @@ function Poster({ focused, categorySlug, mediaSlug, to, title = 'No Title' }) {
     // }
 
     return (
-        <Container to={to} className={focused ? 'focused' : ''}>
+        <Container to={to} className={`poster ${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`}>
             <Image src={`${baseURL}/${categorySlug}/${mediaSlug}/poster.jpg`} height='600' width='400' />
             {getTitle()}
             {getSubTitle()}

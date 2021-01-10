@@ -25,14 +25,21 @@ const Container = styled.button`
     transition: all 0.3s;
     user-select: none;
 
+    &:focus {
+        outline: none;
+    }
+
     &:active,
-    &:focus,
+    /* &:focus, */
     &.focused.selected,
     &:hover {
         border: 2px solid white;
     }
 
-    &:active ${SubTitle}, &:focus ${SubTitle}, &.focused.selected ${SubTitle}, &:hover ${SubTitle} {
+    &:active ${SubTitle},
+    /* &:focus ${SubTitle}, */
+    &.focused.selected ${SubTitle},
+    &:hover ${SubTitle} {
         color: white;
     }
 `;

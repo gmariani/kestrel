@@ -63,7 +63,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
         function onComplete(data) {
             status.current = 'loaded';
-            console.log('onComplete', mounted.current, keyPrefix, data);
+            // console.log('onComplete', mounted.current, keyPrefix, data);
             if (mounted.current) {
                 setMetadata({
                     isLoaded: true,

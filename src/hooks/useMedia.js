@@ -4,7 +4,7 @@ import { toSlug } from '../utils';
 
 export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeName) {
     const meta = useAWSMedia(categorySlug, mediaSlug);
-    console.log('useMedia', categorySlug, mediaSlug, meta);
+    // console.log('useMedia', categorySlug, mediaSlug, meta);
     const [media, setMedia] = useState({
         loaded: false,
         isSingle: true,

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { FaPlay, FaHistory } from 'react-icons/fa';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
+import shave from 'shave';
 import FlexCol from './FlexCol';
 import FlexRow from './FlexRow';
 import ProgressBar from './ProgressBar';
@@ -12,6 +13,7 @@ import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
 
 const Container = styled(FlexCol)`
     font-size: 2rem;
+    justify-content: end;
     color: white;
     flex: 1;
     --progressBG: rgba(255, 255, 255, 0.6);
@@ -36,6 +38,10 @@ const Description = styled.p`
     margin-bottom: 1.5rem;
     line-height: 2rem;
     max-width: 800px;
+    /*overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;*/
 `;
 
 const Timer = styled.span`
@@ -126,10 +132,31 @@ function EpisodeDetail({
     const hasProgress = startEpisodeProgress && startEpisodeProgress.percent > 0;
     const hasEpisode = !!startEpisodeRoute;
 
+    // Auto truncate description as necessary
+    useEffect(() => {
+        function handleResize() {
+            // Quickly see what height would be temporarily
+            // if truncated without the ellipsis.
+            const element = document.querySelector('.js-shave');
+            element.style.overflow = 'hidden';
+            const compStyles = window.getComputedStyle(element);
+            const { height } = compStyles;
+            element.style.overflow = 'visible';
+
+            shave('.js-shave', parseInt(height, 10));
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        // Remove event listener on cleanup
+        return () => window.removeEventListener('resize', handleResize);
+    }, []); // Empty array ensures that effect is only run on mount
+
     return (
         <Container justifyContent='start'>
             <Title>{media.name}</Title>
-            <Description>{media.season.description}</Description>
+            <Description className='js-shave'>{media.season.description}</Description>
             <Meta>
                 {getMetaLabel(
                     isSingle,

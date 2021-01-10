@@ -37,7 +37,8 @@ function SeasonContainer({ setFocus, seasons, onClick }) {
                 rowGap='1.5rem'
                 justifyContent='start'
                 onMouseEnter={() => {
-                    setFocus();
+                    // console.log('FlexCol.onMouseEnter', selectedSeason);
+                    setFocus(`SEASON-${selectedSeason}`);
                 }}
                 focusKey='SEASONS'>
                 {seasons.map((season, i) => {
@@ -54,7 +55,12 @@ function SeasonContainer({ setFocus, seasons, onClick }) {
                             title={season.name}
                             episodeCount={season.episodes.length}
                             selected={i === selectedSeason}
-                            onClick={() => onClick(i)}
+                            onClick={() => {
+                                // console.log('Season.onClick', i);
+                                setFocus(`SEASON-${i}`);
+                                setSelectedSeason(i);
+                                onClick(i);
+                            }}
                         />
                     );
                 })}

@@ -1,19 +1,34 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components/macro';
 import { useHistory } from 'react-router-dom';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
-import { Row, Poster, Loading, FlexRow } from '../components';
+import { Poster, Loading, FlexRow } from '../components';
 import { toName } from '../utils';
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+`;
+
+const Row = styled(FlexRow)`
+    overflow: hidden;
+    padding: 2rem 1rem;
+    position: relative;
+`;
 
 const propTypes = {
     navigateByDirection: PropTypes.func,
-    containerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.elementType })]),
     media: PropTypes.arrayOf(PropTypes.string),
     mediaCategory: PropTypes.string,
     selectedCategory: PropTypes.string,
 };
 
-function PosterContainer({ navigateByDirection, containerRef, media, mediaCategory, selectedCategory }) {
+function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCategory }) {
+    const [selectedPoster, setSelectedPoster] = useState(0);
     const history = useHistory();
     const scrollRef = useRef();
 
@@ -41,6 +56,13 @@ function PosterContainer({ navigateByDirection, containerRef, media, mediaCatego
         };
     });
 
+    useEffect(() => {
+        const posterRef = document.querySelector('.poster.selected');
+        // If no episodes exist, don't break
+        console.log(posterRef);
+        if (posterRef) posterRef.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    }, [selectedPoster]);
+
     // If switching categories, wait until 'media' has loaded and matches the selected category
     if (mediaCategory !== null && mediaCategory !== selectedCategory) {
         // TODO show spinner
@@ -52,32 +74,36 @@ function PosterContainer({ navigateByDirection, containerRef, media, mediaCatego
     }
 
     return (
-        <FlexRow innerRef={scrollRef} flexWrap='wrap' focusKey='POSTERS'>
-            {media.map((mediaSlug) => {
-                const route = `/${selectedCategory}/${mediaSlug}/details`;
-                return (
-                    <Poster
-                        onBecameFocused={(layout) => {
-                            // console.log('Poster.onBecameFocused', route);
-                            // const el = scrollRef.current;
-                            const el = containerRef.current;
-                            // el.scrollTo({ left: 0, top: layout.y, behavior: 'smooth' });
-                            el.style = `top:-${layout.y}px`;
-                        }}
-                        onEnterPress={() => {
-                            // console.log('Poster.onEnterPress', route);
-                            history.push(route);
-                        }}
-                        focusKey={`POSTERS-${mediaSlug.toUpperCase()}`}
-                        key={mediaSlug}
-                        categorySlug={selectedCategory}
-                        mediaSlug={mediaSlug}
-                        title={toName(mediaSlug)}
-                        to={route}
-                    />
-                );
-            })}
-        </FlexRow>
+        <Container>
+            <Row innerRef={scrollRef} flexWrap='wrap' focusKey='POSTERS'>
+                {media.map((mediaSlug, i) => {
+                    const route = `/${selectedCategory}/${mediaSlug}/details`;
+                    return (
+                        <Poster
+                            onBecameFocused={(layout) => {
+                                // console.log('Poster.onBecameFocused', route);
+                                // const el = scrollRef.current;
+                                // const el = containerRef.current;
+                                // el.scrollTo({ left: 0, top: layout.y, behavior: 'smooth' });
+                                // el.style = `top:-${layout.y}px`;
+                                setSelectedPoster(i);
+                            }}
+                            onEnterPress={() => {
+                                // console.log('Poster.onEnterPress', route);
+                                history.push(route);
+                            }}
+                            focusKey={`POSTERS-${i}`}
+                            key={mediaSlug}
+                            selected={i === selectedPoster}
+                            categorySlug={selectedCategory}
+                            mediaSlug={mediaSlug}
+                            title={toName(mediaSlug)}
+                            to={route}
+                        />
+                    );
+                })}
+            </Row>
+        </Container>
     );
 
     /**

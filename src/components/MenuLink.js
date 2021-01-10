@@ -44,7 +44,7 @@ function MenuLink({ setFocus, selected, focused, children, to }) {
 
     // If loaded by URL, auto-focus on correct menu item
     if (selected && !focused) {
-        console.log('MenuLink.setFocus', to);
+        // console.log('MenuLink.setFocus', to);
         setFocus();
     }
     return (
