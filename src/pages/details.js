@@ -4,9 +4,13 @@ import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
-import { SeasonContainer, EpisodeContainer, HeaderContainer } from '../containers';
+import { SeasonContainer, ExtraContainer, EpisodeContainer, HeaderContainer } from '../containers';
 import { useMedia, useLocalStorage } from '../hooks';
 import { getEpisodeProgress, toSlug } from '../utils';
+
+const Container = styled(TempContainer)`
+    height: 100%;
+`;
 
 const Row = styled(FlexRow)`
     overflow: hidden;
@@ -79,6 +83,32 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
         );
     }
 
+    function getEpisodeContainer() {
+        if (isSingle) {
+            console.log(media);
+            if (media.extras && media.extras.length > 0) {
+                return (
+                    <ExtraContainer
+                        episodes={media.extras}
+                        extraProgress={progress?.[1]}
+                        routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/extras/`}
+                    />
+                );
+            }
+            return null;
+        }
+        return (
+            <EpisodeContainer
+                lastEpisodeIndex={lastSeasonIndex === season.index ? lastEpisodeIndex : null}
+                tmdbId={media.tmdb}
+                episodes={season.episodes}
+                seasonNumber={season.number}
+                seasonProgress={progress?.[season.index]}
+                routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
+            />
+        );
+    }
+
     // TODO set escape to go back
     // Go back to the browse screen
     // if (focusKey === 'Escape') {
@@ -101,7 +131,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
 
     return (
         <>
-            <TempContainer>
+            <Container>
                 <HeaderContainer hideMenu />
                 <Row style={{ height: '100%' }} columnGap='2rem'>
                     {!isSingle && media.seasons.length > 1 && (
@@ -139,18 +169,9 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
                             if (navigate) history.push(startEpisodeRoute);
                         }}
                     />
-                    {!isSingle && (
-                        <EpisodeContainer
-                            lastEpisodeIndex={lastSeasonIndex === season.index ? lastEpisodeIndex : null}
-                            tmdbId={media.tmdb}
-                            episodes={season.episodes}
-                            seasonNumber={season.number}
-                            seasonProgress={progress?.[season.index]}
-                            routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
-                        />
-                    )}
+                    {getEpisodeContainer()}
                 </Row>
-            </TempContainer>
+            </Container>
             <Shadow opacity={0.9} />
             <ScrimBackground hue={media.backgroundHue} imagePath={media.season.backgroundURL ?? media.backgroundURL} />
         </>

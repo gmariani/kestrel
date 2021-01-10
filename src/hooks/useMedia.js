@@ -34,9 +34,9 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
         const episodes = isSingle ? [seasonRef] : seasonRef.episodes;
         const season = {
             index: seasonIndex,
-            number: seasonRef?.seasonNumber,
-            slug: seasonSlug,
-            route: `/tv/${mediaSlug}/details/${seasonSlug}`,
+            number: seasonRef?.seasonNumber ?? 0,
+            slug: seasonSlug ?? '',
+            route: isSingle ? `/${categorySlug}/${mediaSlug}/details` : `/tv/${mediaSlug}/details/${seasonSlug}`,
             name: seasonRef.name,
             year: seasonRef?.year ?? mediaRef?.year,
             description: seasonRef?.description ?? mediaRef?.description,
@@ -102,6 +102,9 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             slug: mediaRef.slug,
             tmdb: mediaRef.tmdb,
             year: mediaRef?.year ?? (isSingle ? null : mediaRef.seasons[0]?.year),
+
+            // Movie Extras
+            extras: isSingle ? mediaRef?.extras : null,
 
             season,
             episode,

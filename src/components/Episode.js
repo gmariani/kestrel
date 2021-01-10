@@ -100,6 +100,7 @@ const propTypes = {
     imagePath: PropTypes.string,
     to: PropTypes.string,
     title: PropTypes.string,
+    titlePrefix: PropTypes.string,
     episodeNumber: PropTypes.string,
     progress: PropTypes.shape({
         percent: PropTypes.number,
@@ -119,6 +120,7 @@ function Episode({
     imagePath,
     to,
     title = 'No Title',
+    titlePrefix = 'Episode',
     episodeNumber = '0',
     progress = defaultProgress,
 }) {
@@ -144,7 +146,9 @@ function Episode({
             {getThumbnail()}
             <Info>
                 <Meta>
-                    <div>Episode {episodeNumber}</div>
+                    <div>
+                        {titlePrefix} {episodeNumber}
+                    </div>
                     <div>{timer}</div>
                 </Meta>
                 <Title>{title}</Title>

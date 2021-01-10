@@ -285,6 +285,9 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const rootFiles = fileIndex
                 .map((item) => item.Key)
                 .filter((path) => !path.endsWith('/') && getPathDepth(path) === 2);
+            const mediaFiles = fileIndex
+                .map((item) => item.Key)
+                .filter((path) => !path.endsWith('/') && getPathDepth(path) > 2);
 
             // Get the poster image file if it exists
             const posterFile = getPosterFile(rootFiles);
@@ -294,21 +297,30 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
             // Get full media URL
             const primaryFile = `${BASE_URL}/${singlePath}`;
-
             const subtitlesFile = rootFiles.find((path) => path.endsWith('.vtt'));
 
-            getVideoMeta(primaryFile)
+            // Any extras for the movie
+            const directory = 'extras/';
+            let extraFiles = [];
+            getSeason(directory, 0, mediaFiles)
+                .then((extraMeta) => {
+                    console.log('getExtras result1', extraMeta);
+                    // extraFiles = extraMeta.slice();
+                    extraFiles = extraFiles.concat(extraMeta.episodes);
+                    console.log('getExtras result2', directory, extraFiles, primaryFile);
+                    return getVideoMeta(primaryFile);
+                })
                 .then((videoMeta) => {
-                    // TODO: pick random hue?
-
+                    console.log('asdf', videoMeta, extraFiles);
                     const data = {
-                        backgroundHue: 20,
+                        backgroundHue: parseInt(Math.random() * 360, 10),
                         backgroundURL: backgroundFile,
                         category,
                         contentRating: '',
                         description: '',
                         duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
                         fileURL: primaryFile,
+                        extras: extraFiles ?? [],
                         genres: [],
                         imdb: '',
                         name: toName(getFileName(singlePath)),
@@ -316,7 +328,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
                         slug: toSlug(getFileName(singlePath)),
                         schema: '1.0',
-                        tmdb: '',
+                        tmdb: null,
                         type: 'movie',
                         year: null,
                     };
@@ -393,7 +405,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                     console.log('seasons', seasons);
                     if (onSuccess)
                         onSuccess({
-                            backgroundHue: 20,
+                            backgroundHue: parseInt(Math.random() * 360, 10),
                             backgroundURL: backgroundFile,
                             category,
                             contentRating: '',
@@ -406,7 +418,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                             seasons,
                             slug,
                             schema: '1.0',
-                            tmdb: '',
+                            tmdb: null,
                             type: 'tv',
                             year: null,
                         });
