@@ -58,7 +58,7 @@ function PlayerContainer({ media, folder, onEnded }) {
     if (!playHistory.progress[season.index]) {
         playHistory.progress[season.index] = [];
     }
-    console.log('media', episode);
+
     // React Player Handlers //
     const playerStartHandler = () => {
         // Is there a previously saved timestamp?

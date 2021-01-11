@@ -45,13 +45,11 @@ const StyledLink = styled.button`
 const propTypes = {
     focused: PropTypes.bool,
     selected: PropTypes.bool,
-    realFocusKey: PropTypes.string,
     children: PropTypes.node,
-    className: PropTypes.string,
     onClick: PropTypes.func,
 };
 
-function ButtonLink({ focused, selected, realFocusKey, children, onClick, className = '' }) {
+function ButtonLink({ focused, selected, children, onClick }) {
     // console.log('ButtonLink', `focused: ${focused}`, `selected: ${selected}`, realFocusKey);
     return (
         <StyledLink className={`${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`} onClick={onClick}>

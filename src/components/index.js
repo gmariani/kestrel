@@ -40,3 +40,4 @@ export { default as PaneEpisodeTitle } from './PaneEpisodeTitle';
 export { default as PaneEpisodeDetail } from './PaneEpisodeDetail';
 export { default as PaneEpisodeSettings } from './PaneEpisodeSettings';
 export { default as LazyImage } from './LazyImage';
+export { default as TimerButtonLink } from './TimerButtonLink';

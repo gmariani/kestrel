@@ -14,15 +14,18 @@ html, body,
     text-rendering: optimizeLegibility;
     overflow:hidden;
 }
+
 #root {
     align-items: center;
     justify-content: center;
     flex-direction: column;
     position: relative;
 }
+
 #root.dragging {
     cursor:dragging;
 }
+
 .align-items-center {
     align-items: center;
 }
