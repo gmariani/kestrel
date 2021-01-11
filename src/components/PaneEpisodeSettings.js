@@ -5,7 +5,6 @@ import Toggle from 'react-toggle';
 import FlexRow from './FlexRow';
 import FlexCol from './FlexCol';
 import FlexItem from './FlexItem';
-import { useLocalStorage } from '../hooks';
 import 'react-toggle/style.css';
 
 const Container = styled.div`

@@ -56,7 +56,6 @@ function PlayerContainer({ media, folder, onEnded }) {
         subtitles: true,
         autoplay: true,
     });
-    console.log('settings', settings);
 
     const { isSingle, season, episode, nextEpisode } = media;
     // Create default array if it doesn't exist
