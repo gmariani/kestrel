@@ -2,8 +2,9 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import { TimerButtonLink, CreditsPreview, Credits, FlexCol, FlexRow, ButtonLink, EpisodeTitle } from '../components';
+import { TimerButtonLink, Credits, FlexCol, FlexRow, ButtonLink, EpisodeTitle } from '../components';
 import mediaInterface from '../interfaces/media';
+import { useLocalStorage } from '../hooks';
 
 const propTypes = {
     media: mediaInterface,
@@ -14,7 +15,10 @@ function CreditsContainer({ media, onStarted }) {
     const history = useHistory();
     const { isSingle, season, episode, nextEpisode } = media;
     const nextRoute = nextEpisode?.route;
-    const isAutoAdvance = true;
+    const [settings] = useLocalStorage('settings', {
+        subtitles: true,
+        autoplay: true,
+    });
 
     const onClickBack = () => {
         if (onStarted) onStarted();
@@ -27,15 +31,15 @@ function CreditsContainer({ media, onStarted }) {
 
     useEffect(() => {
         const timerID = setTimeout(() => {
-            if (isAutoAdvance) {
-                console.log('Auto-advance onClickNext()');
+            if (settings.autoplay) {
+                // console.log('Auto-advance onClickNext()');
                 onClickNext();
             }
         }, 10 * 1000);
         return () => {
             clearTimeout(timerID);
         };
-    }, [isAutoAdvance, onClickNext]);
+    }, [settings.autoplay, onClickNext]);
 
     return (
         <Credits>
@@ -52,7 +56,7 @@ function CreditsContainer({ media, onStarted }) {
                         <FaArrowLeft /> Back
                     </ButtonLink>
                     {nextRoute &&
-                        (isAutoAdvance ? (
+                        (settings.autoplay ? (
                             <TimerButtonLink onClick={onClickNext} label='Next' />
                         ) : (
                             <ButtonLink onClick={onClickNext}>Next</ButtonLink>

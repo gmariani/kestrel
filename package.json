@@ -20,6 +20,7 @@
         "react-player": "^2.7.2",
         "react-router-dom": "^5.2.0",
         "react-scripts": "^4.0.1",
+        "react-toggle": "^4.1.1",
         "shave": "^2.5.10",
         "styled-components": "^5.2.1"
     },

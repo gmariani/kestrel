@@ -1,9 +1,12 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import Toggle from 'react-toggle';
 import FlexRow from './FlexRow';
 import FlexCol from './FlexCol';
 import FlexItem from './FlexItem';
+import { useLocalStorage } from '../hooks';
+import 'react-toggle/style.css';
 
 const Container = styled.div`
     display: flex;
@@ -11,6 +14,11 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: start;
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+
+    /* Toggle */
+    & .react-toggle {
+        height: 25px;
+    }
 `;
 
 const Title = styled.div`
@@ -26,32 +34,63 @@ const SettingContainer = styled.div`
     flex: 1;
 `;
 
-const SettingTitle = styled.div`
+const SettingTitle = styled.label`
     font-weight: bold;
 `;
 const SettingDesc = styled.div`
     font-size: 1.5rem;
 `;
 
-const propTypes = {};
+const propTypes = {
+    subtitles: PropTypes.bool,
+    autoplay: PropTypes.bool,
+    setSettings: PropTypes.func,
+};
 
-function PaneEpisodeSettings() {
+function PaneEpisodeSettings({ subtitles, autoplay, setSettings }) {
+    // const [settings, setSettings] = useLocalStorage('settings', {
+    //     subtitles: true,
+    //     autoplay: true,
+    // });
+
+    function onToggleSubtitles(event) {
+        setSettings({ subtitles: event.target.checked, autoplay });
+    }
+
+    function onToggleAutoplay(event) {
+        setSettings({ subtitles, autoplay: event.target.checked });
+    }
+
     return (
         <Container>
             <Title>Settings</Title>
             <FlexCol>
                 <FlexRow>
                     <SettingContainer>
-                        <SettingTitle>Subtitles</SettingTitle>
+                        <SettingTitle htmlFor='subtitle-status'>Subtitles</SettingTitle>
                     </SettingContainer>
-                    <FlexItem>TOGGLE</FlexItem>
+                    <FlexItem>
+                        <Toggle
+                            id='subtitle-status'
+                            style={{ height: '25px' }}
+                            defaultChecked={subtitles}
+                            onChange={onToggleSubtitles}
+                        />
+                    </FlexItem>
                 </FlexRow>
                 <FlexRow>
                     <SettingContainer>
-                        <SettingTitle>Autoplay</SettingTitle>
+                        <SettingTitle htmlFor='autoplay-status'>Autoplay</SettingTitle>
                         <SettingDesc>When you finish a video, another one plays automatically.</SettingDesc>
                     </SettingContainer>
-                    <FlexItem>TOGGLE</FlexItem>
+                    <FlexItem>
+                        <Toggle
+                            id='autoplay-status'
+                            style={{ height: '25px' }}
+                            defaultChecked={autoplay}
+                            onChange={onToggleAutoplay}
+                        />
+                    </FlexItem>
                 </FlexRow>
             </FlexCol>
         </Container>

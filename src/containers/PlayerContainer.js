@@ -52,6 +52,11 @@ function PlayerContainer({ media, folder, onEnded }) {
         lastSeasonIndex: 0,
         lastEpisodeIndex: 0,
     });
+    const [settings, setSettings] = useLocalStorage('settings', {
+        subtitles: true,
+        autoplay: true,
+    });
+    console.log('settings', settings);
 
     const { isSingle, season, episode, nextEpisode } = media;
     // Create default array if it doesn't exist
@@ -207,13 +212,24 @@ function PlayerContainer({ media, folder, onEnded }) {
         };
     }, [keyHandler]);
 
-    // TODO: Finish settings, add toggles
+    // Toggle subtitles/captions
+    useEffect(() => {
+        if (playerRef.current) {
+            const video = playerRef.current.wrapper.querySelector('video');
+            video.textTracks[0].mode = settings.subtitles ? 'showing' : 'hidden';
+        }
+    }, [settings]);
+
     return (
         <Player onMouseMove={activityHandler}>
             {showSettings && (
                 <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleSettings}>
                     <HalfPane backgroundHue={media.backgroundHue}>
-                        <PaneEpisodeSettings />
+                        <PaneEpisodeSettings
+                            subtitles={settings.subtitles}
+                            autoplay={settings.autoplay}
+                            setSettings={setSettings}
+                        />
                     </HalfPane>
                 </SubOverlay>
             )}
@@ -307,6 +323,7 @@ function PlayerContainer({ media, folder, onEnded }) {
                                 src: episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`,
                                 srcLang: 'en',
                                 default: true,
+                                mode: settings.subtitles ? 'showing' : 'hidden',
                             },
                         ],
                     },
