@@ -33,5 +33,5 @@ export function secondsToHuman(duration) {
         );
     }
 
-    return `${Number.parseFloat(seconds)}s`;
+    return `${Number.parseFloat(seconds.toFixed(1))}s`;
 }

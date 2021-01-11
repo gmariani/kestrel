@@ -4,7 +4,7 @@ import { toSlug } from '../utils';
 
 export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeName) {
     const meta = useAWSMedia(categorySlug, mediaSlug);
-    // console.log('useMedia', categorySlug, mediaSlug, meta);
+    // console.log('useMedia', categorySlug, mediaSlug, seasonSlug, episodeName, meta);
     const [media, setMedia] = useState({
         loaded: false,
         isSingle: true,
@@ -31,7 +31,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
         // If we can't find the season, pick the first one
         if (seasonIndex === -1) seasonIndex = 0;
         const seasonRef = isSingle ? mediaRef : mediaRef.seasons[seasonIndex];
-        const episodes = isSingle ? [seasonRef] : seasonRef.episodes;
+        const episodes = isSingle ? [seasonRef, ...mediaRef.extras] : seasonRef.episodes;
         const season = {
             index: seasonIndex,
             number: seasonRef?.seasonNumber ?? 0,
@@ -44,7 +44,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             resolution: seasonRef?.resolution ?? mediaRef?.resolution,
             episodes,
         };
-
+        console.log('episodes', episodes);
         // Episode
         const episodeSlug = toSlug(episodeName);
         let episodeIndex = episodes.findIndex(isCurrent, episodeSlug);

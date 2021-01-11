@@ -22,6 +22,6 @@ export default function Watch() {
             }}
         />
     ) : (
-        <PlayerContainer media={media} onEnded={() => setEnded(true)} />
+        <PlayerContainer media={media} folder={seasonSlug} onEnded={() => setEnded(true)} />
     );
 }

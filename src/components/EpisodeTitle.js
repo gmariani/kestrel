@@ -26,10 +26,16 @@ const Title = styled.div`
     user-select: none;
 `;
 
-function getMetaLabel(episodeTitle, contentRating = 'NR', seasonNum = 0, episodeNum = 0, isSingle = false) {
+function getMetaLabel(episodeTitle, contentRating = 'NR', seasonNum = 0, episodeNum = 0, isSingle = false, folder) {
+    // If is a movie extra
+    if (isSingle && folder) {
+        return `${episodeTitle} • ${contentRating}`;
+    }
+    // If movie
     if (isSingle) {
         return `${contentRating}`;
     }
+    // If TV
     return `S${seasonNum} E${episodeNum} - ${episodeTitle} • ${contentRating}`;
 }
 
@@ -42,6 +48,7 @@ const propTypes = {
         name: PropTypes.string.isRequired,
         contentRating: PropTypes.string,
     }),
+    folder: PropTypes.string,
 };
 
 // Actual object to avoid mutable object from invalidating component
@@ -53,11 +60,12 @@ function EpisodeTitle({
     episodeNum = 0,
     episodeName = 'No Title',
     series = defaultSeries,
+    folder,
 }) {
     return (
         <Container>
             <Title>{series.name}</Title>
-            <Meta>{getMetaLabel(episodeName, series?.contentRating, seasonNum, episodeNum, isSingle)}</Meta>
+            <Meta>{getMetaLabel(episodeName, series?.contentRating, seasonNum, episodeNum, isSingle, folder)}</Meta>
         </Container>
     );
 }

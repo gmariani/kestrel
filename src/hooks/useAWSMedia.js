@@ -218,7 +218,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const accumulatorEpisodes = [];
             return seasonEpisodes
                 .reduce((accumulatorPromise, path, index) => {
-                    console.log(`accumulatorPromise for ${path}`);
+                    // console.log(`accumulatorPromise for ${path}`);
                     const fileName = getFileName(path);
                     // console.log('getSeason', path);
 
@@ -280,7 +280,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const category = rootDir.split('/')[0];
 
             // Get the media slug from the path
-            // const slug = rootDir.split('/')[1];
+            const slug = rootDir.split('/')[1];
 
             const rootFiles = fileIndex
                 .map((item) => item.Key)
@@ -304,14 +304,24 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             let extraFiles = [];
             getSeason(directory, 0, mediaFiles)
                 .then((extraMeta) => {
-                    console.log('getExtras result1', extraMeta);
-                    // extraFiles = extraMeta.slice();
-                    extraFiles = extraFiles.concat(extraMeta.episodes);
-                    console.log('getExtras result2', directory, extraFiles, primaryFile);
+                    // console.log('getExtras result1', extraMeta);
+                    extraFiles = extraFiles
+                        .concat(extraMeta.episodes)
+                        .map(({ duration, name, resolution, episodeNumber, fileURL, subtitleURL }) => {
+                            // Increase index to account for the movie being the first item
+                            return {
+                                duration,
+                                name,
+                                resolution,
+                                episodeNumber: episodeNumber + 1,
+                                fileURL,
+                                subtitleURL,
+                            };
+                        });
+                    // console.log('getExtras result2', directory, extraFiles, primaryFile);
                     return getVideoMeta(primaryFile);
                 })
                 .then((videoMeta) => {
-                    console.log('asdf', videoMeta, extraFiles);
                     const data = {
                         backgroundHue: parseInt(Math.random() * 360, 10),
                         backgroundURL: backgroundFile,
@@ -326,7 +336,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         name: toName(getFileName(singlePath)),
                         posterURL: posterFile,
                         resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
-                        slug: toSlug(getFileName(singlePath)),
+                        slug, // toSlug(getFileName(singlePath)),
                         schema: '1.0',
                         tmdb: null,
                         type: 'movie',
@@ -398,11 +408,11 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             // Promise.all(directories.map((directory, index) => getSeason(directory, index, mediaFiles)))
             seasonPromises
                 .then((/* lastSeason */) => {
-                    console.log('accumulatorSeasons', accumulatorSeasons);
+                    // console.log('accumulatorSeasons', accumulatorSeasons);
                     return accumulatorSeasons;
                 })
                 .then((seasons) => {
-                    console.log('seasons', seasons);
+                    // console.log('seasons', seasons);
                     if (onSuccess)
                         onSuccess({
                             backgroundHue: parseInt(Math.random() * 360, 10),

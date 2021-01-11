@@ -32,10 +32,11 @@ function getFileName(fullPath) {
 
 const propTypes = {
     media: mediaInterface,
+    folder: PropTypes.string,
     onEnded: PropTypes.func,
 };
 
-function PlayerContainer({ media, onEnded }) {
+function PlayerContainer({ media, folder, onEnded }) {
     // Hooks
     const history = useHistory();
     const playerRef = useRef();
@@ -57,7 +58,7 @@ function PlayerContainer({ media, onEnded }) {
     if (!playHistory.progress[season.index]) {
         playHistory.progress[season.index] = [];
     }
-
+    console.log('media', episode);
     // React Player Handlers //
     const playerStartHandler = () => {
         // Is there a previously saved timestamp?
@@ -232,6 +233,7 @@ function PlayerContainer({ media, onEnded }) {
                 <EpisodeTitle
                     isSingle={isSingle}
                     series={media}
+                    folder={folder}
                     seasonNum={season.number}
                     episodeNum={episode.number}
                     episodeName={episode.name}

@@ -19,10 +19,9 @@ const Row = styled(FlexRow)`
 const propTypes = {
     navigateByDirection: PropTypes.func,
     setFocus: PropTypes.func,
-    focused: PropTypes.bool,
     hasFocusedChild: PropTypes.bool,
 };
-function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
+function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
     const media = useMedia(categorySlug, mediaSlug, seasonSlug);
@@ -72,6 +71,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
 
     // If no season is selected and previous season exists, redirect to that
     if (media.seasons && seasonSlug === undefined && lastSeasonIndex !== undefined) {
+        // eslint-disable-next-line no-console
         console.log(
             'Redirect to',
             `/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`
@@ -85,12 +85,12 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
 
     function getEpisodeContainer() {
         if (isSingle) {
-            console.log(media);
             if (media.extras && media.extras.length > 0) {
+                // Remove movie from progress array before sending
                 return (
                     <ExtraContainer
                         episodes={media.extras}
-                        extraProgress={progress?.[1]}
+                        extraProgress={progress[0].slice(1)}
                         routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/extras/`}
                     />
                 );
@@ -118,7 +118,7 @@ function Details({ navigateByDirection, setFocus, focused, hasFocusedChild }) {
     // Get start (last/initial) episode meta
     // console.log(media.id, playHistory);
     if (media.seasons && media?.seasons[lastSeasonIndex] === undefined) lastSeasonIndex = 0;
-    if (media.seasons && media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex] === undefined)
+    if ((media.seasons && media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex] === undefined) || isSingle)
         lastEpisodeIndex = 0;
     const startEpisode = isSingle ? media : media?.seasons[lastSeasonIndex]?.episodes?.[lastEpisodeIndex];
     const startEpisodeProgress = getEpisodeProgress(

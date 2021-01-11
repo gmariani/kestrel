@@ -59,7 +59,6 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
     useEffect(() => {
         const posterRef = document.querySelector('.poster.selected');
         // If no episodes exist, don't break
-        console.log(posterRef);
         if (posterRef) posterRef.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
     }, [selectedPoster]);
 
