@@ -29,5 +29,12 @@ html, body,
 .align-items-center {
     align-items: center;
 }
+
+/* 960x x 540px for TV */
+@media screen and (max-width: 970px) {
+    html {
+        font-size:8px;
+    }
+}
 `;
 export default GlobalStyles;

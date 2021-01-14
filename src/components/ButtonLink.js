@@ -19,6 +19,11 @@ const StyledLink = styled.button`
     column-gap: 1rem;
     max-width: 500px;
 
+    /* 960x x 540px for TV */
+    @media screen and (max-width: 970px) {
+        max-width: 200px;
+    }
+
     & svg {
         margin-left: 1rem;
     }

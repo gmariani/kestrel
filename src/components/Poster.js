@@ -9,7 +9,7 @@ import LazyImage from './LazyImage';
 import { getAWSBaseURL } from '../utils';
 
 const Container = styled(ReachRouterLink)`
-    max-width: 400px;
+    max-width: 20rem;
     transition: all 0.2s ease-in-out;
     &:focus,
     &.focused,
@@ -23,13 +23,15 @@ const Image = styled(LazyImage)`
     filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));
     border-radius: 20px;
     margin-bottom: 0.5rem;
+    width: ${(props) => props.widthVal};
+    height: ${(props) => props.heightVal};
 `;
 
 const Title = styled.h2`
     font-style: normal;
     font-weight: bold;
     font-size: 2.1875rem;
-    line-height: 38px;
+    line-height: 1.9rem;
 
     color: #ffffff;
     & span {
@@ -42,7 +44,7 @@ const SubTitle = styled.p`
     font-style: normal;
     font-weight: normal;
     font-size: 1.5625rem;
-    line-height: 27px;
+    line-height: 1.6875rem;
 
     color: #ffffff;
 `;
@@ -99,7 +101,7 @@ function Poster({ selected, focused, categorySlug, mediaSlug, to, title = 'No Ti
 
     return (
         <Container to={to} className={`poster ${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`}>
-            <Image src={`${baseURL}/${categorySlug}/${mediaSlug}/poster.jpg`} height='600' width='400' />
+            <Image src={`${baseURL}/${categorySlug}/${mediaSlug}/poster.jpg`} heightVal='32.5rem' widthVal='20rem' />
             {getTitle()}
             {getSubTitle()}
         </Container>

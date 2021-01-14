@@ -23,13 +23,13 @@ const Container = styled(FlexCol)`
 const Meta = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
     font-size: 1.25rem;
 `;
 
 const Title = styled.div`
-    font-size: 8rem;
-    line-height: 8rem;
+    font-size: 7rem;
+    line-height: 7rem;
     margin-bottom: 1rem;
 `;
 
