@@ -1,5 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Ideas
+- Load other movies from movieanywhere account via API
+- Add edit meta.json screen
+- Add support for wasabi/dropbox
+- Allow meta.json populataion via imdb or tmdb
+- resize/optimize poster images
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -1,3 +1,3 @@
 export default function removeNumbering(string) {
-    return string.replace(/^\d+\s-\s/gi, '');
+    return string.replace(/^\d+\s?-\s?/gi, '');
 }

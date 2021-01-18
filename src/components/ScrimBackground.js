@@ -25,7 +25,8 @@ const Layer = styled.div`
 const Base = styled(Layer)`
     background-color: var(--base);
 `;
-
+// disney+
+// background-image:radial-gradient(farthest-side at 73% 21%, transparent, rgb(26, 29, 41))
 const Gradient = styled(Layer)`
     /*opacity: 0.5;*/
     background-image: linear-gradient(245deg, hsla(var(--hue), 50%, 40%, 0) 35%, hsla(var(--hue), 50%, 40%, 1) 70%);

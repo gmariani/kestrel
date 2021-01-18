@@ -13,7 +13,9 @@ import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
 
 const Container = styled(FlexCol)`
     font-size: 2rem;
-    justify-content: end;
+    /* Not suppored in Firefox TV or Chrome yet */
+    /*justify-content: end;*/
+    justify-content: flex-end;
     color: white;
     flex: 1;
     --progressBG: rgba(255, 255, 255, 0.6);

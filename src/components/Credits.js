@@ -11,7 +11,9 @@ const Container = styled.div`
     position: absolute;
     top: 0;
     left: 0;
-    justify-content: end;
+    /* Not suppored in Firefox TV or Chrome yet */
+    /*justify-content: end;*/
+    justify-content: flex-end;
 `;
 
 const propTypes = {

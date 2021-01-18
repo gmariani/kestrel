@@ -5,8 +5,11 @@ import styled from 'styled-components/macro';
 
 const Container = styled.div`
     display: flex;
-    justify-content: end;
-    align-items: end;
+    /* Not suppored in Firefox TV or Chrome yet */
+    /*justify-content: end;*/
+    justify-content: flex-end;
+
+    /*align-items: end;*/
 `;
 
 function Header({ children }) {
