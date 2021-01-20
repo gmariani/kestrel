@@ -10,9 +10,9 @@ const Container = styled.div`
 
     & video::cue {
         background-color: transparent;
-        color: white;
+        color: #ffec86;
         font-family: Verdana;
-        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        text-shadow: -2px -2px 2px #000, 2px -2px 2px #000, -2px 2px 2px #000, 2px 2px 2px #000;
     }
     & video::cue(i) {
         color: yellow;

@@ -24,7 +24,7 @@ const Container = styled(FlexCol)`
 
 const Meta = styled.div`
     display: flex;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     margin-bottom: 1rem;
     font-size: 1.25rem;
 `;
@@ -50,6 +50,14 @@ const Timer = styled.span`
     text-transform: uppercase;
     font-size: 1rem;
     user-select: none;
+`;
+
+const Rating = styled.span`
+    padding: 0px 7px;
+    border: 2px solid white;
+    font-family: serif;
+    line-height: 1.5625rem;
+    margin-right: 0.5rem;
 `;
 
 /**
@@ -82,7 +90,7 @@ function getMetaLabel(isSingle = false, contentRating, year, duration, genres, c
     // For tv
     // rating- year - genrea - TV Series
     const items = [];
-    if (contentRating) items.push(contentRating);
+    if (contentRating) items.push('');
     if (year) items.push(year);
     if (isSingle && duration) {
         const totalSeconds = durationToSeconds(duration);
@@ -160,6 +168,7 @@ function EpisodeDetail({
             <Title>{media.name}</Title>
             <Description className='js-shave'>{media.season.description}</Description>
             <Meta>
+                {media.contentRating && <Rating>{media.contentRating}</Rating>}
                 {getMetaLabel(
                     isSingle,
                     media?.contentRating,

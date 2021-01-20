@@ -172,7 +172,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                     {getEpisodeContainer()}
                 </Row>
             </Container>
-            <Shadow opacity={0.9} />
+            <Shadow opacity={0.75} />
             <ScrimBackground hue={media.backgroundHue} imagePath={media.season.backgroundURL ?? media.backgroundURL} />
         </>
     );

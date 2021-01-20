@@ -24,7 +24,6 @@ const Image = styled.img`
     // I use utilitary classes instead of props to avoid style regenerating
     &.loaded:not(.has-error) {
         animation: loaded 300ms ease-in;
-        z-index: 10;
     }
 
     &.has-error {

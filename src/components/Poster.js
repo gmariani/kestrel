@@ -52,7 +52,7 @@ const Image = styled(LazyImage)`
     margin-bottom: 0.5rem;
     width: ${(props) => props.widthVal};
     height: ${(props) => props.heightVal};
-    z-index: 3;
+    z-index: 10;
     position: relative;
 `;
 
