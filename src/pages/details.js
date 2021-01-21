@@ -21,6 +21,19 @@ const propTypes = {
     setFocus: PropTypes.func,
     hasFocusedChild: PropTypes.bool,
 };
+
+// If meta.json is incomplete, populate from TMDB
+// TODO: Maybe do this on the details page?
+// if (metadata.loaded && metadata.data.tmdb) {
+//     if (!metadata.data.name || !metadata.data.year || !metadata.data.genres) {
+//         // const tmdbData = getTMDB(meta.data.tmdb);
+//         // meta.data.name = '';
+//         // meta.data.year = 0;
+//         // meta.data.genres = [];
+//         // setMeta(meta.data);
+//     }
+// }
+
 function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();

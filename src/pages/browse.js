@@ -15,10 +15,6 @@ export default function Browse() {
     const selectedCategory = categorySlug ?? (categories.length ? categories[0] : '');
     const { media, category: mediaCategory } = useAWSCategoryMedia(`${selectedCategory}/`);
 
-    // console.log('Browse: AWS categories', categories);
-    // console.log('Browse: AWS media', media);
-    // console.log('Browse:', `selectedCategory: ${selectedCategory} mediaCategory: ${mediaCategory}`);
-
     return (
         <>
             <Container>

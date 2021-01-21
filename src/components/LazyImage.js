@@ -1,33 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
+// 1px X 1px transparent PNG
 // https://slashgear.github.io/creating-an-image-lazy-loading-component-with-react/
 const placeHolder =
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=';
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
+// Add a smooth animation on loading
+const loaded = keyframes`
+    from {
+        opacity: 0;
+        transform: translate3d(0, 2rem, 500rem);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+`;
+
+// Use utilitary classes instead of props to avoid style regenerating
 const Image = styled.img`
     display: block;
-    /*height: 100px;
-    width: 100px;*/
 
-    // Add a smooth animation on loading
-    @keyframes loaded {
-        0% {
-            opacity: 0.1;
-        }
-        100% {
-            opacity: 1;
-        }
-    }
-
-    // I use utilitary classes instead of props to avoid style regenerating
     &.loaded:not(.has-error) {
-        animation: loaded 300ms ease-in;
+        animation: ${loaded} 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
     }
 
     &.has-error {
-        // fallback to placeholder image on error
         content: url(${placeHolder});
     }
 `;
@@ -38,23 +38,15 @@ const propTypes = {
     className: PropTypes.string,
     height: PropTypes.string,
     width: PropTypes.string,
+    onLoaded: PropTypes.func,
 };
 
-const LazyImage = ({ src, alt, className, height, width }) => {
+const LazyImage = ({ src, alt, className, height, width, onLoaded }) => {
     const [imageSrc, setImageSrc] = useState(placeHolder);
     const [imageRef, setImageRef] = useState();
     const hasError = useRef(false);
 
-    const onLoad = (event) => {
-        event.target.classList.add('loaded');
-    };
-
-    const onError = (event) => {
-        event.target.classList.add('has-error');
-        hasError.current = true;
-        setImageSrc(placeHolder);
-    };
-
+    // On render, observe to see if it's visible on screen before displaying
     useEffect(() => {
         let observer;
         let didCancel = false;
@@ -65,6 +57,7 @@ const LazyImage = ({ src, alt, className, height, width }) => {
                     observer = new IntersectionObserver(
                         (entries) => {
                             entries.forEach((entry) => {
+                                // Is visible, load image
                                 if (!didCancel && (entry.intersectionRatio > 0 || entry.isIntersecting)) {
                                     setImageSrc(src);
                                     observer.unobserve(imageRef);
@@ -92,6 +85,7 @@ const LazyImage = ({ src, alt, className, height, width }) => {
             }
         };
     }, [src, imageSrc, imageRef]);
+
     return (
         <Image
             ref={setImageRef}
@@ -100,8 +94,17 @@ const LazyImage = ({ src, alt, className, height, width }) => {
             className={className}
             height={height}
             width={width}
-            onLoad={onLoad}
-            onError={onError}
+            onLoad={(event) => {
+                console.log('loaded', event.target.complete, event.target);
+                event.target.classList.add('loaded');
+                if (onLoaded) onLoaded(true);
+            }}
+            onError={(event) => {
+                event.target.classList.add('has-error');
+                hasError.current = true;
+                setImageSrc(placeHolder);
+                if (onLoaded) onLoaded(false);
+            }}
         />
     );
 };

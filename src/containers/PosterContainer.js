@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { useHistory } from 'react-router-dom';
@@ -29,8 +29,8 @@ const propTypes = {
 function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCategory }) {
     const [selectedPoster, setSelectedPoster] = useState(0);
     const history = useHistory();
-    const scrollRef = useRef();
 
+    // On render, listen for mouse wheel to navigate as well
     useEffect(() => {
         // TODO: lodash throttle
         // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
@@ -55,16 +55,15 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
         };
     });
 
+    // When selectedPoster changes, scroll poster into view
     useEffect(() => {
-        const posterRef = document.querySelector('.poster.selected');
+        const poster = document.querySelector('.poster.selected');
         // If no episodes exist, don't break
-        // console.log(posterRef);
-        if (posterRef) posterRef.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+        if (poster) poster.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
     }, [selectedPoster]);
 
     // If switching categories, wait until 'media' has loaded and matches the selected category
     if (mediaCategory !== null && mediaCategory !== selectedCategory) {
-        // TODO show spinner
         return (
             <Row>
                 <Loading />
@@ -74,17 +73,13 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
 
     return (
         <Container>
-            <Row innerRef={scrollRef} flexWrap='wrap' focusKey='POSTERS'>
+            <Row flexWrap='wrap' focusKey='POSTERS'>
                 {media.map((mediaSlug, i) => {
                     const route = `/${selectedCategory}/${mediaSlug}/details`;
                     return (
                         <Poster
-                            onBecameFocused={(layout) => {
+                            onBecameFocused={() => {
                                 // console.log('Poster.onBecameFocused', route);
-                                // const el = scrollRef.current;
-                                // const el = containerRef.current;
-                                // el.scrollTo({ left: 0, top: layout.y, behavior: 'smooth' });
-                                // el.style = `top:-${layout.y}px`;
                                 setSelectedPoster(i);
                             }}
                             onEnterPress={() => {

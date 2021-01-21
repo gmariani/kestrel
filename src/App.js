@@ -10,7 +10,7 @@ export default function App() {
 
     // Setup spatial navigation
     initNavigation({
-        debug: true,
+        // debug: true,
         // visualDebug: true,
     });
     // Optional

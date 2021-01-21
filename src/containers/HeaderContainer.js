@@ -11,7 +11,6 @@ const propTypes = {
     selectedCategory: PropTypes.string,
 };
 
-// TODO show loading spinner while categories load
 function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
     const history = useHistory();
 
