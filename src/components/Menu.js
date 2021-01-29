@@ -11,12 +11,12 @@ const Container = styled.nav`
 
 const propTypes = {
     children: PropTypes.node.isRequired,
-    realFocusKey: PropTypes.string,
-    focused: PropTypes.bool,
+    // realFocusKey: PropTypes.string,
+    // focused: PropTypes.bool,
     hasFocusedChild: PropTypes.bool,
 };
 
-function Menu({ children, realFocusKey, focused, hasFocusedChild }) {
+function Menu({ children, hasFocusedChild }) {
     // console.log('Menu', `focused: ${focused}`, `hasFocusedChild: ${hasFocusedChild}`, `realFocusKey: ${realFocusKey}`);
     return <Container className={`${hasFocusedChild ? 'focused' : ''}`}>{children}</Container>;
 }

@@ -8,6 +8,8 @@ import FlexCol from './FlexCol';
 import FlexRow from './FlexRow';
 import ProgressBar from './ProgressBar';
 import ButtonLink from './ButtonLink';
+import Resolution from './Resolution';
+import Rating from './Rating';
 import mediaInterface from '../interfaces/media';
 import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
 
@@ -17,6 +19,7 @@ const Container = styled(FlexCol)`
     /*justify-content: end;*/
     justify-content: flex-end;
     color: white;
+    margin-bottom: 6.25rem;
     flex: 1;
     --progressBG: rgba(255, 255, 255, 0.6);
     --trackBG: rgba(255, 255, 255, 0.25);
@@ -52,14 +55,6 @@ const Timer = styled.span`
     user-select: none;
 `;
 
-const Rating = styled.span`
-    padding: 0px 7px;
-    border: 2px solid white;
-    font-family: serif;
-    line-height: 1.5625rem;
-    margin-right: 0.5rem;
-`;
-
 /**
  * Gets the label based on progress and media type
  * @param {number} lastSeason
@@ -88,9 +83,9 @@ function getWatchLabel(isSingle = false, hasProgress = false, lastSeason = 0, la
 function getMetaLabel(isSingle = false, contentRating, year, duration, genres, category) {
     // Rating - Year - Total run time- genre - Movie
     // For tv
-    // rating- year - genrea - TV Series
+    // rating- year - genre - TV Series
     const items = [];
-    if (contentRating) items.push('');
+    // if (contentRating) items.push('');
     if (year) items.push(year);
     if (isSingle && duration) {
         const totalSeconds = durationToSeconds(duration);
@@ -169,6 +164,7 @@ function EpisodeDetail({
             <Description className='js-shave'>{media.season.description}</Description>
             <Meta>
                 {media.contentRating && <Rating>{media.contentRating}</Rating>}
+                <Resolution type={media?.resolution} />
                 {getMetaLabel(
                     isSingle,
                     media?.contentRating,
@@ -197,8 +193,8 @@ function EpisodeDetail({
                         focusKey='ACTION-PLAY'
                         onClick={onClickWatch}
                         onEnterPress={() => {
-                            console.log('onEnterPress onClickWatch()');
-                            // onClickWatch();
+                            // console.log('onEnterPress onClickWatch()');
+                            onClickWatch();
                         }}
                         onBecameFocused={() => {
                             setSelectedButton('ACTION-PLAY');
@@ -210,8 +206,8 @@ function EpisodeDetail({
                         <ButtonLink
                             focusKey='ACTION-RESTART'
                             onEnterPress={() => {
-                                console.log('onEnterPress onClickRestart()');
-                                // onClickRestart(true)
+                                // console.log('onEnterPress onClickRestart()');
+                                onClickRestart(true);
                             }}
                             onBecameFocused={() => {
                                 setSelectedButton('ACTION-RESTART');

@@ -83,7 +83,7 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
                                 setSelectedEpisode(i);
                             }}
                             onEnterPress={() => {
-                                console.log(`Go to watch episode ${routePrefix}${episodeSlug}`);
+                                // console.log(`Go to watch episode ${routePrefix}${episodeSlug}`);
                             }}
                             to={`${routePrefix}${episodeSlug}`}
                             selected={i === selectedEpisode}

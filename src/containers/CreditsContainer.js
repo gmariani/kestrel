@@ -13,17 +13,18 @@ const propTypes = {
 
 function CreditsContainer({ media, onStarted }) {
     const history = useHistory();
-    const { isSingle, season, episode, nextEpisode } = media;
+    const { isSingle, /* season, episode, */ nextEpisode } = media;
     const nextRoute = nextEpisode?.route;
     const [settings] = useLocalStorage('settings', {
         subtitles: true,
         autoplay: true,
     });
 
-    const onClickBack = () => {
+    const onClickBack = useCallback(() => {
         if (onStarted) onStarted();
         history.push(media.route);
-    };
+    }, [onStarted, history, media]);
+
     const onClickNext = useCallback(() => {
         if (onStarted) onStarted();
         history.replace(nextRoute);
@@ -33,28 +34,38 @@ function CreditsContainer({ media, onStarted }) {
         const timerID = setTimeout(() => {
             if (settings.autoplay) {
                 // console.log('Auto-advance onClickNext()');
-                onClickNext();
+                if (nextEpisode) {
+                    onClickNext();
+                } else {
+                    onClickBack();
+                }
             }
         }, 10 * 1000);
         return () => {
             clearTimeout(timerID);
         };
-    }, [settings.autoplay, onClickNext]);
+    }, [settings.autoplay, nextEpisode, onClickNext, onClickBack]);
 
     return (
         <Credits>
-            <FlexCol justifyContent='end' rowGap='2rem'>
+            <FlexCol alignItems='flex-end' justifyContent='flex-end' rowGap='2rem'>
                 <EpisodeTitle
                     isSingle={isSingle}
                     series={media}
-                    seasonNum={season.number}
-                    episodeNum={episode.number}
-                    episodeName={episode.name}
+                    seasonNum={nextEpisode?.seasonNumber}
+                    episodeNum={nextEpisode?.number}
+                    episodeName={nextEpisode?.name}
+                    align='end'
                 />
+
                 <FlexRow columnGap='2rem'>
-                    <ButtonLink onClick={onClickBack}>
-                        <FaArrowLeft /> Back
-                    </ButtonLink>
+                    {nextRoute ? (
+                        <ButtonLink onClick={onClickBack}>
+                            <FaArrowLeft /> Back
+                        </ButtonLink>
+                    ) : (
+                        <TimerButtonLink onClick={onClickBack} label='Back' />
+                    )}
                     {nextRoute &&
                         (settings.autoplay ? (
                             <TimerButtonLink onClick={onClickNext} label='Next' />
@@ -63,13 +74,6 @@ function CreditsContainer({ media, onStarted }) {
                         ))}
                 </FlexRow>
             </FlexCol>
-            {/* nextEpisode && (
-                <CreditsPreview
-                    nextIndex={nextEpisode.index}
-                    nextThumbnail={nextEpisode.thumbnail}
-                    nextName={nextEpisode.name}
-                />
-            ) */}
         </Credits>
     );
 }

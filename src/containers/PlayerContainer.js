@@ -10,6 +10,7 @@ import {
     TrackBar,
     Resolution,
     EpisodeTitle,
+    NextEpisodeTitle,
     FlexRow,
     FlexCol,
     SubOverlay,
@@ -139,7 +140,7 @@ function PlayerContainer({ media, folder, onEnded }) {
 
     const [timeoutID, setTimeoutID] = useState(null);
     const inactivityHandler = (playerScreen) => {
-        if (!showSettings && !showInfo) playerScreen.classList.remove('show');
+        if (!showSettings && !showInfo && playing) playerScreen.classList.remove('show');
     };
 
     const activityHandler = (event) => {
@@ -245,14 +246,27 @@ function PlayerContainer({ media, folder, onEnded }) {
                 </SubOverlay>
             )}
             <PlayerOverlay>
-                <EpisodeTitle
-                    isSingle={isSingle}
-                    series={media}
-                    folder={folder}
-                    seasonNum={season.number}
-                    episodeNum={episode.number}
-                    episodeName={episode.name}
-                />
+                <FlexRow justifyContent='space-between'>
+                    <EpisodeTitle
+                        isSingle={isSingle}
+                        series={media}
+                        folder={folder}
+                        seasonNum={season.number}
+                        episodeNum={episode.number}
+                        episodeName={episode.name}
+                    />
+                    {nextEpisode && (
+                        <NextEpisodeTitle
+                            isSingle={isSingle}
+                            series={media}
+                            folder={folder}
+                            seasonNum={nextEpisode.seasonNumber}
+                            episodeNum={nextEpisode.number}
+                            episodeName={nextEpisode.name}
+                        />
+                    )}
+                </FlexRow>
+
                 <FlexCol>
                     <TrackBar
                         position={currentProgress}

@@ -47,7 +47,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             resolution: seasonRef?.resolution ?? mediaRef?.resolution,
             episodes,
         };
-        console.log('episodes', episodes);
+
         // Episode
         const episodeSlug = toSlug(episodeName);
         let episodeIndex = episodes.findIndex(isCurrent, episodeSlug);
@@ -69,14 +69,21 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             : null;
 
         // Next Episode
+        const isNextSeason = mediaRef.seasons[seasonIndex + 1] && !episodes[episodeIndex + 1];
+        const nextSeason = isSingle ? null : mediaRef.seasons[seasonIndex + 1] ?? null;
+        const nextSeasonEpisodes = isNextSeason && nextSeason ? nextSeason.episodes : null;
+        const nextSeasonSlug = isNextSeason ? toSlug(nextSeason.name) : seasonSlug;
+
         let nextEpisode = null;
-        const nextEpisodeRef = episodes[episodeIndex + 1] ?? null;
+        const nextEpisodeRef = isNextSeason ? nextSeasonEpisodes[0] : episodes[episodeIndex + 1] ?? null;
         if (nextEpisodeRef) {
             nextEpisode = {
-                index: episodeIndex + 1,
-                number: nextEpisodeRef.episodeNumber ?? episodeIndex + 2,
+                index: isNextSeason ? 0 : episodeIndex + 1,
+                seasonIndex: isNextSeason ? seasonIndex + 1 : season.index,
+                seasonNumber: isNextSeason ? season.number + 1 : season.number,
+                number: isNextSeason ? 1 : nextEpisodeRef.episodeNumber ?? episodeIndex + 2,
                 slug: toSlug(nextEpisodeRef.name),
-                route: `/${categorySlug}/${mediaSlug}/watch/${seasonSlug}/${toSlug(nextEpisodeRef.name)}`,
+                route: `/${categorySlug}/${mediaSlug}/watch/${nextSeasonSlug}/${toSlug(nextEpisodeRef.name)}`,
                 name: nextEpisodeRef.name,
                 fileURL: nextEpisodeRef.fileURL,
                 subtitleURL: nextEpisodeRef.subtitleURL,

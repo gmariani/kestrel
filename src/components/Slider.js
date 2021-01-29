@@ -16,7 +16,7 @@ const ThumbContainer = styled.div`
     flex-direction: column;
     align-items: center;
     width: 2px;
-    left: ${({ value }) => `${value}%;`};
+    left: var(--position);
     top: -5px;
     position: absolute;
     pointer-events: none;
@@ -48,7 +48,7 @@ function Slider({ position = 0, time = '00:00', theme = 'light', onSeek }) {
 
     return (
         <Container>
-            <ThumbContainer value={position * 100}>
+            <ThumbContainer style={{ '--position': `${(position * 100).toFixed(2)}%` }}>
                 <Thumb height={height} theme={theme} />
                 <Timer time={time} />
             </ThumbContainer>

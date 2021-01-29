@@ -11,7 +11,7 @@ const placeHolder =
 const loaded = keyframes`
     from {
         opacity: 0;
-        transform: translate3d(0, 2rem, 500rem);
+        transform: translate3d(0, 0, 500rem);
     }
     to {
         opacity: 1;
@@ -24,7 +24,7 @@ const Image = styled.img`
     display: block;
 
     &.loaded:not(.has-error) {
-        animation: ${loaded} 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        animation: ${loaded} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
     }
 
     &.has-error {
@@ -95,7 +95,7 @@ const LazyImage = ({ src, alt, className, height, width, onLoaded }) => {
             height={height}
             width={width}
             onLoad={(event) => {
-                console.log('loaded', event.target.complete, event.target);
+                // console.log('loaded', event.target.complete, event.target);
                 event.target.classList.add('loaded');
                 if (onLoaded) onLoaded(true);
             }}

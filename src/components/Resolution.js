@@ -4,9 +4,9 @@ import styled from 'styled-components/macro';
 
 const Icon = styled.div`
     border: 2px solid white;
-    border-radius: 5px;
+    border-radius: 3px;
     background: none;
-    padding: 5px 10px;
+    padding: 0px 5px;
     text-transform: uppercase;
     display: inline;
     color: white;
@@ -14,6 +14,7 @@ const Icon = styled.div`
     font-weight: 700;
     pointer-events: none;
     user-select: none;
+    margin-right: 0.5rem;
 `;
 
 const propTypes = {

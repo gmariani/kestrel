@@ -6,17 +6,16 @@ const Container = styled.div`
     display: flex;
     color: white;
     flex-direction: column;
-    justify-content: start;
+    justify-content: var(--align);
     pointer-events: none;
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-    width: 500px;
+    width: 700px;
 `;
 
 const Meta = styled.div`
-    display: flex;
-    justify-content: space-between;
     font-size: 1.5rem;
     user-select: none;
+    text-align: var(--align);
 `;
 
 const Title = styled.div`
@@ -24,11 +23,15 @@ const Title = styled.div`
     line-height: 3rem;
     margin-bottom: 0.5rem;
     user-select: none;
+    text-align: var(--align);
 `;
 
-function getMetaLabel(episodeTitle, contentRating = 'NR', seasonNum = 0, episodeNum = 0, isSingle = false, folder) {
+function getMetaLabel(episodeTitle, contentRating, seasonNum = 0, episodeNum = 0, isSingle = false, folder) {
+    const items = [];
+
     // If is a movie extra
     if (isSingle && folder) {
+        items.push(episodeTitle);
         return `${episodeTitle} • ${contentRating}`;
     }
     // If movie
@@ -48,24 +51,30 @@ const propTypes = {
         name: PropTypes.string.isRequired,
         contentRating: PropTypes.string,
     }),
+    align: PropTypes.string,
     folder: PropTypes.string,
 };
 
 // Actual object to avoid mutable object from invalidating component
-const defaultSeries = { name: 'No Series Title', contentRating: 'NR' };
+const defaultSeries = { name: '', contentRating: 'NR' };
 
 function EpisodeTitle({
     isSingle = false,
     seasonNum = 0,
     episodeNum = 0,
-    episodeName = 'No Title',
+    episodeName = '',
     series = defaultSeries,
+    align = 'start',
     folder,
 }) {
     return (
         <Container>
-            <Title>{series.name}</Title>
-            <Meta>{getMetaLabel(episodeName, series?.contentRating, seasonNum, episodeNum, isSingle, folder)}</Meta>
+            <Title style={{ '--align': align }}>{series.name}</Title>
+            {episodeName !== '' && (
+                <Meta style={{ '--align': align }}>
+                    {getMetaLabel(episodeName, series?.contentRating, seasonNum, episodeNum, isSingle, folder)}
+                </Meta>
+            )}
         </Container>
     );
 }

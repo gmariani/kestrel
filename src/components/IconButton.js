@@ -11,6 +11,10 @@ const Container = styled.button`
     padding: 0;
     align-items: center;
 
+    &:focus {
+        outline: none;
+    }
+
     ${(props) => {
         if (props.disabled) {
             return 'pointer-events:none;opacity:0.5';

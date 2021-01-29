@@ -27,7 +27,7 @@ const Label = styled.div`
     font-weight: normal;
     line-height: 2rem;
     padding: 0 1rem;
-    width: 100px;
+    width: 150px;
 
     &:after {
         display: block;

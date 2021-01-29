@@ -10,6 +10,7 @@ import { getEpisodeProgress, toSlug } from '../utils';
 
 const Container = styled(TempContainer)`
     height: 100%;
+    padding-bottom: 2rem;
 `;
 
 const Row = styled(FlexRow)`

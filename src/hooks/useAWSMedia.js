@@ -10,7 +10,6 @@ import {
     getLastDirectory,
     removeNumbering,
     secondsToDuration,
-    toSlug,
 } from '../utils';
 
 export default function useAWSMedia(categorySlug, mediaSlug) {
@@ -223,10 +222,10 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                     // console.log('getSeason', path);
 
                     return accumulatorPromise.then(() => {
-                        console.log('call getVideoMeta', path);
+                        // console.log('call getVideoMeta', path);
                         return getVideoMeta(`${BASE_URL}/${path}`)
                             .then((videoMeta) => {
-                                console.log('getVideoMeta result', path, videoMeta);
+                                // console.log('getVideoMeta result', path, videoMeta);
                                 const ep = {
                                     duration: videoMeta ? secondsToDuration(videoMeta.duration) : '00:00:00',
                                     name: toName(removeNumbering(getFileName(path))),
@@ -467,7 +466,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             () => {
                 // onError, call loadMeta
                 loadMeta(onComplete, () => {
-                    console.info(keyPrefix, 'meta.json not found, initializing...');
+                    // console.info(keyPrefix, 'meta.json not found, initializing...');
                     // onError, call indexMeta
                     indexMeta((fileIndex) => {
                         generateWhich(

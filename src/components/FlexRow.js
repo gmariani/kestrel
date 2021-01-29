@@ -31,49 +31,44 @@ const propTypes = {
     innerRef: PropTypes.object,
 };
 
-const FlexRow = React.forwardRef(
-    (
-        {
-            children,
-            style,
-            className,
-            columnGap = '1rem',
-            flexGrow,
-            flexWrap,
-            alignContent,
-            alignItems,
-            alignSelf,
-            justifyContent,
-            justifyItems,
-            justifySelf,
-            onClick,
-            onClickCapture,
-            hasFocusedChild,
-            innerRef,
-        },
-        ref
-    ) => {
-        return (
-            <Container
-                ref={innerRef}
-                style={style}
-                className={`${className ?? ''} ${hasFocusedChild ? 'focused' : ''}`}
-                columnGap={columnGap}
-                flexGrow={flexGrow}
-                flexWrap={flexWrap}
-                alignContent={alignContent}
-                alignItems={alignItems}
-                alignSelf={alignSelf}
-                justifyContent={justifyContent}
-                justifyItems={justifyItems}
-                justifySelf={justifySelf}
-                onClick={onClick}
-                onClickCapture={onClickCapture}>
-                {children}
-            </Container>
-        );
-    }
-);
+const FlexRow = ({
+    children,
+    style,
+    className,
+    columnGap = '1rem',
+    flexGrow,
+    flexWrap,
+    alignContent,
+    alignItems,
+    alignSelf,
+    justifyContent,
+    justifyItems,
+    justifySelf,
+    onClick,
+    onClickCapture,
+    hasFocusedChild,
+    innerRef,
+}) => {
+    return (
+        <Container
+            ref={innerRef}
+            style={style}
+            className={`${className ?? ''} ${hasFocusedChild ? 'focused' : ''}`}
+            columnGap={columnGap}
+            flexGrow={flexGrow}
+            flexWrap={flexWrap}
+            alignContent={alignContent}
+            alignItems={alignItems}
+            alignSelf={alignSelf}
+            justifyContent={justifyContent}
+            justifyItems={justifyItems}
+            justifySelf={justifySelf}
+            onClick={onClick}
+            onClickCapture={onClickCapture}>
+            {children}
+        </Container>
+    );
+};
 
 FlexRow.propTypes = propTypes;
 export default withFocusable({
