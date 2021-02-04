@@ -17,6 +17,7 @@ const Container = styled.div`
 const Row = styled(FlexRow)`
     overflow: hidden;
     position: relative;
+    /*margin-bottom: 25vh;*/
 `;
 
 const propTypes = {
@@ -59,7 +60,7 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
     useEffect(() => {
         const poster = document.querySelector('.poster.selected');
         // If no episodes exist, don't break
-        if (poster) poster.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+        if (poster) poster.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
     }, [selectedPoster]);
 
     // If switching categories, wait until 'media' has loaded and matches the selected category

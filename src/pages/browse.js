@@ -6,6 +6,7 @@ import { TempContainer, FadeBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
 
 const Container = styled(TempContainer)`
+    padding-top: 2.25rem;
     padding-bottom: 0 !important;
 `;
 

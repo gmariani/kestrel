@@ -10,7 +10,7 @@ const Image = styled.img`
 `;
 
 const Link = styled(ReachRouterLink)`
-    margin-top: -2.5rem;
+    /*margin-top: -2.5rem;*/
     padding: 0.5rem;
     border-radius: 0.5rem;
     border: 2px solid transparent;

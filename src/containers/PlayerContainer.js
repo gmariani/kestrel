@@ -19,7 +19,7 @@ import {
     PaneEpisodeSettings,
 } from '../components';
 import mediaInterface from '../interfaces/media';
-import { useLocalStorage } from '../hooks';
+import { useLocalStorage, useAWSSignedURL } from '../hooks';
 
 function getFileName(fullPath) {
     // const startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
@@ -220,6 +220,28 @@ function PlayerContainer({ media, folder, onEnded }) {
         }
     }, [settings]);
 
+    const fileURL = useAWSSignedURL(episode.fileURL);
+    // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
+    // const subtitleURL = useAWSSignedURL(episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`);
+    const subtitleURL = episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`;
+    const videoConfig = {
+        file: {
+            attributes: {
+                crossOrigin: 'anonymous',
+            },
+            tracks: [
+                {
+                    kind: 'subtitles',
+                    src: subtitleURL,
+                    srcLang: 'en',
+                    default: true,
+                    mode: settings.subtitles ? 'showing' : 'hidden',
+                },
+            ],
+        },
+    };
+    console.log(2, videoConfig.file.tracks[0].src, videoConfig.file.tracks[0].mode);
+
     return (
         <Player onMouseMove={activityHandler}>
             {showSettings && (
@@ -305,43 +327,29 @@ function PlayerContainer({ media, folder, onEnded }) {
             </PlayerOverlay>
 
             <Loading visible={buffering} />
-
-            <ReactPlayer
-                ref={playerRef}
-                style={{ overflow: 'hidden' }}
-                playing={playing}
-                // controls={true}
-                url={episode.fileURL}
-                width='100%'
-                height='100%'
-                onBuffer={() => setBuffering(true)}
-                onBufferEnd={() => setBuffering(false)}
-                // onReady={}
-                onStart={playerStartHandler}
-                onPlay={() => setPlaying(true)}
-                onPause={() => setPlaying(false)}
-                onDuration={(seconds) => setTotalSeconds(seconds)}
-                onProgress={playerProgressHandler}
-                onEnded={playerEndHandler}
-                onError={playerErrorHandler}
-                // onSeek={}
-                config={{
-                    file: {
-                        attributes: {
-                            crossOrigin: 'anonymous',
-                        },
-                        tracks: [
-                            {
-                                kind: 'subtitles',
-                                src: episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`,
-                                srcLang: 'en',
-                                default: true,
-                                mode: settings.subtitles ? 'showing' : 'hidden',
-                            },
-                        ],
-                    },
-                }}
-            />
+            {fileURL !== '' && (
+                <ReactPlayer
+                    ref={playerRef}
+                    style={{ overflow: 'hidden' }}
+                    playing={playing}
+                    // controls={true}
+                    url={fileURL}
+                    width='100%'
+                    height='100%'
+                    onBuffer={() => setBuffering(true)}
+                    onBufferEnd={() => setBuffering(false)}
+                    // onReady={}
+                    onStart={playerStartHandler}
+                    onPlay={() => setPlaying(true)}
+                    onPause={() => setPlaying(false)}
+                    onDuration={(seconds) => setTotalSeconds(seconds)}
+                    onProgress={playerProgressHandler}
+                    onEnded={playerEndHandler}
+                    onError={playerErrorHandler}
+                    // onSeek={}
+                    config={videoConfig}
+                />
+            )}
         </Player>
     );
 }

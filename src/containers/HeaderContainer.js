@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { FlexCol, Header, Logo, Menu, MenuLink } from '../components';
+import { FlexRow, Header, Logo, Menu, MenuLink } from '../components';
 import * as ROUTES from '../constants/routes';
 import { toName } from '../utils';
 
@@ -15,11 +15,7 @@ function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
     const history = useHistory();
 
     return (
-        <FlexCol>
-            <Header>
-                <Logo to={ROUTES.HOME} />
-                {/* <ButtonLink to={ROUTES.SIGN_IN}>Sign In</ButtonLink> */}
-            </Header>
+        <FlexRow justifyContent={hideMenu ? 'flex-end' : 'space-between'}>
             {!hideMenu && (
                 <Menu focusKey='MENU'>
                     {categories.map((category) => {
@@ -41,7 +37,11 @@ function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
                     })}
                 </Menu>
             )}
-        </FlexCol>
+            <Header>
+                <Logo to={ROUTES.HOME} />
+                {/* <ButtonLink to={ROUTES.SIGN_IN}>Sign In</ButtonLink> */}
+            </Header>
+        </FlexRow>
     );
 }
 

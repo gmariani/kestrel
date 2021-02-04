@@ -8,4 +8,5 @@ export { default as useFocus } from './useFocus';
 export { default as useAWSCategories } from './useAWSCategories';
 export { default as useAWSCategoryMedia } from './useAWSCategoryMedia';
 export { default as useAWSMedia } from './useAWSMedia';
+export { default as useAWSSignedURL } from './useAWSSignedURL';
 export { default as useOnScreen } from './useOnScreen';

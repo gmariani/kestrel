@@ -19,7 +19,7 @@ const Container = styled(FlexCol)`
     /*justify-content: end;*/
     justify-content: flex-end;
     color: white;
-    margin-bottom: 6.25rem;
+    margin-bottom: 2.25rem;
     flex: 1;
     --progressBG: rgba(255, 255, 255, 0.6);
     --trackBG: rgba(255, 255, 255, 0.25);
@@ -33,8 +33,8 @@ const Meta = styled.div`
 `;
 
 const Title = styled.div`
-    font-size: 7rem;
-    line-height: 7rem;
+    font-size: 6rem;
+    line-height: 6rem;
     margin-bottom: 1rem;
 `;
 
@@ -147,7 +147,6 @@ function EpisodeDetail({
             const compStyles = window.getComputedStyle(element);
             const { height } = compStyles;
             element.style.overflow = 'visible';
-
             shave('.js-shave', parseInt(height, 10));
         }
 
@@ -161,9 +160,10 @@ function EpisodeDetail({
     return (
         <Container justifyContent='start'>
             <Title>{media.name}</Title>
-            <Description className='js-shave'>{media.season.description}</Description>
+            <Description className='js-shave'>
+                {isSingle ? media.description : media.season.description ?? media.description}
+            </Description>
             <Meta>
-                {media.contentRating && <Rating>{media.contentRating}</Rating>}
                 <Resolution type={media?.resolution} />
                 {getMetaLabel(
                     isSingle,
@@ -173,6 +173,7 @@ function EpisodeDetail({
                     media?.genres,
                     media?.category
                 )}
+                {media.contentRating && <Rating>{media.contentRating}</Rating>}
             </Meta>
 
             {hasProgress && (

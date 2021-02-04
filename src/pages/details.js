@@ -10,7 +10,7 @@ import { getEpisodeProgress, toSlug } from '../utils';
 
 const Container = styled(TempContainer)`
     height: 100%;
-    padding-bottom: 2rem;
+    padding: 2.25rem;
 `;
 
 const Row = styled(FlexRow)`
@@ -40,7 +40,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
     const media = useMedia(categorySlug, mediaSlug, seasonSlug);
     const { isSingle, season } = media;
-
+    console.log('isSingle', isSingle);
     // Get previous played history, if no history select first episode of first season
     const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
         progress: [[0]],

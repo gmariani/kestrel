@@ -22,7 +22,7 @@ const Meta = styled.div`
 `;
 
 const Container = styled(ReachRouterLink)`
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.75);
     border-width: 0;
     border-style: solid;
     border-color: transparent;

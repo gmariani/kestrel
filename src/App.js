@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { initNavigation } from '@noriginmedia/react-spatial-navigation';
-import { SignIn, Home, Browse, Details, Watch } from './pages';
+import { SignIn, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
 import { useAuthListener } from './hooks';
 
@@ -43,9 +43,11 @@ export default function App() {
                     <Redirect to='/browse' />
                 </Route>
 
-                <Route>
+                {/* <Route>
                     <Home />
-                </Route>
+                </Route> */}
+
+                <Redirect to='/browse' />
             </Switch>
         </Router>
     ) : (

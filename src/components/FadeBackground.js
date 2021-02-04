@@ -43,8 +43,8 @@ const Gradient = styled(Layer)`
     */
     background-image: linear-gradient(
         180deg,
-        hsla(var(--hue), 50%, 40%, 0) ${({ split }) => split / 2}%,
-        hsla(var(--hue), 50%, 40%, 1) ${({ split }) => split}%
+        hsla(var(--hue), 50%, 40%, 0) var(--split1),
+        hsla(var(--hue), 50%, 40%, 1) var(--split2)
     );
     background-size: 400% 400%;
     animation: ${moving} 60s ease-in-out infinite;
@@ -70,7 +70,7 @@ const FadeBackground = ({ hue = -1, base = '#292C33', split = 70, imagePath = ''
         <Container style={{ '--hue': hue > 0 ? hue : 0, '--base': base }}>
             <Base />
             {imagePath !== '' && <Art src={imagePath} />}
-            <Gradient split={split} />
+            <Gradient style={{ '--split1': `${split / 2}%`, '--split2': `${split}%` }} />
         </Container>
     );
 };

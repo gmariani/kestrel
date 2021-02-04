@@ -5,8 +5,6 @@ import { Loading } from '../components';
 import PlayerContainer from '../containers/PlayerContainer';
 import CreditsContainer from '../containers/CreditsContainer';
 
-// TODO get tokenized s3 links
-
 export default function Watch() {
     const { categorySlug, mediaSlug, seasonSlug, episodeSlug } = useParams();
     const media = useMedia(categorySlug, mediaSlug, seasonSlug, episodeSlug);

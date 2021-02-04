@@ -18,7 +18,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
         if (!meta.isLoaded) return;
 
         const mediaRef = meta.data; // content.find((series) => mediaSlug === toSlug(series.name));
-        const isSingle = !!(mediaRef && mediaRef.type === 'movie');
+        const isSingle = mediaRef && mediaRef.type === 'movie';
         // const categorySlug = toSlug(mediaRef.category);
 
         // Can't use arrow-function as 'this' won't be replaced properly
@@ -69,7 +69,7 @@ export default function useMedia(categorySlug, mediaSlug, seasonSlug, episodeNam
             : null;
 
         // Next Episode
-        const isNextSeason = mediaRef.seasons[seasonIndex + 1] && !episodes[episodeIndex + 1];
+        const isNextSeason = mediaRef.seasons && mediaRef.seasons[seasonIndex + 1] && !episodes[episodeIndex + 1];
         const nextSeason = isSingle ? null : mediaRef.seasons[seasonIndex + 1] ?? null;
         const nextSeasonEpisodes = isNextSeason && nextSeason ? nextSeason.episodes : null;
         const nextSeasonSlug = isNextSeason ? toSlug(nextSeason.name) : seasonSlug;
