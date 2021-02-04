@@ -7,7 +7,16 @@ import { useAuthListener } from './hooks';
 
 // TODO: Add search button like hulu
 // TODO: Add edit screen to modify the meta.json
-// TODO: Modify loaded urls so they are relative to the media folder
+// If meta.json is incomplete, populate from TMDB
+// if (metadata.loaded && metadata.data.tmdb) {
+//     if (!metadata.data.name || !metadata.data.year || !metadata.data.genres) {
+//         // const tmdbData = getTMDB(meta.data.tmdb);
+//         // meta.data.name = '';
+//         // meta.data.year = 0;
+//         // meta.data.genres = [];
+//         // setMeta(meta.data);
+//     }
+// }
 // BUG: Fix spatial navigation errors
 
 export default function App() {

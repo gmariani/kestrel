@@ -3,6 +3,7 @@ import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+// import throttle from 'lodash/throttle';
 import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
 import { SeasonContainer, ExtraContainer, EpisodeContainer, HeaderContainer } from '../containers';
 import { useMedia, useLocalStorage } from '../hooks';
@@ -23,18 +24,6 @@ const propTypes = {
     hasFocusedChild: PropTypes.bool,
 };
 
-// If meta.json is incomplete, populate from TMDB
-// TODO: Maybe do this on the details page?
-// if (metadata.loaded && metadata.data.tmdb) {
-//     if (!metadata.data.name || !metadata.data.year || !metadata.data.genres) {
-//         // const tmdbData = getTMDB(meta.data.tmdb);
-//         // meta.data.name = '';
-//         // meta.data.year = 0;
-//         // meta.data.genres = [];
-//         // setMeta(meta.data);
-//     }
-// }
-
 function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const history = useHistory();
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
@@ -53,9 +42,6 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const { progress } = playHistory;
 
     useEffect(() => {
-        // TODO: lodash throttle
-        // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
-
         function onWheel(event) {
             event.preventDefault();
             const { deltaY, deltaX } = event;
@@ -70,6 +56,27 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                 navigateByDirection('left');
             }
         }
+
+        // TODO: lodash throttle
+        // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
+        // function onWheelHandler(event) {
+        //     event.preventDefault();
+        //     const { deltaY, deltaX } = event;
+
+        //     if (deltaY > 1) {
+        //         navigateByDirection('down');
+        //     } else if (deltaY < 0) {
+        //         navigateByDirection('up');
+        //     } else if (deltaX > 1) {
+        //         navigateByDirection('right');
+        //     } else if (deltaX < 1) {
+        //         navigateByDirection('left');
+        //     }
+        // }
+        // const throttledWheelHandler = throttle(onWheelHandler, 500, { trailing: false });
+        // function onWheel(event) {
+        //     throttledWheelHandler(event);
+        // }
 
         document.addEventListener('wheel', onWheel, false);
         return () => {
