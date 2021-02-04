@@ -104,6 +104,7 @@ function Poster({ selected, focused, categorySlug, mediaSlug, to, title = 'No Ti
     const [loading, setLoading] = useState(true);
     const baseURL = getAWSBaseURL();
     const meta = useAWSMedia(categorySlug, mediaSlug);
+    const keyPrefix = `${categorySlug}/${mediaSlug}`;
     // console.log('Poster', `focused: ${focused}`, mediaSlug);
 
     // Determine year (or year range) to display, if available
@@ -177,11 +178,19 @@ function Poster({ selected, focused, categorySlug, mediaSlug, to, title = 'No Ti
     const classes = ['poster'];
     if (selected) classes.push('selected');
     if (focused) classes.push('focused');
+
+    // TODO: Figure out cost-effective way to determine poster file extension on all
+    // media folders in a category
+    // For now, just assume it's a .jpg
+    const rawPosterURL = 'poster.jpg'; // media.posterURL;
+    const posterURL =
+        rawPosterURL && !rawPosterURL.includes(mediaSlug) ? `${baseURL}/${keyPrefix}/${rawPosterURL}` : rawPosterURL;
+
     return (
         <Container to={to} className={`${classes.join(' ')}`}>
             <ImageContainer heightVal='30rem' widthVal='20rem'>
                 <Image
-                    src={`${baseURL}/${categorySlug}/${mediaSlug}/poster.jpg`}
+                    src={posterURL}
                     heightVal='30rem'
                     widthVal='20rem'
                     onLoaded={() => {

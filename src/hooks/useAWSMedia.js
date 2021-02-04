@@ -184,7 +184,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const foundPath = fileIndex.find(
                 (path) => path.includes('poster.') && (path.endsWith('.jpg') || path.endsWith('.png'))
             );
-            return foundPath ? `${BASE_URL}/${foundPath}` : null;
+            return foundPath ?? null;
         }
 
         /**
@@ -197,7 +197,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const foundPath = fileIndex.find(
                 (path) => path.includes('background.') && (path.endsWith('.jpg') || path.endsWith('.png'))
             );
-            return foundPath ? `${BASE_URL}/${foundPath}` : null;
+            return foundPath ?? null;
         }
 
         /**
@@ -210,10 +210,12 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
         function getSeason(directory, seasonIndex, mediaFiles) {
             const name = toName(removeNumbering(getLastDirectory(directory)));
             const backgroundFile = getBackgroundFile(mediaFiles.filter((path) => path.includes(directory)));
-            const seasonEpisodes = mediaFiles.filter(
-                (path) => path.includes(directory) && (path.endsWith('.mp4') || path.endsWith('.m4v'))
-            );
-            const seasonSubtitles = mediaFiles.filter((path) => path.includes(directory) && path.endsWith('.vtt'));
+            const seasonEpisodes = mediaFiles
+                .filter((path) => path.includes(directory) && (path.endsWith('.mp4') || path.endsWith('.m4v')))
+                .map((path) => path.replace(`${keyPrefix}/`, ''));
+            const seasonSubtitles = mediaFiles
+                .filter((path) => path.includes(directory) && path.endsWith('.vtt'))
+                .map((path) => path.replace(`${keyPrefix}/`, ''));
             const accumulatorEpisodes = [];
             return seasonEpisodes
                 .reduce((accumulatorPromise, path, index) => {
@@ -222,8 +224,8 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                     // console.log('getSeason', path);
 
                     return accumulatorPromise.then(() => {
-                        // console.log('call getVideoMeta', path);
-                        return getVideoMeta(`${BASE_URL}/${path}`)
+                        // console.log('call getVideoMeta', `${BASE_URL}/${keyPrefix}/${path}`);
+                        return getVideoMeta(`${BASE_URL}/${keyPrefix}/${path}`)
                             .then((videoMeta) => {
                                 // console.log('getVideoMeta result', path, videoMeta);
                                 const ep = {
@@ -231,11 +233,12 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                                     name: toName(removeNumbering(getFileName(path))),
                                     resolution: videoMeta && videoMeta.width >= 1080 ? 'hd' : 'sd',
                                     episodeNumber: index + 1,
-                                    fileURL: `${BASE_URL}/${path}`,
+                                    fileURL: path,
                                 };
                                 // Corresponding subtitles exist? Add them in
                                 if (seasonSubtitles.includes(`${directory}${fileName}.vtt`)) {
-                                    ep.subtitleURL = `${BASE_URL}/${directory}${fileName}.vtt`;
+                                    // console.log(`ep.subtitleURL = ${directory}${fileName}.vtt`);
+                                    ep.subtitleURL = `${directory}${fileName}.vtt`;
                                 }
                                 accumulatorEpisodes.push(ep);
                                 return ep;
@@ -283,10 +286,12 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
             const rootFiles = fileIndex
                 .map((item) => item.Key)
-                .filter((path) => !path.endsWith('/') && getPathDepth(path) === 2);
+                .filter((path) => !path.endsWith('/') && getPathDepth(path) === 2)
+                .map((path) => path.replace(`${keyPrefix}/`, ''));
             const mediaFiles = fileIndex
                 .map((item) => item.Key)
-                .filter((path) => !path.endsWith('/') && getPathDepth(path) > 2);
+                .filter((path) => !path.endsWith('/') && getPathDepth(path) > 2)
+                .map((path) => path.replace(`${keyPrefix}/`, ''));
 
             // Get the poster image file if it exists
             const posterFile = getPosterFile(rootFiles);
@@ -295,7 +300,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const backgroundFile = getBackgroundFile(rootFiles);
 
             // Get full media URL
-            const primaryFile = `${BASE_URL}/${singlePath}`;
+            const primaryFile = singlePath.replace(`${keyPrefix}/`, '');
             const subtitlesFile = rootFiles.find((path) => path.endsWith('.vtt'));
 
             // Any extras for the movie
@@ -318,7 +323,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                             };
                         });
                     // console.log('getExtras result2', directory, extraFiles, primaryFile);
-                    return getVideoMeta(primaryFile);
+                    return getVideoMeta(`${BASE_URL}/${keyPrefix}/${primaryFile}`);
                 })
                 .then((videoMeta) => {
                     const data = {
@@ -342,7 +347,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
                         year: null,
                     };
                     if (subtitlesFile !== undefined) {
-                        data.subtitleURL = `${BASE_URL}/${subtitlesFile}`;
+                        data.subtitleURL = subtitlesFile;
                     }
 
                     if (onSuccess) onSuccess(data);
@@ -375,10 +380,12 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
 
             const rootFiles = fileIndex
                 .map((item) => item.Key)
-                .filter((path) => !path.endsWith('/') && getPathDepth(path) === 2);
+                .filter((path) => !path.endsWith('/') && getPathDepth(path) === 2)
+                .map((path) => path.replace(`${keyPrefix}/`, ''));
             const mediaFiles = fileIndex
                 .map((item) => item.Key)
-                .filter((path) => !path.endsWith('/') && getPathDepth(path) > 2);
+                .filter((path) => !path.endsWith('/') && getPathDepth(path) > 2)
+                .map((path) => path.replace(`${keyPrefix}/`, ''));
 
             // Get the poster image file if it exists
             const posterFile = getPosterFile(rootFiles);
@@ -387,10 +394,11 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             const backgroundFile = getBackgroundFile(rootFiles);
 
             const accumulatorSeasons = [];
-            const seasonPromises = directories.reduce((accumulatorPromise, directory, index) => {
+            const seasonPromises = directories.reduce((accumulatorPromise, directoryKey, index) => {
+                const directory = directoryKey.replace(`${keyPrefix}/`, '');
                 // console.log(`accumulatorPromise for ${directory}`);
                 return accumulatorPromise.then(() => {
-                    // console.log('call getSeason', directory, index);
+                    // console.log('call getSeason', directory, index, mediaFiles);
                     return getSeason(directory, index, mediaFiles)
                         .then((seasonMeta) => {
                             // console.log('getSeason result', directory, seasonMeta);

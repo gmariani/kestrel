@@ -5,6 +5,11 @@ import { SignIn, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
 import { useAuthListener } from './hooks';
 
+// TODO: Add search button like hulu
+// TODO: Add edit screen to modify the meta.json
+// TODO: Modify loaded urls so they are relative to the media folder
+// BUG: Fix spatial navigation errors
+
 export default function App() {
     const { user } = useAuthListener();
 

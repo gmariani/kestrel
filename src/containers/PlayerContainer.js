@@ -20,6 +20,7 @@ import {
 } from '../components';
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage, useAWSSignedURL } from '../hooks';
+import { getAWSBaseURL } from '../utils';
 
 function getFileName(fullPath) {
     // const startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
@@ -57,6 +58,7 @@ function PlayerContainer({ media, folder, onEnded }) {
         subtitles: true,
         autoplay: true,
     });
+    const baseURL = getAWSBaseURL();
 
     const { isSingle, season, episode, nextEpisode } = media;
     // Create default array if it doesn't exist
@@ -220,10 +222,17 @@ function PlayerContainer({ media, folder, onEnded }) {
         }
     }, [settings]);
 
-    const fileURL = useAWSSignedURL(episode.fileURL);
+    const fileURL = useAWSSignedURL(episode.fileURL, media.category, media.slug);
     // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
     // const subtitleURL = useAWSSignedURL(episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`);
-    const subtitleURL = episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`;
+
+    const keyPrefix = `${media.category}/${media.slug}`;
+    const rawSubtitleURL = episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`;
+    const subtitleURL =
+        rawSubtitleURL && !rawSubtitleURL.includes(media.slug)
+            ? `${baseURL}/${keyPrefix}/${rawSubtitleURL}`
+            : rawSubtitleURL;
+
     const videoConfig = {
         file: {
             attributes: {

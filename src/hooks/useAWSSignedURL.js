@@ -2,16 +2,20 @@ import { useEffect, useState } from 'react';
 import S3 from 'aws-sdk/clients/s3';
 import { getAWSBaseURL } from '../utils';
 
-export default function useAWSSignedURL(key) {
+export default function useAWSSignedURL(rawKey, categorySlug, mediaSlug) {
     const [signedURL, setSignedURL] = useState('');
-    // const keyPrefix = `${categorySlug}/${mediaSlug}`;
+    const keyPrefix = `${categorySlug}/${mediaSlug}/`;
     // TODO: Figure out what to do if you pause and come back after the url expires
     // or if you drop internet connection longer than the lifetime.
+
+    // Is this old style URL or new style (without prefix)?
+    const key = !rawKey.includes(mediaSlug) ? `${keyPrefix}${rawKey}` : rawKey;
+    console.log(`key: ${key}`);
 
     useEffect(() => {
         const BASE_URL = getAWSBaseURL();
         const objectKey = String(key).replace(`${BASE_URL}/`, '');
-
+        console.log(`objectKey: ${objectKey}`);
         const S3_CLIENT = new S3({
             apiVersion: '2006-03-01',
             region: process.env.REACT_APP_AWS_DEFAULT_REGION,

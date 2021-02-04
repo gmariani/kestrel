@@ -6,7 +6,7 @@ import styled from 'styled-components/macro';
 import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
 import { SeasonContainer, ExtraContainer, EpisodeContainer, HeaderContainer } from '../containers';
 import { useMedia, useLocalStorage } from '../hooks';
-import { getEpisodeProgress, toSlug } from '../utils';
+import { getEpisodeProgress, toSlug, getAWSBaseURL } from '../utils';
 
 const Container = styled(TempContainer)`
     height: 100%;
@@ -40,7 +40,9 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const { categorySlug, mediaSlug, seasonSlug } = useParams();
     const media = useMedia(categorySlug, mediaSlug, seasonSlug);
     const { isSingle, season } = media;
-    console.log('isSingle', isSingle);
+    const baseURL = getAWSBaseURL();
+    const keyPrefix = `${categorySlug}/${mediaSlug}`;
+
     // Get previous played history, if no history select first episode of first season
     const [playHistory, setPlayHistory] = useLocalStorage(media.id, {
         progress: [[0]],
@@ -86,15 +88,8 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     // If no season is selected and previous season exists, redirect to that
     if (media.seasons && seasonSlug === undefined && lastSeasonIndex !== undefined) {
         // eslint-disable-next-line no-console
-        console.log(
-            'Redirect to',
-            `/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`
-        );
-        return (
-            <Redirect
-                to={`/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`}
-            />
-        );
+        console.log('Redirect to', `/${keyPrefix}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`);
+        return <Redirect to={`/${keyPrefix}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`} />;
     }
 
     function getEpisodeContainer() {
@@ -105,7 +100,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                     <ExtraContainer
                         episodes={media.extras}
                         extraProgress={progress[0].slice(1)}
-                        routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/extras/`}
+                        routePrefix={`/${keyPrefix}/watch/extras/`}
                     />
                 );
             }
@@ -118,7 +113,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                 episodes={season.episodes}
                 seasonNumber={season.number}
                 seasonProgress={progress?.[season.index]}
-                routePrefix={`/${toSlug(media.category)}/${media.slug}/watch/${season.slug}/`}
+                routePrefix={`/${keyPrefix}/watch/${season.slug}/`}
             />
         );
     }
@@ -140,8 +135,14 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
         startEpisode.duration
     );
     const startEpisodeRoute = isSingle
-        ? `/${categorySlug}/${mediaSlug}/watch`
-        : `/${categorySlug}/${mediaSlug}/watch/${toSlug(season.name)}/${toSlug(startEpisode.name)}`;
+        ? `/${keyPrefix}/watch`
+        : `/${keyPrefix}/watch/${toSlug(season.name)}/${toSlug(startEpisode.name)}`;
+
+    const rawBackgroundURL = media.season.backgroundURL ?? media.backgroundURL;
+    const backgroundURL =
+        rawBackgroundURL && !rawBackgroundURL.includes(mediaSlug)
+            ? `${baseURL}/${keyPrefix}/${rawBackgroundURL}`
+            : rawBackgroundURL;
 
     return (
         <>
@@ -154,7 +155,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                             onClick={(seasonIndex) => {
                                 history.replace(
                                     // prettier-ignore
-                                    `/${toSlug(media.category)}/${media.slug}/details/${toSlug(media.seasons[seasonIndex].name)}`
+                                    `/${keyPrefix}/details/${toSlug(media.seasons[seasonIndex].name)}`
                                 );
                             }}
                         />
@@ -187,7 +188,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                 </Row>
             </Container>
             <Shadow opacity={0.75} />
-            <ScrimBackground hue={media.backgroundHue} imagePath={media.season.backgroundURL ?? media.backgroundURL} />
+            <ScrimBackground hue={media.backgroundHue} imagePath={backgroundURL} />
         </>
     );
 }
