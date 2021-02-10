@@ -53,7 +53,7 @@ const Circle = styled.div`
 
 const Label = styled.div`
     color: white;
-    font-size: 1rem;
+    font-size: 1.2rem;
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
 `;
 

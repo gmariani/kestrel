@@ -4,10 +4,7 @@ import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
 import svgLogo from '../logo.svg';
 
-const Image = styled.img`
-    width: ${(props) => props.widthVal};
-    height: ${(props) => props.heightVal};
-`;
+const Image = styled.img``;
 
 const Link = styled(ReachRouterLink)`
     /*margin-top: -2.5rem;*/
@@ -26,7 +23,14 @@ const propTypes = {
 };
 
 function Logo({ to = '' }) {
-    const image = <Image src={svgLogo} alt='Kestrel' widthVal='12.5rem' heightVal='2.8125rem' />;
+    const image = (
+        <Image
+            src={svgLogo}
+            alt='Kestrel'
+            width={12.5 * 16} // 12.5rem
+            height={2.8125 * 16} // 2.8125rem
+        />
+    );
     if (to !== '') return <Link to={to}>{image}</Link>;
     return image;
 }

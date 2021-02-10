@@ -10,12 +10,10 @@ export default function useAWSSignedURL(rawKey, categorySlug, mediaSlug) {
 
     // Is this old style URL or new style (without prefix)?
     const key = !rawKey.includes(mediaSlug) ? `${keyPrefix}${rawKey}` : rawKey;
-    console.log(`key: ${key}`);
 
     useEffect(() => {
         const BASE_URL = getAWSBaseURL();
         const objectKey = String(key).replace(`${BASE_URL}/`, '');
-        console.log(`objectKey: ${objectKey}`);
         const S3_CLIENT = new S3({
             apiVersion: '2006-03-01',
             region: process.env.REACT_APP_AWS_DEFAULT_REGION,

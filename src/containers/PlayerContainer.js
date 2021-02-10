@@ -154,6 +154,7 @@ function PlayerContainer({ media, folder, onEnded }) {
 
     const keyHandler = useCallback(
         (event) => {
+            console.log(event.code);
             switch (event.code) {
                 // 460 Subtitle
                 // 461 Back
@@ -249,7 +250,6 @@ function PlayerContainer({ media, folder, onEnded }) {
             ],
         },
     };
-    console.log(2, videoConfig.file.tracks[0].src, videoConfig.file.tracks[0].mode);
 
     return (
         <Player onMouseMove={activityHandler}>
@@ -286,7 +286,7 @@ function PlayerContainer({ media, folder, onEnded }) {
                         episodeNum={episode.number}
                         episodeName={episode.name}
                     />
-                    {nextEpisode && (
+                    {nextEpisode && currentProgress > 75 && (
                         <NextEpisodeTitle
                             isSingle={isSingle}
                             series={media}

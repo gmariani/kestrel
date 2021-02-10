@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Switch, BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { initNavigation } from '@noriginmedia/react-spatial-navigation';
-import { SignIn, Browse, Details, Watch } from './pages';
+// import { SignIn, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
 import { useAuthListener } from './hooks';
+
+const SignIn = lazy(() => import('./pages/signin.js'));
+const Browse = lazy(() => import('./pages/browse.js'));
+const Details = lazy(() => import('./pages/details.js'));
+const Watch = lazy(() => import('./pages/watch.js'));
+const renderLoader = () => <p>Loading</p>;
 
 // TODO: Add search button like hulu
 // TODO: Add edit screen to modify the meta.json
@@ -42,15 +48,21 @@ export default function App() {
                 <Redirect from={`${ROUTES.SIGN_IN}`} to='/browse' />
 
                 <Route path={`${ROUTES.BROWSE}`}>
-                    <Browse />
+                    <Suspense fallback={renderLoader()}>
+                        <Browse />
+                    </Suspense>
                 </Route>
 
                 <Route path={`${ROUTES.DETAILS}`}>
-                    <Details />
+                    <Suspense fallback={renderLoader()}>
+                        <Details />
+                    </Suspense>
                 </Route>
 
                 <Route exact path={[`${ROUTES.WATCH_MOVIE}`, `${ROUTES.WATCH_TV}`]}>
-                    <Watch />
+                    <Suspense fallback={renderLoader()}>
+                        <Watch />
+                    </Suspense>
                 </Route>
 
                 <Route exact path={`${ROUTES.HOME}`}>
@@ -70,7 +82,9 @@ export default function App() {
                 <Redirect from={`${ROUTES.SIGN_IN}`} to={`${ROUTES.HOME}`} />
 
                 <Route path={`${ROUTES.HOME}`}>
-                    <SignIn />
+                    <Suspense fallback={renderLoader()}>
+                        <SignIn />
+                    </Suspense>
                 </Route>
             </Switch>
         </Router>

@@ -47,7 +47,8 @@ const Gradient = styled(Layer)`
         hsla(var(--hue), 50%, 40%, 1) var(--split2)
     );
     background-size: 400% 400%;
-    animation: ${moving} 60s ease-in-out infinite;
+    /*animation: ${moving} 60s ease-in-out infinite;*/
+    background-position: 50% 60%;
 `;
 
 const Art = styled(Layer)`

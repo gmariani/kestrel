@@ -20,10 +20,16 @@ const Container = styled.div`
 const propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    style: PropTypes.object,
 };
 
-const TempContainer = ({ children, className }) => {
-    return <Container className={className}>{children}</Container>;
+const TempContainer = ({ children, className, style }) => {
+    return (
+        <Container className={className} style={style}>
+            {children}
+        </Container>
+    );
 };
 TempContainer.propTypes = propTypes;
 export default TempContainer;
