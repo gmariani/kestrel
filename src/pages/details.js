@@ -85,6 +85,22 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     });
 
     useEffect(() => {
+        function onKeyDown(event) {
+            const { key } = event;
+            // keyCode: 27 / key: Escape
+            if (key === 'Escape') {
+                event.preventDefault();
+                history.push('/browse');
+            }
+        }
+
+        document.addEventListener('keydown', onKeyDown, false);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown, false);
+        };
+    });
+
+    useEffect(() => {
         // Set initial focus inorder to jumpstart spacial navigation
         if (!hasFocusedChild) setFocus('ACTION-PLAY');
     });
@@ -124,12 +140,6 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
             />
         );
     }
-
-    // TODO set escape to go back
-    // Go back to the browse screen
-    // if (focusKey === 'Escape') {
-    //     return <Redirect to='/browse' />;
-    // }
 
     // Get start (last/initial) episode meta
     // console.log(media.id, playHistory);

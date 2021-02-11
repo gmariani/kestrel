@@ -17,6 +17,8 @@ const Container = styled.div`
 const Row = styled(FlexRow)`
     overflow: hidden;
     position: relative;
+    /* Fixes rounding error in spatial-navigation */
+    row-gap: 3px;
     /*margin-bottom: 25vh;*/
 `;
 

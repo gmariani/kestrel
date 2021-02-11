@@ -23,7 +23,6 @@ const renderLoader = () => <p>Loading</p>;
 //         // setMeta(meta.data);
 //     }
 // }
-// BUG: Fix spatial navigation errors
 
 export default function App() {
     const { user } = useAuthListener();
