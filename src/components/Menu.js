@@ -7,6 +7,9 @@ const Container = styled.nav`
     column-gap: 2rem;
     display: flex;
     margin-bottom: 2rem;
+    /* Not suppored in Firefox TV or Chrome yet */
+    /*align-items: start;*/
+    align-items: flex-start;
 `;
 
 const propTypes = {

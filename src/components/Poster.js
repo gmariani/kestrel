@@ -42,7 +42,10 @@ const LoadingIcon = styled(FaSync)`
     animation-timing-function: linear;
 `;
 
-const Image = styled(LazyImage)``;
+const Image = styled(LazyImage)`
+    width: var(--width);
+    height: var(--height);
+`;
 
 const ImageContainer = styled.div`
     transition: all 0.2s ease-in-out;
@@ -191,6 +194,7 @@ function Poster({ selected, focused, categorySlug, mediaSlug, to, title = 'No Ti
                     alt={meta.isLoaded ? meta.data?.name ?? title : title}
                     height={30 * 16} // 30rem
                     width={20 * 16} // 20rem
+                    style={{ '--width': '20rem', '--height': '30rem' }}
                     onLoaded={() => {
                         setLoading(false);
                     }}

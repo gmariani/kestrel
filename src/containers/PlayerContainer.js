@@ -152,33 +152,73 @@ function PlayerContainer({ media, folder, onEnded }) {
         setTimeoutID(setTimeout(inactivityHandler, 3000, playerScreen));
     };
 
-    const keyHandler = useCallback(
-        (event) => {
-            console.log(event.code);
-            switch (event.code) {
-                // 460 Subtitle
-                // 461 Back
-                // 457 Info
-                // 424 Prev
-                // 425 Next
-                // 402 Play/Pause
-                // 415 Play
-                // 19 Pause
-                case 412: // Rewind
+    // On render, listen for tv remote to navigate as well
+    useEffect(() => {
+        function onKeyDown(event) {
+            const { key } = event;
+
+            switch (key) {
+                case 'ColorF2Yellow':
+                    event.preventDefault();
+                    // navigateByDirection('up');
+                    break;
+                case 'ColorF3Blue':
+                    event.preventDefault();
+                    // navigateByDirection('down');
+                    break;
+                case 'ColorF0Red':
+                    event.preventDefault();
+                    // navigateByDirection('left');
+                    break;
+                case 'ColorF1Green':
+                    event.preventDefault();
+                    // navigateByDirection('right');
+                    break;
+                case 'MediaPlay':
+                    event.preventDefault();
+                    if (!buffering) setPlaying(true);
+                    break;
+                case 'MediaPlayPause':
+                    event.preventDefault();
+                    if (!buffering) setPlaying(false);
+                    break;
+                case 'MediaRewind':
                     event.preventDefault();
                     // Rewind 10 seconds
                     playerRef.current.seekTo(playerRef.current.getCurrentTime() - 10);
                     break;
-
-                case 417: // Fast Forward
+                case 'MediaFastForward':
                     event.preventDefault();
                     // Skip ahead 10 seconds
                     playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10);
                     break;
-                default:
-                // Quit when this doesn't handle the key event
-            }
-            switch (event.key) {
+                case 'ChannelUp':
+                case 'ChannelDown':
+                case 'MediaAudioTrack': // Audio
+                case 'MediaTrackPrevious':
+                    // event.preventDefault();
+                    //
+                    break;
+                case 'MediaStop':
+                    event.preventDefault();
+                    seekHandler(0);
+                    if (!buffering) setPlaying(false);
+                    break;
+                case 'MediaTrackNext':
+                    event.preventDefault();
+                    history.replace(nextEpisode.route);
+                    break;
+                case 'Info': // Display
+                    event.preventDefault();
+                    setShowInfo(!showInfo);
+                    break;
+                case 'ClosedCaptionToggle': // Subtitle
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        const video = playerRef.current.wrapper.querySelector('video');
+                        video.textTracks[0].mode = settings.subtitles ? 'showing' : 'hidden';
+                    }
+                    break;
                 case 'Spacebar':
                 case ' ':
                     event.preventDefault();
@@ -203,17 +243,15 @@ function PlayerContainer({ media, folder, onEnded }) {
 
                     break;
                 default:
-                // Quit when this doesn't handle the key event
+                // Do nothing
             }
-        },
-        [togglePlaying, showSettings, setShowSettings, showInfo, setShowInfo, history, media]
-    );
-    useEffect(() => {
-        document.addEventListener('keydown', keyHandler, false);
+        }
+
+        document.addEventListener('keydown', onKeyDown, false);
         return () => {
-            document.removeEventListener('keydown', keyHandler, false);
+            document.removeEventListener('keydown', onKeyDown, false);
         };
-    }, [keyHandler]);
+    });
 
     // Toggle subtitles/captions
     useEffect(() => {

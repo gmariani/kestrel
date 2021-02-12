@@ -38,10 +38,12 @@ const propTypes = {
     className: PropTypes.string,
     height: PropTypes.string,
     width: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    style: PropTypes.object,
     onLoaded: PropTypes.func,
 };
 
-const LazyImage = ({ src, alt, className, height, width, onLoaded }) => {
+const LazyImage = ({ src, alt, className, height, width, style, onLoaded }) => {
     const [imageSrc, setImageSrc] = useState(placeHolder);
     const [imageRef, setImageRef] = useState();
     const hasError = useRef(false);
@@ -94,6 +96,7 @@ const LazyImage = ({ src, alt, className, height, width, onLoaded }) => {
             className={className}
             height={height}
             width={width}
+            style={style}
             onLoad={(event) => {
                 // console.log('loaded', event.target.complete, event.target);
                 event.target.classList.add('loaded');

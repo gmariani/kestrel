@@ -4,10 +4,12 @@ import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
 import svgLogo from '../logo.svg';
 
-const Image = styled.img``;
+const Image = styled.img`
+    width: var(--width);
+    height: var(--height);
+`;
 
 const Link = styled(ReachRouterLink)`
-    /*margin-top: -2.5rem;*/
     padding: 0.5rem;
     border-radius: 0.5rem;
     border: 2px solid transparent;
@@ -29,6 +31,7 @@ function Logo({ to = '' }) {
             alt='Kestrel'
             width={12.5 * 16} // 12.5rem
             height={2.8125 * 16} // 2.8125rem
+            style={{ '--width': '12.5rem', '--height': '2.8125rem' }}
         />
     );
     if (to !== '') return <Link to={to}>{image}</Link>;

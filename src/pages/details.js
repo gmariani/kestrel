@@ -100,6 +100,39 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
         };
     });
 
+    // On render, listen for tv remote to navigate as well
+    useEffect(() => {
+        function onKeyDown(event) {
+            const { key } = event;
+
+            switch (key) {
+                case 'ColorF2Yellow':
+                    event.preventDefault();
+                    navigateByDirection('up');
+                    break;
+                case 'ColorF3Blue':
+                    event.preventDefault();
+                    navigateByDirection('down');
+                    break;
+                case 'ColorF0Red':
+                    event.preventDefault();
+                    navigateByDirection('left');
+                    break;
+                case 'ColorF1Green':
+                    event.preventDefault();
+                    navigateByDirection('right');
+                    break;
+                default:
+                // Do nothing
+            }
+        }
+
+        document.addEventListener('keydown', onKeyDown, false);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown, false);
+        };
+    });
+
     useEffect(() => {
         // Set initial focus inorder to jumpstart spacial navigation
         if (!hasFocusedChild) setFocus('ACTION-PLAY');

@@ -18,8 +18,7 @@ const Row = styled(FlexRow)`
     overflow: hidden;
     position: relative;
     /* Fixes rounding error in spatial-navigation */
-    row-gap: 3px;
-    /*margin-bottom: 25vh;*/
+    row-gap: 2px;
 `;
 
 const propTypes = {
@@ -55,6 +54,39 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
         document.addEventListener('wheel', onWheel, false);
         return () => {
             document.removeEventListener('wheel', onWheel, false);
+        };
+    });
+
+    // On render, listen for tv remote to navigate as well
+    useEffect(() => {
+        function onKeyDown(event) {
+            const { key } = event;
+
+            switch (key) {
+                case 'ColorF2Yellow':
+                    event.preventDefault();
+                    navigateByDirection('up');
+                    break;
+                case 'ColorF3Blue':
+                    event.preventDefault();
+                    navigateByDirection('down');
+                    break;
+                case 'ColorF0Red':
+                    event.preventDefault();
+                    navigateByDirection('left');
+                    break;
+                case 'ColorF1Green':
+                    event.preventDefault();
+                    navigateByDirection('right');
+                    break;
+                default:
+                // Do nothing
+            }
+        }
+
+        document.addEventListener('keydown', onKeyDown, false);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown, false);
         };
     });
 
