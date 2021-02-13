@@ -2,26 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { FaPlay, FaCog, FaInfo, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
-
-const Container = styled.button`
-    border: none;
-    background: none;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    align-items: center;
-
-    &:focus {
-        outline: none;
-    }
-
-    ${(props) => {
-        if (props.disabled) {
-            return 'pointer-events:none;opacity:0.5';
-        }
-        return '';
-    }}
-`;
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 
 const Circle = styled.div`
     background-color: rgba(255, 255, 255, 0.15);
@@ -42,13 +23,6 @@ const Circle = styled.div`
         fill: white;
         transition: fill 0.3s;
     }
-
-    &:hover {
-        background-color: white;
-    }
-    &:hover svg {
-        fill: rgba(0, 0, 0, 0.75);
-    }
 `;
 
 const Label = styled.div`
@@ -57,14 +31,51 @@ const Label = styled.div`
     text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
 `;
 
+const Container = styled.button`
+    border: none;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    align-items: center;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    &:not([disabled]):active
+        ${Circle},
+        &:not([disabled]):focus
+        ${Circle},
+        &:not([disabled]).focused.selected
+        ${Circle},
+        &:not([disabled]):hover
+        ${Circle} {
+        background-color: white;
+    }
+    &:not([disabled]):active ${Circle} svg,
+    &:not([disabled]):focus ${Circle} svg,
+    &:not([disabled]).focused.selected ${Circle} svg,
+    &:not([disabled]):hover ${Circle} svg {
+        fill: rgba(0, 0, 0, 0.75);
+    }
+`;
+
 const propTypes = {
     label: PropTypes.string,
     icon: PropTypes.string,
     disabled: PropTypes.bool,
+    focused: PropTypes.bool,
+    selected: PropTypes.bool,
     onClick: PropTypes.func,
 };
 
-function IconButton({ label = 'Start Over', icon = 'play', disabled = false, onClick }) {
+function IconButton({ label = 'Start Over', icon = 'play', disabled = false, focused, selected, onClick }) {
     function getIcon(type) {
         switch (type) {
             case 'pause':
@@ -84,7 +95,10 @@ function IconButton({ label = 'Start Over', icon = 'play', disabled = false, onC
     }
     // const style = { opacity: disabled ? 0.5 : 1 };
     return (
-        <Container disabled={disabled} onClick={onClick}>
+        <Container
+            disabled={disabled}
+            className={`${selected ? 'selected' : ''} ${focused ? 'focused' : ''}`}
+            onClick={onClick}>
             <Circle>{getIcon(icon)}</Circle>
             <Label>{label}</Label>
         </Container>
@@ -92,4 +106,4 @@ function IconButton({ label = 'Start Over', icon = 'play', disabled = false, onC
 }
 
 IconButton.propTypes = propTypes;
-export default IconButton;
+export default withFocusable()(IconButton);

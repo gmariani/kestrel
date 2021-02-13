@@ -65,7 +65,3 @@ function FlexRow({
 
 FlexRow.propTypes = propTypes;
 export default FlexRow;
-
-Header.MenuFocusable = withFocusable({
-    trackChildren: true,
-})(Header.Menu);

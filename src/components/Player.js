@@ -24,13 +24,13 @@ const Container = styled.div`
 
 const propTypes = {
     children: PropTypes.node,
-    onMouseMove: PropTypes.func,
-    onKeyDown: PropTypes.func,
+    className: PropTypes.string,
+    onActivity: PropTypes.func,
 };
 
-function Player({ children, onMouseMove, onKeyDown }) {
+function Player({ children, className, onActivity }) {
     return (
-        <Container onMouseMove={onMouseMove} onKeyDown={onKeyDown}>
+        <Container onMouseMove={onActivity} onKeyDown={onActivity} className={className}>
             {children}
         </Container>
     );

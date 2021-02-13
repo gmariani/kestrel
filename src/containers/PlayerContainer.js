@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
 import {
@@ -33,15 +34,21 @@ function getFileName(fullPath) {
 }
 
 const propTypes = {
+    navigateByDirection: PropTypes.func,
+    setFocus: PropTypes.func,
+    hasFocusedChild: PropTypes.bool,
     media: mediaInterface,
     folder: PropTypes.string,
     onEnded: PropTypes.func,
 };
 
-function PlayerContainer({ media, folder, onEnded }) {
+function PlayerContainer({ navigateByDirection, setFocus, hasFocusedChild, media, folder, onEnded }) {
     // Hooks
     const history = useHistory();
     const playerRef = useRef();
+    const [timeoutID, setTimeoutID] = useState(null);
+    const [selectedButton, setSelectedButton] = useState('ACTION-PLAY');
+    const [showControls, setShowControls] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
     const [currentProgress, setCurrentProgress] = useState(0);
@@ -66,7 +73,9 @@ function PlayerContainer({ media, folder, onEnded }) {
         playHistory.progress[season.index] = [];
     }
 
+    /// ///////////////////////
     // React Player Handlers //
+    /// ///////////////////////
     const playerStartHandler = () => {
         // Is there a previously saved timestamp?
         const storedTime = playHistory.progress?.[season.index]?.[episode.index] ?? 0;
@@ -115,7 +124,9 @@ function PlayerContainer({ media, folder, onEnded }) {
         // eslint-disable-next-line no-console
         console.error('playerErrorHandler', event);
     };
+    /// //////////////////
     // End React Player //
+    /// //////////////////
 
     const togglePlaying = useCallback(() => {
         if (!buffering) setPlaying(!playing);
@@ -129,7 +140,7 @@ function PlayerContainer({ media, folder, onEnded }) {
         setShowInfo(!showInfo);
     }, [showInfo]);
 
-    const seekHandler = (progressPercent) => {
+    const seekTo = (progressPercent) => {
         // Update UI immediately
         setCurrentProgress(progressPercent * 100);
         setCurrentSeconds(totalSeconds * progressPercent);
@@ -138,18 +149,16 @@ function PlayerContainer({ media, folder, onEnded }) {
         playerRef.current.seekTo(progressPercent);
     };
 
-    // TODO useIdleTimer(3000)
-
-    const [timeoutID, setTimeoutID] = useState(null);
-    const inactivityHandler = (playerScreen) => {
-        if (!showSettings && !showInfo && playing) playerScreen.classList.remove('show');
+    const inactivityHandler = () => {
+        if (!showSettings && !showInfo && playing) {
+            setShowControls(false);
+        }
     };
 
-    const activityHandler = (event) => {
-        const playerScreen = event.currentTarget;
-        playerScreen.classList.add('show');
+    const activityHandler = () => {
         clearTimeout(timeoutID);
-        setTimeoutID(setTimeout(inactivityHandler, 3000, playerScreen));
+        setShowControls(true);
+        setTimeoutID(setTimeout(inactivityHandler, 3000));
     };
 
     // On render, listen for tv remote to navigate as well
@@ -160,19 +169,19 @@ function PlayerContainer({ media, folder, onEnded }) {
             switch (key) {
                 case 'ColorF2Yellow':
                     event.preventDefault();
-                    // navigateByDirection('up');
+                    navigateByDirection('up');
                     break;
                 case 'ColorF3Blue':
                     event.preventDefault();
-                    // navigateByDirection('down');
+                    navigateByDirection('down');
                     break;
                 case 'ColorF0Red':
                     event.preventDefault();
-                    // navigateByDirection('left');
+                    navigateByDirection('left');
                     break;
                 case 'ColorF1Green':
                     event.preventDefault();
-                    // navigateByDirection('right');
+                    navigateByDirection('right');
                     break;
                 case 'MediaPlay':
                     event.preventDefault();
@@ -201,7 +210,7 @@ function PlayerContainer({ media, folder, onEnded }) {
                     break;
                 case 'MediaStop':
                     event.preventDefault();
-                    seekHandler(0);
+                    seekTo(0);
                     if (!buffering) setPlaying(false);
                     break;
                 case 'MediaTrackNext':
@@ -261,36 +270,22 @@ function PlayerContainer({ media, folder, onEnded }) {
         }
     }, [settings]);
 
+    // Set initial focus inorder to jumpstart spacial navigation
+    useEffect(() => {
+        if (!hasFocusedChild) setFocus('ACTION-PLAY');
+    });
+
     const fileURL = useAWSSignedURL(episode.fileURL, media.category, media.slug);
     // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
     // const subtitleURL = useAWSSignedURL(episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`);
-
     const keyPrefix = `${media.category}/${media.slug}`;
     const rawSubtitleURL = episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`;
     const subtitleURL =
         rawSubtitleURL && !rawSubtitleURL.includes(media.slug)
             ? `${baseURL}/${keyPrefix}/${rawSubtitleURL}`
             : rawSubtitleURL;
-
-    const videoConfig = {
-        file: {
-            attributes: {
-                crossOrigin: 'anonymous',
-            },
-            tracks: [
-                {
-                    kind: 'subtitles',
-                    src: subtitleURL,
-                    srcLang: 'en',
-                    default: true,
-                    mode: settings.subtitles ? 'showing' : 'hidden',
-                },
-            ],
-        },
-    };
-
     return (
-        <Player onMouseMove={activityHandler}>
+        <Player onActivity={activityHandler} className={showControls ? 'show' : ''}>
             {showSettings && (
                 <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleSettings}>
                     <HalfPane backgroundHue={media.backgroundHue}>
@@ -341,7 +336,7 @@ function PlayerContainer({ media, folder, onEnded }) {
                         position={currentProgress}
                         currentSeconds={currentSeconds}
                         totalSeconds={totalSeconds}
-                        onChange={(percent) => seekHandler(percent)}
+                        onChange={(percent) => seekTo(percent)}
                     />
 
                     <FlexRow>
@@ -350,24 +345,76 @@ function PlayerContainer({ media, folder, onEnded }) {
                         </FlexRow>
 
                         <FlexRow flexGrow={1} alignItems='start' justifyContent='center'>
-                            <IconButton label='Start Over' icon='prev' onClick={() => seekHandler(0)} />
+                            <IconButton
+                                focusKey='ACTION-RESTART'
+                                label='Start Over'
+                                icon='prev'
+                                onClick={() => seekTo(0)}
+                                onBecameFocused={() => {
+                                    setSelectedButton('ACTION-RESTART');
+                                }}
+                                selected={selectedButton === 'ACTION-RESTART'}
+                            />
                             {playing ? (
-                                <IconButton label='Pause' icon='pause' disabled={buffering} onClick={togglePlaying} />
+                                <IconButton
+                                    focusKey='ACTION-PAUSE'
+                                    label='Pause'
+                                    icon='pause'
+                                    disabled={buffering}
+                                    onClick={togglePlaying}
+                                    onBecameFocused={() => {
+                                        setSelectedButton('ACTION-PAUSE');
+                                    }}
+                                    selected={selectedButton === 'ACTION-PAUSE'}
+                                />
                             ) : (
-                                <IconButton label='Play' icon='play' disabled={buffering} onClick={togglePlaying} />
+                                <IconButton
+                                    focusKey='ACTION-PLAY'
+                                    label='Play'
+                                    icon='play'
+                                    disabled={buffering}
+                                    onClick={togglePlaying}
+                                    onBecameFocused={() => {
+                                        setSelectedButton('ACTION-PLAY');
+                                    }}
+                                    selected={selectedButton === 'ACTION-PLAY'}
+                                />
                             )}
                             {nextEpisode?.route && (
                                 <IconButton
+                                    focusKey='ACTION-NEXT'
                                     label='Play Next'
                                     icon='next'
                                     onClick={() => history.replace(nextEpisode.route)}
+                                    onBecameFocused={() => {
+                                        setSelectedButton('ACTION-NEXT');
+                                    }}
+                                    selected={selectedButton === 'ACTION-NEXT'}
                                 />
                             )}
                         </FlexRow>
 
                         <FlexRow flexGrow={1} alignItems='start' justifyContent='end'>
-                            <IconButton label='Settings' icon='cog' onClick={() => setShowSettings(true)} />
-                            <IconButton label='Info' icon='info' onClick={() => setShowInfo(true)} />
+                            <IconButton
+                                focusKey='ACTION-SETTINGS'
+                                label='Settings'
+                                icon='cog'
+                                onClick={() => setShowSettings(true)}
+                                onBecameFocused={() => {
+                                    setSelectedButton('ACTION-SETTINGS');
+                                }}
+                                selected={selectedButton === 'ACTION-SETTINGS'}
+                            />
+                            <IconButton
+                                focusKey='ACTION-INFO'
+                                label='Info'
+                                icon='info'
+                                onClick={() => setShowInfo(true)}
+                                onBecameFocused={() => {
+                                    setSelectedButton('ACTION-INFO');
+                                }}
+                                selected={selectedButton === 'ACTION-INFO'}
+                            />
                         </FlexRow>
                     </FlexRow>
                 </FlexCol>
@@ -394,7 +441,22 @@ function PlayerContainer({ media, folder, onEnded }) {
                     onEnded={playerEndHandler}
                     onError={playerErrorHandler}
                     // onSeek={}
-                    config={videoConfig}
+                    config={{
+                        file: {
+                            attributes: {
+                                crossOrigin: 'anonymous',
+                            },
+                            tracks: [
+                                {
+                                    kind: 'subtitles',
+                                    src: subtitleURL,
+                                    srcLang: 'en',
+                                    default: true,
+                                    mode: settings.subtitles ? 'showing' : 'hidden',
+                                },
+                            ],
+                        },
+                    }}
                 />
             )}
         </Player>
@@ -402,4 +464,4 @@ function PlayerContainer({ media, folder, onEnded }) {
 }
 
 PlayerContainer.propTypes = propTypes;
-export default PlayerContainer;
+export default withFocusable({ trackChildren: true })(PlayerContainer);
