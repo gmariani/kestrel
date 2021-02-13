@@ -13,6 +13,7 @@ import {
     EpisodeTitle,
     NextEpisodeTitle,
     FlexRow,
+    FlexRowFocusable,
     FlexCol,
     SubOverlay,
     HalfPane,
@@ -34,15 +35,14 @@ function getFileName(fullPath) {
 }
 
 const propTypes = {
-    navigateByDirection: PropTypes.func,
-    setFocus: PropTypes.func,
-    hasFocusedChild: PropTypes.bool,
     media: mediaInterface,
     folder: PropTypes.string,
+    setFocus: PropTypes.func,
+    hasFocusedChild: PropTypes.bool,
     onEnded: PropTypes.func,
 };
 
-function PlayerContainer({ navigateByDirection, setFocus, hasFocusedChild, media, folder, onEnded }) {
+function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) {
     // Hooks
     const history = useHistory();
     const playerRef = useRef();
@@ -165,24 +165,9 @@ function PlayerContainer({ navigateByDirection, setFocus, hasFocusedChild, media
     useEffect(() => {
         function onKeyDown(event) {
             const { key } = event;
+            activityHandler();
 
             switch (key) {
-                case 'ColorF2Yellow':
-                    event.preventDefault();
-                    navigateByDirection('up');
-                    break;
-                case 'ColorF3Blue':
-                    event.preventDefault();
-                    navigateByDirection('down');
-                    break;
-                case 'ColorF0Red':
-                    event.preventDefault();
-                    navigateByDirection('left');
-                    break;
-                case 'ColorF1Green':
-                    event.preventDefault();
-                    navigateByDirection('right');
-                    break;
                 case 'MediaPlay':
                     event.preventDefault();
                     if (!buffering) setPlaying(true);
@@ -270,10 +255,10 @@ function PlayerContainer({ navigateByDirection, setFocus, hasFocusedChild, media
         }
     }, [settings]);
 
-    // Set initial focus inorder to jumpstart spacial navigation
     useEffect(() => {
-        if (!hasFocusedChild) setFocus('ACTION-PLAY');
-    });
+        // Set initial focus inorder to jumpstart spacial navigation
+        if (!hasFocusedChild) setFocus('PLAYER-PAUSEPLAY');
+    }, [hasFocusedChild, setFocus]);
 
     const fileURL = useAWSSignedURL(episode.fileURL, media.category, media.slug);
     // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
@@ -344,78 +329,72 @@ function PlayerContainer({ navigateByDirection, setFocus, hasFocusedChild, media
                             <Resolution type={media?.resolution} />
                         </FlexRow>
 
-                        <FlexRow flexGrow={1} alignItems='start' justifyContent='center'>
+                        <FlexRowFocusable focusKey='PLAYER' flexGrow={1} alignItems='start' justifyContent='center'>
                             <IconButton
-                                focusKey='ACTION-RESTART'
+                                focusKey='PLAYER-RESTART'
                                 label='Start Over'
                                 icon='prev'
                                 onClick={() => seekTo(0)}
-                                onBecameFocused={() => {
-                                    setSelectedButton('ACTION-RESTART');
-                                }}
-                                selected={selectedButton === 'ACTION-RESTART'}
+                                onEnterPress={() => seekTo(0)}
+                                onBecameFocused={() => setSelectedButton('PLAYER-RESTART')}
+                                selected={selectedButton === 'PLAYER-RESTART'}
                             />
                             {playing ? (
                                 <IconButton
-                                    focusKey='ACTION-PAUSE'
+                                    focusKey='PLAYER-PAUSEPLAY'
                                     label='Pause'
                                     icon='pause'
                                     disabled={buffering}
                                     onClick={togglePlaying}
-                                    onBecameFocused={() => {
-                                        setSelectedButton('ACTION-PAUSE');
-                                    }}
-                                    selected={selectedButton === 'ACTION-PAUSE'}
+                                    onEnterPress={togglePlaying}
+                                    onBecameFocused={() => setSelectedButton('PLAYER-PAUSEPLAY')}
+                                    selected={selectedButton === 'PLAYER-PAUSEPLAY'}
                                 />
                             ) : (
                                 <IconButton
-                                    focusKey='ACTION-PLAY'
+                                    focusKey='PLAYER-PAUSEPLAY'
                                     label='Play'
                                     icon='play'
                                     disabled={buffering}
                                     onClick={togglePlaying}
-                                    onBecameFocused={() => {
-                                        setSelectedButton('ACTION-PLAY');
-                                    }}
-                                    selected={selectedButton === 'ACTION-PLAY'}
+                                    onEnterPress={togglePlaying}
+                                    onBecameFocused={() => setSelectedButton('PLAYER-PAUSEPLAY')}
+                                    selected={selectedButton === 'PLAYER-PAUSEPLAY'}
                                 />
                             )}
                             {nextEpisode?.route && (
                                 <IconButton
-                                    focusKey='ACTION-NEXT'
+                                    focusKey='PLAYER-NEXT'
                                     label='Play Next'
                                     icon='next'
+                                    onEnterPress={() => history.replace(nextEpisode.route)}
                                     onClick={() => history.replace(nextEpisode.route)}
-                                    onBecameFocused={() => {
-                                        setSelectedButton('ACTION-NEXT');
-                                    }}
-                                    selected={selectedButton === 'ACTION-NEXT'}
+                                    onBecameFocused={() => setSelectedButton('PLAYER-NEXT')}
+                                    selected={selectedButton === 'PLAYER-NEXT'}
                                 />
                             )}
-                        </FlexRow>
+                        </FlexRowFocusable>
 
-                        <FlexRow flexGrow={1} alignItems='start' justifyContent='end'>
+                        <FlexRowFocusable focusKey='MEDIA' flexGrow={1} alignItems='start' justifyContent='end'>
                             <IconButton
-                                focusKey='ACTION-SETTINGS'
+                                focusKey='MEDIA-SETTINGS'
                                 label='Settings'
                                 icon='cog'
                                 onClick={() => setShowSettings(true)}
-                                onBecameFocused={() => {
-                                    setSelectedButton('ACTION-SETTINGS');
-                                }}
-                                selected={selectedButton === 'ACTION-SETTINGS'}
+                                onEnterPress={() => setShowSettings(true)}
+                                onBecameFocused={() => setSelectedButton('MEDIA-SETTINGS')}
+                                selected={selectedButton === 'MEDIA-SETTINGS'}
                             />
                             <IconButton
-                                focusKey='ACTION-INFO'
+                                focusKey='MEDIA-INFO'
                                 label='Info'
                                 icon='info'
+                                onEnterPress={() => setShowInfo(true)}
                                 onClick={() => setShowInfo(true)}
-                                onBecameFocused={() => {
-                                    setSelectedButton('ACTION-INFO');
-                                }}
-                                selected={selectedButton === 'ACTION-INFO'}
+                                onBecameFocused={() => setSelectedButton('MEDIA-INFO')}
+                                selected={selectedButton === 'MEDIA-INFO'}
                             />
-                        </FlexRow>
+                        </FlexRowFocusable>
                     </FlexRow>
                 </FlexCol>
             </PlayerOverlay>
@@ -464,4 +443,6 @@ function PlayerContainer({ navigateByDirection, setFocus, hasFocusedChild, media
 }
 
 PlayerContainer.propTypes = propTypes;
-export default withFocusable({ trackChildren: true })(PlayerContainer);
+export default withFocusable({
+    trackChildren: true,
+})(PlayerContainer);

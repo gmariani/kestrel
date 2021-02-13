@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { Link as ReachRouterLink } from 'react-router-dom';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import svgLogo from '../logo.svg';
 
 const Image = styled.img`
@@ -14,7 +15,8 @@ const Link = styled(ReachRouterLink)`
     border-radius: 0.5rem;
     border: 2px solid transparent;
     transition: all 0.3s;
-    &:focus {
+    &:focus,
+    &.focused {
         border-radius: 0.5rem;
         border-color: white;
     }
@@ -22,9 +24,10 @@ const Link = styled(ReachRouterLink)`
 
 const propTypes = {
     to: PropTypes.string,
+    focused: PropTypes.bool,
 };
 
-function Logo({ to = '' }) {
+function Logo({ focused, to = '' }) {
     const image = (
         <Image
             src={svgLogo}
@@ -34,9 +37,15 @@ function Logo({ to = '' }) {
             style={{ '--width': '12.5rem', '--height': '2.8125rem' }}
         />
     );
-    if (to !== '') return <Link to={to}>{image}</Link>;
+    if (to !== '')
+        return (
+            <Link className={`${focused ? 'focused' : ''}`} to={to}>
+                {image}
+            </Link>
+        );
     return image;
 }
 
 Logo.propTypes = propTypes;
-export default Logo;
+// export default Logo;
+export default withFocusable()(Logo);

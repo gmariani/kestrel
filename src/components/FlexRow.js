@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
-import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import FlexItem from './FlexItem';
 
 const Container = styled(FlexItem)`
@@ -71,6 +70,4 @@ const FlexRow = ({
 };
 
 FlexRow.propTypes = propTypes;
-export default withFocusable({
-    trackChildren: true,
-})(FlexRow);
+export default FlexRow;

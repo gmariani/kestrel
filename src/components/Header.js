@@ -6,10 +6,10 @@ import styled from 'styled-components/macro';
 const Container = styled.div`
     display: flex;
     /* Not suppored in Firefox TV or Chrome yet */
-    /*justify-content: end;*/
+    /* justify-content: end; */
+    /* align-items: start; */
     justify-content: flex-end;
-
-    /*align-items: end;*/
+    align-items: flex-start;
 `;
 
 function Header({ children }) {

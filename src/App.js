@@ -29,17 +29,9 @@ export default function App() {
 
     // Setup spatial navigation
     initNavigation({
-        debug: true,
+        // debug: true,
         // visualDebug: true,
     });
-    // Optional
-    // setKeyMap({
-    //     left: 9001,
-    //     up: 9002,
-    //     right: 9003,
-    //     down: 9004,
-    //     enter: 9005,
-    // });
 
     return user ? (
         <Router basename='/kestrel/'>
