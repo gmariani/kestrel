@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, TempContainer, Gradient, SignInForm, SecurityCode, Footer } from '../components';
 import FirebaseContext from '../context/firebase';
@@ -14,11 +14,12 @@ export default function SignIn() {
 
     const onChange = (code) => {
         // console.log('onChange', code);
+        setError('');
         setPassword(code);
     };
 
     const onSubmit = (event) => {
-        event.preventDefault();
+        if (event) event.preventDefault();
 
         return firebase
             .auth()
@@ -35,20 +36,39 @@ export default function SignIn() {
             });
     };
 
+    useEffect(() => {
+        function onKeyDown(event) {
+            const { key } = event;
+
+            switch (key) {
+                case 'Enter':
+                    onSubmit();
+                    break;
+                default:
+                // Do nothing
+            }
+        }
+
+        document.addEventListener('keydown', onKeyDown, false);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown, false);
+        };
+    });
+
     return (
         <>
             <TempContainer style={{ height: '100%' }}>
                 <SignInForm onSubmit={onSubmit} method='POST'>
                     <SignInForm.Title>Passcode</SignInForm.Title>
                     {error && <SignInForm.Error>{error}</SignInForm.Error>}
-                    <SecurityCode length={8} onChange={onChange} />
+                    <SecurityCode length={8} onChange={onChange} hasError={error} />
                     <Button disabled={isInvalid} type='submit' theme='primary' width='280px'>
                         Login
                     </Button>
                 </SignInForm>
                 <Footer />
             </TempContainer>
-            <Gradient opacity={0.8} startColor='#EE6B4D' endColor='rgba(255, 255, 255, 0)' />
+            <Gradient opacity={0.8} startColor='#EE6B4D' endColor='#551C0F' />
         </>
     );
 }

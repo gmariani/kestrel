@@ -1,5 +1,8 @@
 https://www.youtube.com/watch?v=x_EEwGe-a9o
 
+Amazon Fire TV runs Chrome 84
+https://www.whatismybrowser.com/w/235N8D3npm st
+
 Install create-react-app
 Install firebase
 Install normalize.css

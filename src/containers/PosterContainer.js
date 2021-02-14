@@ -11,14 +11,14 @@ const Container = styled.div`
     flex-direction: column;
     position: relative;
     flex: 1;
-    overflow: hidden;
+    /*overflow: hidden;*/
 `;
 
 const Row = styled(FlexRow)`
-    overflow: hidden;
+    /*overflow: hidden;*/
     position: relative;
     /* Fixes rounding error in spatial-navigation */
-    row-gap: 2px;
+    row-gap: 20px;
 `;
 
 const propTypes = {
@@ -38,7 +38,7 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
         // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
 
         function onWheel(event) {
-            event.preventDefault();
+            // event.preventDefault();
             const { deltaY, deltaX } = event;
 
             if (deltaY > 1) {
@@ -51,9 +51,9 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
                 navigateByDirection('left');
             }
         }
-        document.addEventListener('wheel', onWheel, false);
+        document.addEventListener('wheel', onWheel, { passive: true });
         return () => {
-            document.removeEventListener('wheel', onWheel, false);
+            document.removeEventListener('wheel', onWheel, { passive: true });
         };
     });
 
@@ -108,7 +108,7 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
 
     return (
         <Container>
-            <Row flexWrap='wrap' focusKey='POSTERS'>
+            <Row flexWrap='wrap' focusKey='POSTERS' columnGap='20px'>
                 {media.map((mediaSlug, i) => {
                     const route = `/${selectedCategory}/${mediaSlug}/details`;
                     return (

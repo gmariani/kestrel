@@ -24,21 +24,19 @@ const Layer = styled.div`
 const Base = styled(Layer)`
     background-color: var(--base);
 `;
-// disney+
-// background-image:radial-gradient(farthest-side at 73% 21%, transparent, rgb(26, 29, 41))
+
 const Gradient = styled(Layer)`
-    /*opacity: 0.5;*/
-    background-image: linear-gradient(245deg, hsla(var(--hue), 50%, 40%, 0) 35%, hsla(var(--hue), 50%, 40%, 1) 70%);
+    background-image: linear-gradient(245deg, hsla(var(--hue), 50%, 40%, 0) 35%, hsla(var(--hue), 50%, 40%, 1) 70%),
+        radial-gradient(farthest-side at 73% 21%, transparent, hsl(var(--hue), 50%, 40%));
 `;
 
 const Art = styled(Layer)`
-    background-image: linear-gradient(80deg, hsl(var(--hue), 50%, 40%) 10%, hsla(var(--hue), 50%, 40%, 0) 20%),
-        ${({ src }) => `url(${src})`};
+    background-image: var(--src);
     background-size: cover;
     width: 85%;
     background-position: right;
     left: auto;
-    opacity: 0.6;
+    /*opacity: 0.6;*/
 `;
 
 const Scrim = styled(Layer)`
@@ -57,7 +55,7 @@ const ScrimBackground = ({ hue = -1, base = '#292C33', imagePath = '' }) => {
     return (
         <Container style={{ '--hue': hue > 0 ? hue : Math.random() * 360, '--base': base }}>
             <Base />
-            {imagePath !== '' ? <Art src={imagePath} /> : null}
+            {imagePath !== '' && <Art style={{ '--src': `url(${imagePath})` }} />}
             <Gradient />
             <Scrim />
         </Container>

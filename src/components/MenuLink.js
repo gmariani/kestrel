@@ -14,7 +14,7 @@ const Container = styled(ReachRouterLink)`
     padding: 0.5rem;
     transition: all 0.3s;
     padding: 0.5rem 1rem;
-    border-radius: 3px;
+    border-radius: 4px;
     outline: none;
 
     &.selected {

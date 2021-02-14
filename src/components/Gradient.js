@@ -10,9 +10,10 @@ const Container = styled.div`
     z-index: 0;
     top: 0;
     left: 0;
-    background: ${({ startColor, endColor }) => `linear-gradient(128.4deg, ${startColor} 18.25%, ${endColor} 84.73%)`};
-    mix-blend-mode: ${({ blendMode }) => blendMode};
-    opacity: ${({ opacity }) => opacity};
+    /*background: linear-gradient(128.4deg, var(--startColor) 18.25%, var(--endColor) 84.73%);*/
+    background: radial-gradient(farthest-side at 41% 24%, var(--startColor), var(--endColor));
+    mix-blend-mode: var(--blendMode);
+    opacity: var(--opacity);
 `;
 
 const propTypes = {
@@ -23,7 +24,14 @@ const propTypes = {
 };
 
 const Gradient = ({ startColor = '#EE6B4D', endColor = '#FF3000', blendMode = 'normal', opacity = 0.8 }) => (
-    <Container blendMode={blendMode} opacity={opacity.toString()} startColor={startColor} endColor={endColor} />
+    <Container
+        style={{
+            '--blendMode': blendMode,
+            '--opacity': opacity.toString(),
+            '--startColor': startColor,
+            '--endColor': endColor,
+        }}
+    />
 );
 Gradient.propTypes = propTypes;
 export default Gradient;

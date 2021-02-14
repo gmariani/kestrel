@@ -12,7 +12,7 @@ const StyledLink = styled.button`
     line-height: 2rem;
     transition: all 0.3s;
     padding: 1rem;
-    border-radius: 3px;
+    border-radius: 4px;
     border: none;
     display: flex;
     align-items: center;

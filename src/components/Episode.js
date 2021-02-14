@@ -26,7 +26,7 @@ const Container = styled(ReachRouterLink)`
     border-width: 0;
     border-style: solid;
     border-color: transparent;
-    border-radius: 2rem;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     opacity: 0.75;
@@ -75,8 +75,8 @@ const Container = styled(ReachRouterLink)`
 const ThumbnailContainer = styled.div`
     width: 30%;
     background-color: rgba(100, 100, 100, 0.5);
-    border-top-left-radius: 2rem;
-    border-bottom-left-radius: 2rem;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
     /* Fix slight pixel render error */
     transform: translateX(-1px);
     overflow: hidden;

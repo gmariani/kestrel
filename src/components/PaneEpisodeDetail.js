@@ -68,6 +68,25 @@ function getMeta(episodeTitle, seasonNum = 0, episodeNum = 0, isSingle = false) 
 }
 
 function getPostMeta(airDate, contentRating) {
+    /**
+     * String.prototype.replaceAll() polyfill
+     * https://gomakethings.com/how-to-replace-a-section-of-a-string-with-another-one-with-vanilla-js/
+     * @author Chris Ferdinandi
+     * @license MIT
+     */
+    if (!String.prototype.replaceAll) {
+        // eslint-disable-next-line no-extend-native
+        String.prototype.replaceAll = (str, newStr) => {
+            // If a regex pattern
+            if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
+                return this.replace(str, newStr);
+            }
+
+            // If a string
+            return this.replace(new RegExp(str, 'g'), newStr);
+        };
+    }
+
     if (airDate) {
         const localeDate = new Date(Date.parse(airDate.replaceAll('/', '-'))).toLocaleDateString();
         return `Air Date: ${localeDate} • ${contentRating}`;
@@ -155,8 +174,8 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
                     </ButtonLink>
                 </FlexCol>
                 <Attribution>
-                    <SVGImg alt='The Movie Database' src={`${process.env.PUBLIC_URL}/tmdb_logo.svg`} /> This product
-                    uses the TMDb API but is not endorsed or certified by TMDb.
+                    <SVGImg alt='The Movie Database' src={`${process.env.PUBLIC_URL}/images/tmdb_logo.svg`} /> This
+                    product uses the TMDb API but is not endorsed or certified by TMDb.
                 </Attribution>
             </Container>
         </HalfPane>

@@ -1,4 +1,4 @@
-import React, { useState, createRef } from 'react';
+import React, { useEffect, useState, createRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 
@@ -34,11 +34,12 @@ const Input = styled.input`
 const propTypes = {
     length: PropTypes.number,
     blurOnComplete: PropTypes.bool,
+    hasError: PropTypes.bool,
     onChange: PropTypes.func,
     onComplete: PropTypes.func,
 };
 
-function SecurityCode({ length = 8, blurOnComplete = true, onChange, onComplete }) {
+function SecurityCode({ length = 8, blurOnComplete = true, onChange, onComplete, hasError = false }) {
     const [code, setCode] = useState('');
     const groupRef = createRef();
 
@@ -191,12 +192,20 @@ function SecurityCode({ length = 8, blurOnComplete = true, onChange, onComplete 
         event.preventDefault();
     };
 
+    useEffect(() => {
+        if (hasError) {
+            const input = document.getElementById(`char_${length - 1}`);
+            input.focus();
+        }
+    }, [hasError, length]);
+
     return (
         <InputGroup ref={groupRef}>
             {Array.from(Array(length)).map((item, index) => (
                 <Input
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
+                    id={`char_${index}`}
                     name={`char_${index}`}
                     className='char-field'
                     value={code.charAt(index)}
@@ -210,6 +219,7 @@ function SecurityCode({ length = 8, blurOnComplete = true, onChange, onComplete 
                     autocorrect='off'
                     autocomplete='off'
                     autocapitalize='none'
+                    autoFocus={!hasError && index <= 0}
                     spellcheck='false'
                     aria-label={index > 0 ? `Letter ${index + 1}` : `Enter password letter ${index + 1}`}
                     type='password'

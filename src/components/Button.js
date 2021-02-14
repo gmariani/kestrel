@@ -12,7 +12,7 @@ const StyledButton = styled.button`
                 return 'rgba(255, 255, 255, 0.25)';
         }
     }};
-    border-radius: 3px;
+    border-radius: 4px;
     border-color: transparent;
     color: #fff;
     font-size: 2.5rem;

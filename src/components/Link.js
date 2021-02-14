@@ -12,7 +12,7 @@ const StyledLink = styled(ReachRouterLink)`
     line-height: 2rem;
     transition: all 0.3s;
     padding: 1rem;
-    border-radius: 3px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     column-gap: 1rem;

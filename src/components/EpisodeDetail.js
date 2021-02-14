@@ -29,7 +29,8 @@ const Meta = styled.div`
     display: flex;
     /*justify-content: space-between;*/
     margin-bottom: 1rem;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+    line-height: 1.875rem;
 `;
 
 const Title = styled.div`
@@ -164,7 +165,7 @@ function EpisodeDetail({
                 {isSingle ? media.description : media.season.description ?? media.description}
             </Description>
             <Meta>
-                <Resolution type={media?.resolution} />
+                {media.contentRating && <Rating rating={media.contentRating} />}
                 {getMetaLabel(
                     isSingle,
                     media?.contentRating,
@@ -173,7 +174,6 @@ function EpisodeDetail({
                     media?.genres,
                     media?.category
                 )}
-                {media.contentRating && <Rating>{media.contentRating}</Rating>}
             </Meta>
 
             {hasProgress && (

@@ -15,7 +15,7 @@ const loading = keyframes`
 const Background = styled.div`
     background-color: white;
     animation: ${loading} 10s linear;
-    border-radius: 3px;
+    border-radius: 4px;
     transition: width 10s;
     padding: 1rem 0;
 `;
