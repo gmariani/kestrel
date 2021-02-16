@@ -15,11 +15,17 @@ function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
     const history = useHistory();
 
     return (
-        <FlexRowFocusable justifyContent={hideMenu ? 'flex-end' : 'space-between'}>
+        <FlexRowFocusable
+            style={{
+                'background-color': hideMenu ? 'transparent' : '#182848',
+                'padding-left': hideMenu ? 'initial' : '2rem',
+                'padding-right': hideMenu ? 'initial' : '2rem',
+            }}
+            justifyContent={hideMenu ? 'flex-end' : 'space-between'}>
             {!hideMenu && (
                 <Menu focusKey='MENU'>
                     {categories.map((category) => {
-                        const route = `/browse/${category}`;
+                        const route = `/${category}`;
                         return (
                             <MenuLink
                                 onBecameFocused={() => {

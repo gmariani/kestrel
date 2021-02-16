@@ -148,7 +148,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
          */
         function indexMeta(onSuccess, onFailure) {
             status.current = 'initializing';
-            S3_CLIENT.listObjectsV2({ Prefix: keyPrefix })
+            S3_CLIENT.listObjectsV2({ Prefix: `${keyPrefix}/` })
                 .promise()
                 .then((data) => {
                     if (onSuccess) onSuccess(data.Contents);
@@ -458,8 +458,10 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             // Look for a media file in the root, as opposed to within a season folder
             const singlePath = getSingleMedia(fileIndex);
             if (singlePath) {
+                console.info(keyPrefix, 'generateMovieMeta', fileIndex, singlePath);
                 generateMovieMeta(singlePath, fileIndex, onSuccess, onFailure);
             } else {
+                console.info(keyPrefix, 'generateTVMeta');
                 generateTVMeta(fileIndex, onSuccess, onFailure);
             }
         }
@@ -474,7 +476,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             () => {
                 // onError, call loadMeta
                 loadMeta(onComplete, () => {
-                    // console.info(keyPrefix, 'meta.json not found, initializing...');
+                    console.info(keyPrefix, 'meta.json not found, initializing...');
                     // onError, call indexMeta
                     indexMeta((fileIndex) => {
                         generateWhich(

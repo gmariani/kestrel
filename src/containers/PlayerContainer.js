@@ -174,7 +174,7 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                     break;
                 case 'MediaPlayPause':
                     event.preventDefault();
-                    if (!buffering) setPlaying(false);
+                    togglePlaying();
                     break;
                 case 'MediaRewind':
                     event.preventDefault();
@@ -262,13 +262,41 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
 
     const fileURL = useAWSSignedURL(episode.fileURL, media.category, media.slug);
     // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
-    // const subtitleURL = useAWSSignedURL(episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`);
+
+    // Signed
+    // BUG: but doesn't seem to get passed into the <track> element
+    // https://github.com/cookpete/react-player/blob/22bf8586a835fb2c04ca58ddfc49935ccd577c1f/src/players/FilePlayer.js
+    // const subtitleURL = useAWSSignedURL(
+    //     episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt`,
+    //     media.category,
+    //     media.slug
+    // );
+
+    // TODO: Maybe auto position tracks when controls are displayed
+    // const track = document.getElementsByTagName('track')[0].track;
+    // // Position the cue at the top
+    // track.activeCues[0].line = 0;
+    // // Position the cue at the bottom (default)
+    // track.activeCues[0].line = -1;
+    // // Move the cue up 3 lines to make room for video controls
+    // track.activeCues[0].line = -4;
+
+    // Unsigned
     const keyPrefix = `${media.category}/${media.slug}`;
-    const rawSubtitleURL = episode?.subtitleURL ?? `${getFileName(episode.fileURL)}.vtt}`;
+    const rawSubtitleURL = episode?.subtitleURL ?? `${keyPrefix}/${getFileName(episode.fileURL)}.vtt`;
     const subtitleURL =
         rawSubtitleURL && !rawSubtitleURL.includes(media.slug)
             ? `${baseURL}/${keyPrefix}/${rawSubtitleURL}`
             : rawSubtitleURL;
+
+    const subtitleTrack = {
+        kind: 'subtitles',
+        src: subtitleURL,
+        srcLang: 'en',
+        default: true,
+        mode: settings.subtitles ? 'showing' : 'hidden',
+    };
+
     return (
         <Player onActivity={activityHandler} className={showControls ? 'show' : ''}>
             {showSettings && (
@@ -325,11 +353,15 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                     />
 
                     <FlexRow>
-                        <FlexRow flexGrow={1} alignItems='start' justifyContent='start'>
+                        <FlexRow flexGrow={1} alignItems='flex-start' justifyContent='flex-start'>
                             <Resolution type={media?.resolution} />
                         </FlexRow>
 
-                        <FlexRowFocusable focusKey='PLAYER' flexGrow={1} alignItems='start' justifyContent='center'>
+                        <FlexRowFocusable
+                            focusKey='PLAYER'
+                            flexGrow={1}
+                            alignItems='flex-start'
+                            justifyContent='center'>
                             <IconButton
                                 focusKey='PLAYER-RESTART'
                                 label='Start Over'
@@ -375,7 +407,11 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                             )}
                         </FlexRowFocusable>
 
-                        <FlexRowFocusable focusKey='MEDIA' flexGrow={1} alignItems='start' justifyContent='end'>
+                        <FlexRowFocusable
+                            focusKey='MEDIA'
+                            flexGrow={1}
+                            alignItems='flex-start'
+                            justifyContent='flex-end'>
                             <IconButton
                                 focusKey='MEDIA-SETTINGS'
                                 label='Settings'
@@ -425,15 +461,7 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                             attributes: {
                                 crossOrigin: 'anonymous',
                             },
-                            tracks: [
-                                {
-                                    kind: 'subtitles',
-                                    src: subtitleURL,
-                                    srcLang: 'en',
-                                    default: true,
-                                    mode: settings.subtitles ? 'showing' : 'hidden',
-                                },
-                            ],
+                            tracks: [subtitleTrack],
                         },
                     }}
                 />

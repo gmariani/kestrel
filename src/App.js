@@ -36,11 +36,11 @@ export default function App() {
     return user ? (
         <Router basename='/kestrel/'>
             <Switch>
-                <Redirect from={`${ROUTES.SIGN_IN}`} to='/browse' />
+                <Redirect from={`${ROUTES.SIGN_IN}`} to='/' />
 
-                <Route path={`${ROUTES.BROWSE}`}>
+                <Route exact path={[`${ROUTES.WATCH_MOVIE}`, `${ROUTES.WATCH_TV}`]}>
                     <Suspense fallback={renderLoader()}>
-                        <Browse />
+                        <Watch />
                     </Suspense>
                 </Route>
 
@@ -50,21 +50,18 @@ export default function App() {
                     </Suspense>
                 </Route>
 
-                <Route exact path={[`${ROUTES.WATCH_MOVIE}`, `${ROUTES.WATCH_TV}`]}>
+                <Route path={`${ROUTES.BROWSE}`}>
                     <Suspense fallback={renderLoader()}>
-                        <Watch />
+                        <Browse />
                     </Suspense>
                 </Route>
 
                 <Route exact path={`${ROUTES.HOME}`}>
-                    <Redirect to='/browse' />
+                    <Redirect to='/' />
+                    {/* <Home /> */}
                 </Route>
 
-                {/* <Route>
-                    <Home />
-                </Route> */}
-
-                <Redirect to='/browse' />
+                <Redirect to='/' />
             </Switch>
         </Router>
     ) : (

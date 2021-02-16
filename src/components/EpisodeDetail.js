@@ -8,7 +8,6 @@ import FlexCol from './FlexCol';
 import FlexRow from './FlexRow';
 import ProgressBar from './ProgressBar';
 import ButtonLink from './ButtonLink';
-import Resolution from './Resolution';
 import Rating from './Rating';
 import mediaInterface from '../interfaces/media';
 import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
@@ -138,6 +137,16 @@ function EpisodeDetail({
     const hasProgress = startEpisodeProgress && startEpisodeProgress.percent > 0;
     const hasEpisode = !!startEpisodeRoute;
 
+    function getDescription() {
+        if (isSingle) {
+            return media?.description;
+        }
+        if (media?.season?.description && media.season.description !== '') {
+            return media.season.description;
+        }
+        return media?.description;
+    }
+
     // Auto truncate description as necessary
     useEffect(() => {
         function handleResize() {
@@ -159,11 +168,9 @@ function EpisodeDetail({
     }, []); // Empty array ensures that effect is only run on mount
 
     return (
-        <Container justifyContent='start'>
+        <Container justifyContent='flex-start'>
             <Title>{media.name}</Title>
-            <Description className='js-shave'>
-                {isSingle ? media.description : media.season.description ?? media.description}
-            </Description>
+            <Description className='js-shave'>{getDescription()}</Description>
             <Meta>
                 {media.contentRating && <Rating rating={media.contentRating} />}
                 {getMetaLabel(

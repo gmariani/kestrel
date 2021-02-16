@@ -43,7 +43,7 @@ function ExtraContainer({ setFocus, episodes = [], extraProgress = [], routePref
         <Container>
             <Column
                 rowGap='1.5rem'
-                justifyContent='start'
+                justifyContent='flex-start'
                 onMouseEnter={() => {
                     setFocus();
                 }}
@@ -67,7 +67,7 @@ function ExtraContainer({ setFocus, episodes = [], extraProgress = [], routePref
                             onEnterPress={() => {
                                 // console.log(`Go to watch episode ${routePrefix}${episodeSlug}`);
                             }}
-                            to={`${routePrefix}${episodeSlug}`}
+                            to={`${routePrefix}${episodeSlug}/watch`}
                             selected={i === selectedEpisode}
                             imagePath={episodeThumbnail}
                             title={episode.name}

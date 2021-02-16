@@ -58,7 +58,7 @@ function getSVG(rating) {
 
 function Rating({ rating = 'NR' }) {
     const svg = getSVG(rating);
-    return <Container>{svg}</Container>;
+    return svg && <Container>{svg}</Container>;
 }
 
 Rating.propTypes = propTypes;

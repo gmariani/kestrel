@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
@@ -34,6 +35,7 @@ const propTypes = {
 
 function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, seasonProgress = [], routePrefix }) {
     const [selectedEpisode, setSelectedEpisode] = useState(0);
+    const history = useHistory();
     // Grab thumbnails for episodes
     const { tmdb } = useTMDB('season', tmdbId, seasonNumber);
 
@@ -48,7 +50,7 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
         <Container>
             <Column
                 rowGap='1.5rem'
-                justifyContent='start'
+                justifyContent='flex-start'
                 onMouseEnter={() => {
                     setFocus();
                 }}
@@ -83,9 +85,10 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
                                 setSelectedEpisode(i);
                             }}
                             onEnterPress={() => {
-                                // console.log(`Go to watch episode ${routePrefix}${episodeSlug}`);
+                                console.log(`Go to watch episode ${routePrefix}${episodeSlug}/watch`);
+                                history.push(`${routePrefix}${episodeSlug}/watch`);
                             }}
-                            to={`${routePrefix}${episodeSlug}`}
+                            to={`${routePrefix}${episodeSlug}/watch`}
                             selected={i === selectedEpisode}
                             imagePath={episodeThumbnail}
                             title={episode.name}

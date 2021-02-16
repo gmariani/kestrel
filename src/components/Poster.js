@@ -15,7 +15,9 @@ const ImageContainer = styled.div`
     border-radius: 4px;
     position: relative;
     /*background: rgba(0, 0, 0, 0.25);*/
-    background: rgba(0, 0, 0, 0) linear-gradient(rgb(48, 50, 62), rgb(30, 31, 42)) repeat scroll 0% 0% / cover;
+    /*background: rgba(0, 0, 0, 0) linear-gradient(rgb(48, 50, 62), rgb(30, 31, 42)) repeat scroll 0% 0% / cover;*/
+    background: rgba(0, 0, 0, 0) linear-gradient(rgba(48, 50, 62, 0.5), rgba(30, 31, 42, 0.5)) repeat scroll 0% 0% /
+        cover;
     /*filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25));*/
     overflow: hidden;
 `;
@@ -32,6 +34,7 @@ const Container = styled(ReachRouterLink)`
     transition-duration: 300ms;
     transition-property: transform, box-shadow;
     transition-timing-function: ease-out;
+    scroll-margin: 25px;
 
     &:after {
         border-radius: 4px;
@@ -75,16 +78,12 @@ function Poster({ selected, focused, categorySlug, mediaSlug, to, title = 'No Ti
     const baseURL = getAWSBaseURL();
     const meta = useAWSMedia(categorySlug, mediaSlug);
     const keyPrefix = `${categorySlug}/${mediaSlug}`;
-    // console.log('Poster', `focused: ${focused}`, mediaSlug);
 
     const classes = ['poster'];
     if (selected) classes.push('selected');
     if (focused) classes.push('focused');
 
-    // TODO: Figure out cost-effective way to determine poster file extension on all
-    // media folders in a category
-    // For now, just assume it's a .jpg
-    const rawPosterURL = 'poster.jpg'; // media.posterURL;
+    const rawPosterURL = meta.isLoaded ? meta.data?.posterURL ?? 'poster.jpg' : 'poster.jpg';
     const posterURL =
         rawPosterURL && !rawPosterURL.includes(mediaSlug) ? `${baseURL}/${keyPrefix}/${rawPosterURL}` : rawPosterURL;
 

@@ -27,7 +27,10 @@ const propTypes = {
 
 function SubOverlay({ children, backgroundHue, onClick }) {
     return (
-        <Container justifyContent='end' style={{ '--hue': backgroundHue > 0 ? backgroundHue : 0 }} onClick={onClick}>
+        <Container
+            justifyContent='flex-end'
+            style={{ '--hue': backgroundHue > 0 ? backgroundHue : 0 }}
+            onClick={onClick}>
             {children}
         </Container>
     );

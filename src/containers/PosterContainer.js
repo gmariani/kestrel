@@ -11,14 +11,15 @@ const Container = styled.div`
     flex-direction: column;
     position: relative;
     flex: 1;
-    /*overflow: hidden;*/
+    overflow: hidden;
 `;
 
 const Row = styled(FlexRow)`
-    /*overflow: hidden;*/
+    overflow: hidden;
     position: relative;
     /* Fixes rounding error in spatial-navigation */
     row-gap: 20px;
+    padding: 2.25rem;
 `;
 
 const propTypes = {
@@ -110,7 +111,7 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
         <Container>
             <Row flexWrap='wrap' focusKey='POSTERS' columnGap='20px'>
                 {media.map((mediaSlug, i) => {
-                    const route = `/${selectedCategory}/${mediaSlug}/details`;
+                    const route = `/${selectedCategory}/${mediaSlug}`;
                     return (
                         <Poster
                             onBecameFocused={() => {
@@ -161,7 +162,7 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
     //                         title={toName(mediaSlug)}
     //                         // prettier-ignore
     //                         className={`${mediaSlug === selectedPoster ? 'selected' : ''} ${hasFocus ? 'focused' : ''}`}
-    //                         to={`/${selectedCategory}/${mediaSlug}/details`}
+    //                         to={`/${selectedCategory}/${mediaSlug}`}
     //                     />
     //                 );
     //             })}

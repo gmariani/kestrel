@@ -25,7 +25,7 @@ export default function SignIn() {
             .auth()
             .signInWithEmailAndPassword(emailAddress, password)
             .then(() => {
-                history.push(`/browse`);
+                history.push(`/`);
             })
             .catch((err) => {
                 // eslint-disable-next-line no-console

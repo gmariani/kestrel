@@ -11,7 +11,8 @@ import { getEpisodeProgress, toSlug, getAWSBaseURL } from '../utils';
 
 const Container = styled(TempContainer)`
     height: 100%;
-    padding: 2.25rem;
+    padding-top: 2.25rem;
+    padding-bottom: 2.25rem;
 `;
 
 const Row = styled(FlexRow)`
@@ -90,7 +91,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
             // keyCode: 27 / key: Escape
             if (key === 'Escape') {
                 event.preventDefault();
-                history.push('/browse');
+                history.push('/');
             }
         }
 
@@ -144,8 +145,8 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     // If no season is selected and previous season exists, redirect to that
     if (media.seasons && seasonSlug === undefined && lastSeasonIndex !== undefined) {
         // eslint-disable-next-line no-console
-        console.log('Redirect to', `/${keyPrefix}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`);
-        return <Redirect to={`/${keyPrefix}/details/${toSlug(media.seasons[lastSeasonIndex].name)}`} />;
+        console.log('Redirect to', `/${keyPrefix}/${toSlug(media.seasons[lastSeasonIndex].name)}`);
+        return <Redirect to={`/${keyPrefix}/${toSlug(media.seasons[lastSeasonIndex].name)}`} />;
     }
 
     function getEpisodeContainer() {
@@ -156,7 +157,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                     <ExtraContainer
                         episodes={media.extras}
                         extraProgress={progress[0].slice(1)}
-                        routePrefix={`/${keyPrefix}/watch/extras/`}
+                        routePrefix={`/${keyPrefix}/extras/`}
                     />
                 );
             }
@@ -169,7 +170,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                 episodes={season.episodes}
                 seasonNumber={season.number}
                 seasonProgress={progress?.[season.index]}
-                routePrefix={`/${keyPrefix}/watch/${season.slug}/`}
+                routePrefix={`/${keyPrefix}/${season.slug}/`}
             />
         );
     }
@@ -186,7 +187,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     );
     const startEpisodeRoute = isSingle
         ? `/${keyPrefix}/watch`
-        : `/${keyPrefix}/watch/${toSlug(season.name)}/${toSlug(startEpisode.name)}`;
+        : `/${keyPrefix}/${toSlug(season.name)}/${toSlug(startEpisode.name)}/watch`;
 
     const rawBackgroundURL = media.season.backgroundURL ?? media.backgroundURL;
     const backgroundURL =
@@ -205,7 +206,7 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
                             onClick={(seasonIndex) => {
                                 history.replace(
                                     // prettier-ignore
-                                    `/${keyPrefix}/details/${toSlug(media.seasons[seasonIndex].name)}`
+                                    `/${keyPrefix}/${toSlug(media.seasons[seasonIndex].name)}`
                                 );
                             }}
                         />

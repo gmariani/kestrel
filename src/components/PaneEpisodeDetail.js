@@ -8,6 +8,7 @@ import ButtonLink from './ButtonLink';
 import HalfPane from './HalfPane';
 import mediaInterface from '../interfaces/media';
 import { useFocus, useTMDB } from '../hooks';
+import replaceAllPolyfill from '../utils/replaceAllPolyfill';
 
 const Container = styled(FlexCol)`
     font-size: 2rem;
@@ -68,24 +69,7 @@ function getMeta(episodeTitle, seasonNum = 0, episodeNum = 0, isSingle = false) 
 }
 
 function getPostMeta(airDate, contentRating) {
-    /**
-     * String.prototype.replaceAll() polyfill
-     * https://gomakethings.com/how-to-replace-a-section-of-a-string-with-another-one-with-vanilla-js/
-     * @author Chris Ferdinandi
-     * @license MIT
-     */
-    if (!String.prototype.replaceAll) {
-        // eslint-disable-next-line no-extend-native
-        String.prototype.replaceAll = (str, newStr) => {
-            // If a regex pattern
-            if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
-                return this.replace(str, newStr);
-            }
-
-            // If a string
-            return this.replace(new RegExp(str, 'g'), newStr);
-        };
-    }
+    replaceAllPolyfill();
 
     if (airDate) {
         const localeDate = new Date(Date.parse(airDate.replaceAll('/', '-'))).toLocaleDateString();
@@ -163,7 +147,7 @@ function PaneEpisodeDetail({ hasFocus = false, isSingle = false, media = default
                     ? `https://image.tmdb.org/t/p/original/${tmdb?.still_path}`
                     : media.backgroundURL
             }>
-            <Container justifyContent='end'>
+            <Container justifyContent='flex-end'>
                 <Title>{media.name}</Title>
                 <Meta>{getMeta(media.episode.name, media.season.number, media.episode.number, isSingle)}</Meta>
                 {getDescription()}

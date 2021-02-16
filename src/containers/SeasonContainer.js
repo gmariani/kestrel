@@ -35,7 +35,7 @@ function SeasonContainer({ setFocus, seasons, onClick }) {
         <Container>
             <FlexCol
                 rowGap='0.5rem'
-                justifyContent='start'
+                justifyContent='flex-start'
                 onMouseEnter={() => {
                     // console.log('FlexCol.onMouseEnter', selectedSeason);
                     setFocus(`SEASON-${selectedSeason}`);

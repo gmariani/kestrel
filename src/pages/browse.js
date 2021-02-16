@@ -8,6 +8,8 @@ import { HeaderContainer, PosterContainer } from '../containers';
 const Container = styled(TempContainer)`
     padding-top: 2.25rem;
     padding-bottom: 0 !important;
+    padding-left: 4.25rem;
+    padding-right: 4.25rem;
 `;
 
 export default function Browse() {
