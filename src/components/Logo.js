@@ -25,16 +25,18 @@ const Link = styled(ReachRouterLink)`
 const propTypes = {
     to: PropTypes.string,
     focused: PropTypes.bool,
+    width: PropTypes.number,
+    height: PropTypes.number,
 };
 
-function Logo({ focused, to = '' }) {
+function Logo({ focused, width = 12.5, height = 2.8125, to = '' }) {
     const image = (
         <Image
             src={svgLogo}
             alt='Kestrel'
-            width={12.5 * 16} // 12.5rem
-            height={2.8125 * 16} // 2.8125rem
-            style={{ '--width': '12.5rem', '--height': '2.8125rem' }}
+            width={width * 16} // 12.5rem
+            height={height * 16} // 2.8125rem
+            style={{ '--width': `${width}rem`, '--height': `${height}rem` }}
         />
     );
     if (to !== '')

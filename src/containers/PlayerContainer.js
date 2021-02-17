@@ -19,6 +19,8 @@ import {
     HalfPane,
     PaneEpisodeDetail,
     PaneEpisodeSettings,
+    Logo,
+    PreRollRating,
 } from '../components';
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage, useAWSSignedURL } from '../hooks';
@@ -48,6 +50,7 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
     const playerRef = useRef();
     const [timeoutID, setTimeoutID] = useState(null);
     const [selectedButton, setSelectedButton] = useState('ACTION-PLAY');
+    const [showPreRoll, setShowPreRoll] = useState(true);
     const [showControls, setShowControls] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
@@ -158,6 +161,7 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
     const activityHandler = () => {
         clearTimeout(timeoutID);
         setShowControls(true);
+        setShowPreRoll(false);
         setTimeoutID(setTimeout(inactivityHandler, 3000));
     };
 
@@ -258,11 +262,16 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
     useEffect(() => {
         // Set initial focus inorder to jumpstart spacial navigation
         if (!hasFocusedChild) setFocus('PLAYER-PAUSEPLAY');
+
+        setTimeout(() => {
+            console.log('hide preroll');
+            setShowPreRoll(false);
+        }, 5000);
     }, [hasFocusedChild, setFocus]);
 
     const fileURL = useAWSSignedURL(episode.fileURL, media.category, media.slug);
     // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
-
+    console.log('showPreRoll', showPreRoll);
     // Signed
     // BUG: but doesn't seem to get passed into the <track> element
     // https://github.com/cookpete/react-player/blob/22bf8586a835fb2c04ca58ddfc49935ccd577c1f/src/players/FilePlayer.js
@@ -322,7 +331,15 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                     />
                 </SubOverlay>
             )}
-            <PlayerOverlay>
+            {showPreRoll && (
+                <PlayerOverlay zIndex={6} className='show'>
+                    <FlexRow justifyContent='space-between'>
+                        <PreRollRating rating={media?.contentRating} />
+                        <Logo width={9} height={1.5} />
+                    </FlexRow>
+                </PlayerOverlay>
+            )}
+            <PlayerOverlay zIndex={5}>
                 <FlexRow justifyContent='space-between'>
                     <EpisodeTitle
                         isSingle={isSingle}

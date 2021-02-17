@@ -10,7 +10,7 @@ import ProgressBar from './ProgressBar';
 import ButtonLink from './ButtonLink';
 import Rating from './Rating';
 import mediaInterface from '../interfaces/media';
-import { secondsToHuman, capitalize, durationToSeconds } from '../utils';
+import { secondsToHuman, durationToSeconds } from '../utils';
 
 const Container = styled(FlexCol)`
     font-size: 2rem;
@@ -79,7 +79,7 @@ function getWatchLabel(isSingle = false, hasProgress = false, lastSeason = 0, la
     return `Start Watching: ${suffix}`;
 }
 
-function getMetaLabel(isSingle = false, contentRating, year, duration, genres, category) {
+function getMetaLabel(isSingle = false, contentRating, year, duration, genres) {
     // Rating - Year - Total run time- genre - Movie
     // For tv
     // rating- year - genre - TV Series
@@ -92,15 +92,15 @@ function getMetaLabel(isSingle = false, contentRating, year, duration, genres, c
     }
 
     if (genres && genres.length > 0) items.push(genres.join(', '));
-    if (category) {
-        if (category === 'tv') {
-            items.push('TV Series');
-        } else if (category === 'movies') {
-            items.push('Movie');
-        } else {
-            items.push(capitalize(category));
-        }
-    }
+    // if (category) {
+    //     if (category === 'tv') {
+    //         items.push('TV Series');
+    //     } else if (category === 'movies') {
+    //         items.push('Movie');
+    //     } else {
+    //         items.push(capitalize(category));
+    //     }
+    // }
     if (year) items.push(year);
 
     return items.join(' • ');
@@ -179,8 +179,7 @@ function EpisodeDetail({
                     media?.contentRating,
                     media.season?.year ?? media?.year,
                     media?.duration,
-                    media?.genres,
-                    media?.category
+                    media?.genres
                 )}
             </Meta>
 

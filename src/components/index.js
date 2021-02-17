@@ -15,6 +15,7 @@ export { default as Loading } from './Loading';
 export { default as Logo } from './Logo';
 export { default as Player } from './Player';
 export { default as EpisodeTitle } from './EpisodeTitle';
+export { default as PreRollRating } from './PreRollRating';
 export { default as PlayerOverlay } from './PlayerOverlay';
 export { default as Poster } from './Poster';
 export { default as ProgressBar } from './ProgressBar';

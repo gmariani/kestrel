@@ -1,9 +1,9 @@
 https://www.youtube.com/watch?v=x_EEwGe-a9o
 
 Amazon Fire TV runs Chrome 84
-https://www.whatismybrowser.com/w/235N8D3npm st
+https://www.whatismybrowser.com/w/235N8D3
 
-TODO: Add initial header when first starting a video like Disney+. where it shows logo and content rating
+https://developer.amazon.com/docs/fire-tv/supporting-controllers-in-web-apps.html
 
 Install create-react-app
 Install firebase

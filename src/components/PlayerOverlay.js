@@ -13,10 +13,11 @@ const Container = styled(FlexCol)`
     opacity: 0;
     transition: opacity 0.3s;
     padding: 4rem;
-    z-index: 5;
+    z-index: var(--zIndex);
     cursor: none;
 
-    .show & {
+    .show &,
+    &.show {
         opacity: 1;
         cursor: auto;
     }
@@ -24,10 +25,16 @@ const Container = styled(FlexCol)`
 
 const propTypes = {
     children: PropTypes.node,
+    zIndex: PropTypes.number,
+    className: PropTypes.string,
 };
 
-function PlayerOverlay({ children }) {
-    return <Container justifyContent='space-between'>{children}</Container>;
+function PlayerOverlay({ children, className, zIndex = 5 }) {
+    return (
+        <Container justifyContent='space-between' className={className} style={{ '--zIndex': zIndex }}>
+            {children}
+        </Container>
+    );
 }
 
 PlayerOverlay.propTypes = propTypes;
