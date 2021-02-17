@@ -13,6 +13,7 @@ html, body,
     font-family: Tw Cen MT;
     text-rendering: optimizeLegibility;
     overflow:hidden;
+    color:white;
 }
 
 #root {

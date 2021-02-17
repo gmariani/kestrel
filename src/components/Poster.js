@@ -39,6 +39,11 @@ const Container = styled(ReachRouterLink)`
     &:after {
         border-radius: 4px;
         border: 4px solid rgba(255, 255, 255, 0);
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        /* Added in Chrome 87 */
         inset: 0px;
         content: '';
         position: absolute;

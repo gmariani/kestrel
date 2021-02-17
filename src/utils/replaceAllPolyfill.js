@@ -9,7 +9,8 @@ export default function replaceAllPolyfill() {
      * @license MIT
      */
     if (!String.prototype.replaceAll) {
-        String.prototype.replaceAll = (str, newStr) => {
+        // eslint-disable-next-line func-names
+        String.prototype.replaceAll = function (str, newStr) {
             // If a regex pattern
             if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
                 return this.replace(str, newStr);

@@ -1,15 +1,17 @@
+/* eslint-disable no-unreachable */
 import React, { lazy, Suspense } from 'react';
 import { Switch, BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { initNavigation } from '@noriginmedia/react-spatial-navigation';
 // import { SignIn, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
 import { useAuthListener } from './hooks';
+import Loading from './components/Loading';
 
 const SignIn = lazy(() => import('./pages/signin.js'));
 const Browse = lazy(() => import('./pages/browse.js'));
 const Details = lazy(() => import('./pages/details.js'));
 const Watch = lazy(() => import('./pages/watch.js'));
-const renderLoader = () => <p>Loading</p>;
+const renderLoader = () => <Loading visible />;
 
 // TODO: Add search button like hulu
 // TODO: Add edit screen to modify the meta.json
@@ -56,9 +58,8 @@ export default function App() {
                     </Suspense>
                 </Route>
 
-                <Route exact path={`${ROUTES.HOME}`}>
+                <Route exact path={`${ROUTES.SIGN_IN}`}>
                     <Redirect to='/' />
-                    {/* <Home /> */}
                 </Route>
 
                 <Redirect to='/' />
@@ -67,13 +68,13 @@ export default function App() {
     ) : (
         <Router basename='/kestrel'>
             <Switch>
-                <Redirect from={`${ROUTES.SIGN_IN}`} to={`${ROUTES.HOME}`} />
-
-                <Route path={`${ROUTES.HOME}`}>
+                <Route path={`${ROUTES.SIGN_IN}`}>
                     <Suspense fallback={renderLoader()}>
                         <SignIn />
                     </Suspense>
                 </Route>
+
+                <Redirect to={`${ROUTES.SIGN_IN}`} />
             </Switch>
         </Router>
     );
