@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
@@ -30,7 +31,8 @@ const propTypes = {
 };
 
 function ExtraContainer({ setFocus, episodes = [], extraProgress = [], routePrefix }) {
-    const [selectedEpisode, setSelectedEpisode] = useState(0);
+    const [selectedEpisode, setSelectedEpisode] = useState(-1);
+    const history = useHistory();
 
     // On focusElement change, move element into view
     useEffect(() => {
@@ -66,6 +68,7 @@ function ExtraContainer({ setFocus, episodes = [], extraProgress = [], routePref
                             }}
                             onEnterPress={() => {
                                 // console.log(`Go to watch episode ${routePrefix}${episodeSlug}`);
+                                history.push(`${routePrefix}${episodeSlug}/watch`);
                             }}
                             to={`${routePrefix}${episodeSlug}/watch`}
                             selected={i === selectedEpisode}

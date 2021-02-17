@@ -458,10 +458,10 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             // Look for a media file in the root, as opposed to within a season folder
             const singlePath = getSingleMedia(fileIndex);
             if (singlePath) {
-                console.info(keyPrefix, 'generateMovieMeta', fileIndex, singlePath);
+                // console.info(keyPrefix, 'generateMovieMeta', fileIndex, singlePath);
                 generateMovieMeta(singlePath, fileIndex, onSuccess, onFailure);
             } else {
-                console.info(keyPrefix, 'generateTVMeta');
+                // console.info(keyPrefix, 'generateTVMeta');
                 generateTVMeta(fileIndex, onSuccess, onFailure);
             }
         }
@@ -476,6 +476,7 @@ export default function useAWSMedia(categorySlug, mediaSlug) {
             () => {
                 // onError, call loadMeta
                 loadMeta(onComplete, () => {
+                    // eslint-disable-next-line no-console
                     console.info(keyPrefix, 'meta.json not found, initializing...');
                     // onError, call indexMeta
                     indexMeta((fileIndex) => {

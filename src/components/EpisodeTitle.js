@@ -26,20 +26,46 @@ const Title = styled.div`
     text-align: var(--align);
 `;
 
+function getRating(rating) {
+    switch (rating.toLowerCase()) {
+        case 'nc-17':
+        case 'r':
+        case 'pg-13':
+        case 'pg':
+        case 'g':
+        case 'tv-ma':
+        case 'tv-14':
+        case 'tv-pg':
+        case 'tv-g':
+        case 'tv-y7':
+        case 'tv-y':
+            return rating.toUpperCase();
+        default:
+            // nr
+            return null;
+    }
+}
+
 function getMetaLabel(episodeTitle, contentRating, seasonNum = 0, episodeNum = 0, isSingle = false, folder) {
     const items = [];
+    const rating = getRating(contentRating);
 
     // If is a movie extra
     if (isSingle && folder) {
         items.push(episodeTitle);
-        return `${episodeTitle} • ${contentRating}`;
+        if (rating) items.push(rating);
+        return items.join(' • ');
     }
+
     // If movie
     if (isSingle) {
-        return `${contentRating}`;
+        return rating ? `${rating}` : '';
     }
+
     // If TV
-    return `S${seasonNum} E${episodeNum} - ${episodeTitle} • ${contentRating}`;
+    items.push(`S${seasonNum} E${episodeNum} - ${episodeTitle}`);
+    if (rating) items.push(rating);
+    return items.join(' • ');
 }
 
 const propTypes = {

@@ -34,8 +34,9 @@ const propTypes = {
 };
 
 function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, seasonProgress = [], routePrefix }) {
-    const [selectedEpisode, setSelectedEpisode] = useState(0);
+    const [selectedEpisode, setSelectedEpisode] = useState(-1);
     const history = useHistory();
+
     // Grab thumbnails for episodes
     const { tmdb } = useTMDB('season', tmdbId, seasonNumber);
 
@@ -85,7 +86,7 @@ function EpisodeContainer({ setFocus, tmdbId, episodes = [], seasonNumber = 1, s
                                 setSelectedEpisode(i);
                             }}
                             onEnterPress={() => {
-                                console.log(`Go to watch episode ${routePrefix}${episodeSlug}/watch`);
+                                // console.log(`Go to watch episode ${routePrefix}${episodeSlug}/watch`);
                                 history.push(`${routePrefix}${episodeSlug}/watch`);
                             }}
                             to={`${routePrefix}${episodeSlug}/watch`}

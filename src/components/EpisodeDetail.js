@@ -26,7 +26,6 @@ const Container = styled(FlexCol)`
 
 const Meta = styled.div`
     display: flex;
-    /*justify-content: space-between;*/
     margin-bottom: 1rem;
     font-size: 1.1rem;
     line-height: 1.875rem;
@@ -86,13 +85,13 @@ function getMetaLabel(isSingle = false, contentRating, year, duration, genres, c
     // rating- year - genre - TV Series
     const items = [];
     // if (contentRating) items.push('');
-    if (year) items.push(year);
+
     if (isSingle && duration) {
         const totalSeconds = durationToSeconds(duration);
         items.push(secondsToHuman(totalSeconds));
     }
 
-    if (genres) items.push(genres.join(', '));
+    if (genres && genres.length > 0) items.push(genres.join(', '));
     if (category) {
         if (category === 'tv') {
             items.push('TV Series');
@@ -102,6 +101,8 @@ function getMetaLabel(isSingle = false, contentRating, year, duration, genres, c
             items.push(capitalize(category));
         }
     }
+    if (year) items.push(year);
+
     return items.join(' • ');
 }
 
