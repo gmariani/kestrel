@@ -11,11 +11,26 @@ const Container = styled.div`
     flex-direction: column;
     position: relative;
     flex: 1;
-    overflow: hidden;
+    overflow-y: auto;
+
+    /* Entire scrollbar */
+    &::-webkit-scrollbar {
+        width: 0.35rem;
+    }
+
+    /* The track (progress bar) of the scrollbar */
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: transparent;
+    }
+
+    /* the draggable scrolling handle */
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
 `;
 
 const Row = styled(FlexRow)`
-    overflow: hidden;
     position: relative;
     /* Fixes rounding error in spatial-navigation */
     row-gap: 20px;
@@ -32,31 +47,6 @@ const propTypes = {
 function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCategory }) {
     const [selectedPoster, setSelectedPoster] = useState(0);
     const history = useHistory();
-
-    // On render, listen for mouse wheel to navigate as well
-    useEffect(() => {
-        // TODO: lodash throttle
-        // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
-
-        function onWheel(event) {
-            // event.preventDefault();
-            const { deltaY, deltaX } = event;
-
-            if (deltaY > 1) {
-                navigateByDirection('down');
-            } else if (deltaY < 0) {
-                navigateByDirection('up');
-            } else if (deltaX > 1) {
-                navigateByDirection('right');
-            } else if (deltaX < 1) {
-                navigateByDirection('left');
-            }
-        }
-        document.addEventListener('wheel', onWheel, { passive: true });
-        return () => {
-            document.removeEventListener('wheel', onWheel, { passive: true });
-        };
-    });
 
     // On render, listen for tv remote to navigate as well
     useEffect(() => {

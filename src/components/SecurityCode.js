@@ -218,7 +218,7 @@ function SecurityCode({ length = 8, blurOnComplete = true, onChange, onComplete,
                     maxlength='1'
                     autocorrect='off'
                     autocomplete='off'
-                    autocapitalize='none'
+                    autocapitalize='off'
                     autoFocus={!hasError && index <= 0}
                     spellcheck='false'
                     aria-label={index > 0 ? `Letter ${index + 1}` : `Enter password letter ${index + 1}`}

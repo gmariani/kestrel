@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
@@ -17,10 +17,26 @@ const Container = styled.div`
 `;
 
 const Column = styled(FlexCol)`
-    overflow: hidden;
     padding-top: 1rem;
     padding-right: 1rem;
     padding-left: 1rem;
+    overflow-y: auto;
+
+    /* Entire scrollbar */
+    &::-webkit-scrollbar {
+        width: 0.35rem;
+    }
+
+    /* The track (progress bar) of the scrollbar */
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: transparent;
+    }
+
+    /* the draggable scrolling handle */
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
 `;
 
 const propTypes = {
@@ -34,12 +50,16 @@ function ExtraContainer({ setFocus, episodes = [], extraProgress = [], routePref
     const [selectedEpisode, setSelectedEpisode] = useState(-1);
     const history = useHistory();
 
-    // On focusElement change, move element into view
-    useEffect(() => {
+    const scrollIntoView = useCallback(() => {
         const episodeRef = document.querySelector('.episode.selected');
         // If no episodes exist, don't break
         if (episodeRef) episodeRef.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    }, [selectedEpisode]);
+    }, []);
+
+    // On focusElement change, move element into view
+    useEffect(() => {
+        scrollIntoView();
+    }, [selectedEpisode, scrollIntoView]);
 
     return (
         <Container>
@@ -62,8 +82,9 @@ function ExtraContainer({ setFocus, episodes = [], extraProgress = [], routePref
                         <Episode
                             focusKey={`EPISODE-${episodeSlug.toUpperCase()}`}
                             key={episodeSlug}
-                            onBecameFocused={() => {
+                            onBecameFocused={(layout, props, details) => {
                                 // console.log('Episode.onBecameFocused', i);
+                                if (details.event) scrollIntoView();
                                 setSelectedEpisode(i);
                             }}
                             onEnterPress={() => {

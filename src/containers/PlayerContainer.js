@@ -264,14 +264,13 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
         if (!hasFocusedChild) setFocus('PLAYER-PAUSEPLAY');
 
         setTimeout(() => {
-            console.log('hide preroll');
             setShowPreRoll(false);
         }, 5000);
     }, [hasFocusedChild, setFocus]);
 
     const fileURL = useAWSSignedURL(episode.fileURL, media.category, media.slug);
     // BUG: Wait for reply on https://github.com/CookPete/react-player/issues/329
-    console.log('showPreRoll', showPreRoll);
+
     // Signed
     // BUG: but doesn't seem to get passed into the <track> element
     // https://github.com/cookpete/react-player/blob/22bf8586a835fb2c04ca58ddfc49935ccd577c1f/src/players/FilePlayer.js

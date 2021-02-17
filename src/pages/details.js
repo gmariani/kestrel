@@ -43,49 +43,6 @@ function Details({ navigateByDirection, setFocus, hasFocusedChild }) {
     const { progress } = playHistory;
 
     useEffect(() => {
-        function onWheel(event) {
-            event.preventDefault();
-            const { deltaY, deltaX } = event;
-
-            if (deltaY > 1) {
-                navigateByDirection('down');
-            } else if (deltaY < 0) {
-                navigateByDirection('up');
-            } else if (deltaX > 1) {
-                navigateByDirection('right');
-            } else if (deltaX < 1) {
-                navigateByDirection('left');
-            }
-        }
-
-        // TODO: lodash throttle
-        // https://github.com/NoriginMedia/react-spatial-navigation/blob/master/src/App.js
-        // function onWheelHandler(event) {
-        //     event.preventDefault();
-        //     const { deltaY, deltaX } = event;
-
-        //     if (deltaY > 1) {
-        //         navigateByDirection('down');
-        //     } else if (deltaY < 0) {
-        //         navigateByDirection('up');
-        //     } else if (deltaX > 1) {
-        //         navigateByDirection('right');
-        //     } else if (deltaX < 1) {
-        //         navigateByDirection('left');
-        //     }
-        // }
-        // const throttledWheelHandler = throttle(onWheelHandler, 500, { trailing: false });
-        // function onWheel(event) {
-        //     throttledWheelHandler(event);
-        // }
-
-        document.addEventListener('wheel', onWheel, false);
-        return () => {
-            document.removeEventListener('wheel', onWheel, false);
-        };
-    });
-
-    useEffect(() => {
         function onKeyDown(event) {
             const { key } = event;
             // keyCode: 27 / key: Escape
