@@ -8,6 +8,8 @@ const InputGroup = styled.div`
     margin-bottom: 5rem;
     justify-content: center;
     width: 100%;
+
+    /* Safari Fix: It can't handle column-gap with Flex */
     display: grid;
     grid-template-columns: repeat(auto-fit, 50px);
     grid-column-gap: 10px;

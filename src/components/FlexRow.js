@@ -7,6 +7,8 @@ const Container = styled(FlexItem)`
     display: flex;
     flex-direction: row;
     column-gap: ${(props) => props.columnGap};
+    /* Safari Fix: Improperly displays height */
+    flex-shrink: 0;
 `;
 
 const propTypes = {

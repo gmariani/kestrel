@@ -35,6 +35,13 @@ const Row = styled(FlexRow)`
     /* Fixes rounding error in spatial-navigation */
     row-gap: 20px;
     padding: 2.25rem;
+
+    /* Safari Fix: It can't handle column-gap with Flex */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 20rem);
+    grid-column-gap: 20px;
+    /* Fixes rounding error in spatial-navigation */
+    grid-row-gap: 20px;
 `;
 
 const propTypes = {

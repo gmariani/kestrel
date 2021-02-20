@@ -79,6 +79,9 @@ const ThumbnailContainer = styled.div`
     /* Fix slight pixel render error */
     transform: translateX(-1px);
     overflow: hidden;
+
+    /* Safari Fix: Overflow hidden doesn't do jack */
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
 `;
 const ThumbnailImage = styled.img`
     height: 100%;

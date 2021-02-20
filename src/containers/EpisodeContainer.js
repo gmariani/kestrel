@@ -23,6 +23,15 @@ const Column = styled(FlexCol)`
     padding-left: 1rem;
     overflow-y: auto;
 
+    /* Safari Fix: Improperly displays height */
+    /*flex-shrink: 0;*/
+
+    /* Safari Fix: It can't handle column-gap with Flex */
+    display: grid;
+    grid-template-row: auto;
+    /* Fixes rounding error in spatial-navigation */
+    grid-row-gap: 1.5rem;
+
     /* Entire scrollbar */
     &::-webkit-scrollbar {
         width: 0.35rem;
