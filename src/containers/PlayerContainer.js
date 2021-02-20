@@ -21,6 +21,7 @@ import {
     PaneEpisodeSettings,
     Logo,
     PreRollRating,
+    PreRollOverlay,
 } from '../components';
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage, useAWSSignedURL } from '../hooks';
@@ -330,14 +331,14 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                     />
                 </SubOverlay>
             )}
-            {showPreRoll && (
-                <PlayerOverlay zIndex={6} className='show'>
-                    <FlexRow justifyContent='space-between'>
-                        <PreRollRating rating={media?.contentRating} />
-                        <Logo width={9} height={1.5} />
-                    </FlexRow>
-                </PlayerOverlay>
-            )}
+
+            <PreRollOverlay zIndex={6} className={showPreRoll ? 'show' : ''}>
+                <FlexRow justifyContent='space-between'>
+                    <PreRollRating rating={media?.contentRating} />
+                    <Logo width={9} height={1.5} />
+                </FlexRow>
+            </PreRollOverlay>
+
             <PlayerOverlay zIndex={5}>
                 <FlexRow justifyContent='space-between'>
                     <EpisodeTitle

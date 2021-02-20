@@ -23,7 +23,7 @@ function Footer() {
     return (
         <Container>
             <Logo />
-            <Version>Mariani 2021 - 0.3.0</Version>
+            <Version>Mariani 2021 - 0.4.0</Version>
         </Container>
     );
 }

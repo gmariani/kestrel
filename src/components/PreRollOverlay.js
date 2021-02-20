@@ -4,7 +4,8 @@ import styled from 'styled-components/macro';
 import FlexCol from './FlexCol';
 
 const Container = styled(FlexCol)`
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.25);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5) 20%, rgba(0, 0, 0, 0));
     top: 0px;
     bottom: 0px;
     left: 0px;
@@ -15,10 +16,10 @@ const Container = styled(FlexCol)`
     padding: 4rem;
     z-index: var(--zIndex);
     cursor: none;
+    pointer-events: none;
 
-    .show & {
+    &.show {
         opacity: 1;
-        cursor: auto;
     }
 `;
 
@@ -28,7 +29,7 @@ const propTypes = {
     className: PropTypes.string,
 };
 
-function PlayerOverlay({ children, className, zIndex = 5 }) {
+function PreRollOverlay({ children, className, zIndex = 5 }) {
     return (
         <Container justifyContent='space-between' className={className} style={{ '--zIndex': zIndex }}>
             {children}
@@ -36,5 +37,5 @@ function PlayerOverlay({ children, className, zIndex = 5 }) {
     );
 }
 
-PlayerOverlay.propTypes = propTypes;
-export default PlayerOverlay;
+PreRollOverlay.propTypes = propTypes;
+export default PreRollOverlay;

@@ -13,7 +13,7 @@ const Details = lazy(() => import('./pages/details.js'));
 const Watch = lazy(() => import('./pages/watch.js'));
 const renderLoader = () => <Loading visible />;
 
-// TODO: Add touch controls for mobile phone scrolling
+// TODO: Used signed urls for generating meta and loading posters
 // TODO: Add search button like hulu
 // TODO: Add edit screen to modify the meta.json
 // If meta.json is incomplete, populate from TMDB

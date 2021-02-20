@@ -10,7 +10,7 @@ html, body,
     height:100%;
     width: 100%;
     background-color:#000;
-    font-family: Tw Cen MT;
+    font-family: Tw Cen MT, Avenir, Helvetica, Arial, sans-serif;
     text-rendering: optimizeLegibility;
     overflow:hidden;
     color:white;

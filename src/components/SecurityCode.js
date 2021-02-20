@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 
 const InputGroup = styled.div`
-    display: flex;
+    /*display: flex;*/
     column-gap: 10px;
     margin-bottom: 5rem;
     justify-content: center;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 50px);
+    grid-column-gap: 10px;
 `;
 
 const Input = styled.input`
