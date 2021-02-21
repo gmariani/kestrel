@@ -22,13 +22,14 @@ const Column = styled(FlexCol)`
     padding-right: 1rem;
     padding-left: 1rem;
     overflow-y: auto;
+    margin-bottom: 3rem;
 
     /* Safari Fix: Improperly displays height */
     /*flex-shrink: 0;*/
 
     /* Safari Fix: It can't handle column-gap with Flex */
     display: grid;
-    grid-template-row: auto;
+    grid-auto-columns: 1fr;
     /* Fixes rounding error in spatial-navigation */
     grid-row-gap: 1.5rem;
 

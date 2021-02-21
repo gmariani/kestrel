@@ -6,7 +6,23 @@ import { FlexCol, Season } from '../components';
 import { toSlug } from '../utils';
 
 const Container = styled.div`
-    overflow: hidden;
+    overflow-y: auto;
+
+    /* Entire scrollbar */
+    &::-webkit-scrollbar {
+        width: 0.35rem;
+    }
+
+    /* The track (progress bar) of the scrollbar */
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: transparent;
+    }
+
+    /* the draggable scrolling handle */
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
 `;
 
 const propTypes = {
@@ -34,6 +50,7 @@ function SeasonContainer({ setFocus, seasons, onClick }) {
     return (
         <Container>
             <FlexCol
+                style={{ marginBottom: '3rem' }}
                 rowGap='0.5rem'
                 justifyContent='flex-start'
                 onMouseEnter={() => {

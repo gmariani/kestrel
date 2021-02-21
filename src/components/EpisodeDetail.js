@@ -18,7 +18,7 @@ const Container = styled(FlexCol)`
     /*justify-content: end;*/
     justify-content: flex-end;
     color: white;
-    margin-bottom: 2.25rem;
+    margin-bottom: 4.25rem;
     flex: 1;
     --progressBG: rgba(255, 255, 255, 0.6);
     --trackBG: rgba(255, 255, 255, 0.25);
