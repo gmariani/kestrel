@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import FlexCol from './FlexCol';
 import FadeBackground from './FadeBackground';
 
@@ -23,9 +24,17 @@ const propTypes = {
     children: PropTypes.node,
     backgroundHue: PropTypes.number,
     backgroundURL: PropTypes.string,
+    setFocus: PropTypes.func,
+    hasFocusedChild: PropTypes.bool,
+    initialFocus: PropTypes.string,
 };
 
-function HalfPane({ children, backgroundHue, backgroundURL }) {
+function HalfPaneContainer({ children, backgroundHue, backgroundURL, setFocus, hasFocusedChild, initialFocus }) {
+    useEffect(() => {
+        // Set initial focus inorder to jumpstart spacial navigation
+        if (!hasFocusedChild && initialFocus) setFocus(initialFocus);
+    }, [hasFocusedChild, setFocus, initialFocus]);
+
     return (
         <Container
             onClick={(e) => {
@@ -38,5 +47,9 @@ function HalfPane({ children, backgroundHue, backgroundURL }) {
     );
 }
 
-HalfPane.propTypes = propTypes;
+HalfPaneContainer.propTypes = propTypes;
+const HalfPane = withFocusable({
+    trackChildren: true,
+    blockNavigationOut: true,
+})(HalfPaneContainer);
 export default HalfPane;

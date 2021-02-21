@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { FaSearch } from 'react-icons/fa';
 import { FlexRowFocusable, Header, Logo, Menu, MenuLink } from '../components';
 import * as ROUTES from '../constants/routes';
 import { toName } from '../utils';
@@ -24,6 +25,9 @@ function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
             justifyContent={hideMenu ? 'flex-end' : 'space-between'}>
             {!hideMenu && (
                 <Menu focusKey='MENU'>
+                    <MenuLink>
+                        <FaSearch />
+                    </MenuLink>
                     {categories.map((category) => {
                         const route = `/${category}`;
                         return (

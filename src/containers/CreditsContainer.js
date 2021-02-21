@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -8,11 +9,14 @@ import { useLocalStorage } from '../hooks';
 
 const propTypes = {
     media: mediaInterface,
+    setFocus: PropTypes.func,
+    hasFocusedChild: PropTypes.bool,
     onStarted: PropTypes.func,
 };
 
-function CreditsContainer({ media, onStarted }) {
+function CreditsContainer({ media, setFocus, hasFocusedChild, onStarted }) {
     const history = useHistory();
+    const [selectedButton, setSelectedButton] = useState('ACTION-NEXT');
     const { isSingle, /* season, episode, */ nextEpisode } = media;
     const nextRoute = nextEpisode?.route;
     const [settings] = useLocalStorage('settings', {
@@ -46,6 +50,11 @@ function CreditsContainer({ media, onStarted }) {
         };
     }, [settings.autoplay, nextEpisode, onClickNext, onClickBack]);
 
+    useEffect(() => {
+        // Set initial focus inorder to jumpstart spacial navigation
+        if (!hasFocusedChild) setFocus('ACTION-NEXT');
+    }, [hasFocusedChild, setFocus]);
+
     return (
         <Credits>
             <FlexCol alignItems='flex-end' justifyContent='flex-end' rowGap='2rem'>
@@ -60,17 +69,63 @@ function CreditsContainer({ media, onStarted }) {
 
                 <FlexRow columnGap='2rem'>
                     {nextRoute ? (
-                        <ButtonLink onClick={onClickBack}>
+                        <ButtonLink
+                            focusKey='ACTION-BACK'
+                            onEnterPress={() => {
+                                // console.log('onEnterPress onClickBack()');
+                                onClickBack();
+                            }}
+                            onClick={onClickBack}
+                            onBecameFocused={() => {
+                                setSelectedButton('ACTION-BACK');
+                            }}
+                            selected={selectedButton === 'ACTION-BACK'}>
                             <FaArrowLeft /> Back
                         </ButtonLink>
                     ) : (
-                        <TimerButtonLink onClick={onClickBack} label='Back' />
+                        <TimerButtonLink
+                            focusKey='ACTION-BACK'
+                            onEnterPress={() => {
+                                // console.log('onEnterPress onClickBack()');
+                                onClickBack();
+                            }}
+                            onClick={onClickBack}
+                            onBecameFocused={() => {
+                                setSelectedButton('ACTION-BACK');
+                            }}
+                            selected={selectedButton === 'ACTION-BACK'}
+                            label='Back'
+                        />
                     )}
                     {nextRoute &&
                         (settings.autoplay ? (
-                            <TimerButtonLink onClick={onClickNext} label='Next' />
+                            <TimerButtonLink
+                                focusKey='ACTION-NEXT'
+                                onEnterPress={() => {
+                                    // console.log('onEnterPress onClickNext()');
+                                    onClickNext();
+                                }}
+                                onClick={onClickNext}
+                                onBecameFocused={() => {
+                                    setSelectedButton('ACTION-NEXT');
+                                }}
+                                selected={selectedButton === 'ACTION-NEXT'}
+                                label='Next'
+                            />
                         ) : (
-                            <ButtonLink onClick={onClickNext}>Next</ButtonLink>
+                            <ButtonLink
+                                focusKey='ACTION-NEXT'
+                                onEnterPress={() => {
+                                    // console.log('onEnterPress onClickNext()');
+                                    onClickNext();
+                                }}
+                                onClick={onClickNext}
+                                onBecameFocused={() => {
+                                    setSelectedButton('ACTION-NEXT');
+                                }}
+                                selected={selectedButton === 'ACTION-NEXT'}>
+                                Next
+                            </ButtonLink>
                         ))}
                 </FlexRow>
             </FlexCol>
@@ -79,4 +134,6 @@ function CreditsContainer({ media, onStarted }) {
 }
 
 CreditsContainer.propTypes = propTypes;
-export default CreditsContainer;
+export default withFocusable({
+    trackChildren: true,
+})(CreditsContainer);

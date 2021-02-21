@@ -39,36 +39,23 @@ const Label = styled.div`
 `;
 
 const StyledLink = styled.button`
-    background-color: rgba(255, 255, 255, 0.25);
-    border: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid transparent;
     border-radius: 3px;
     display: flex;
     align-items: center;
     justify-items: center;
     max-width: 500px;
     padding: 0;
+    transition: border-color 0.3s;
 
     & svg {
         margin-left: 1rem;
     }
 
-    &.selected > ${Background} {
-        color: white;
-        background-color: rgba(255, 255, 255, 0.25);
+    &.selected {
+        border-color: white;
     }
-
-    /*&:not([disabled]):active
-        > ${Background},
-        &:not([disabled]):focus
-        > ${Background},
-        &:not([disabled]).focused.selected
-        > ${Background},
-        &:not([disabled]):hover
-        > ${Background} {
-        color: black;
-        background-color: white;
-        text-decoration: none;
-    }*/
 
     &:not([disabled]):focus {
         outline: 2px solid white;

@@ -1,8 +1,6 @@
-/* eslint-disable no-unreachable */
 import React, { lazy, Suspense } from 'react';
 import { Switch, BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { initNavigation } from '@noriginmedia/react-spatial-navigation';
-// import { SignIn, Browse, Details, Watch } from './pages';
 import * as ROUTES from './constants/routes';
 import { useAuthListener } from './hooks';
 import Loading from './components/Loading';

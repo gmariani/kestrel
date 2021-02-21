@@ -4,24 +4,23 @@ import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player/file';
 import {
-    Player,
-    Loading,
-    PlayerOverlay,
-    IconButton,
-    TrackBar,
-    Resolution,
     EpisodeTitle,
-    NextEpisodeTitle,
-    FlexRow,
-    FlexRowFocusable,
     FlexCol,
-    SubOverlay,
-    HalfPane,
+    FlexRow,
+    GridColFocusable,
+    IconButton,
+    Loading,
+    Logo,
+    NextEpisodeTitle,
     PaneEpisodeDetail,
     PaneEpisodeSettings,
-    Logo,
-    PreRollRating,
+    Player,
+    PlayerOverlay,
     PreRollOverlay,
+    PreRollRating,
+    Resolution,
+    SubOverlay,
+    TrackBar,
 } from '../components';
 import mediaInterface from '../interfaces/media';
 import { useLocalStorage, useAWSSignedURL } from '../hooks';
@@ -310,21 +309,28 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
         <Player onActivity={activityHandler} className={showControls ? 'show' : ''}>
             {showSettings && (
                 <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleSettings}>
-                    <HalfPane backgroundHue={media.backgroundHue}>
-                        <PaneEpisodeSettings
-                            subtitles={settings.subtitles}
-                            autoplay={settings.autoplay}
-                            setSettings={setSettings}
-                        />
-                    </HalfPane>
+                    <PaneEpisodeSettings
+                        settings={settings}
+                        setSettings={setSettings}
+                        media={media}
+                        onClickBack={() => {
+                            setShowSettings(false);
+                            setSelectedButton('MEDIA-SETTINGS');
+                            setFocus('MEDIA-SETTINGS');
+                        }}
+                    />
                 </SubOverlay>
             )}
             {showInfo && (
                 <SubOverlay backgroundHue={media.backgroundHue} onClick={toggleInfo}>
                     <PaneEpisodeDetail
-                        hasFocus
                         isSingle={isSingle}
                         media={media}
+                        onClickBack={() => {
+                            setShowInfo(false);
+                            setSelectedButton('MEDIA-INFO');
+                            setFocus('MEDIA-INFO');
+                        }}
                         onClickDetails={() => {
                             history.push(media.route);
                         }}
@@ -369,14 +375,17 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                         onChange={(percent) => seekTo(percent)}
                     />
 
-                    <FlexRow>
-                        <FlexRow flexGrow={1} alignItems='flex-start' justifyContent='flex-start'>
+                    <FlexRow justifyContent='space-between'>
+                        <GridColFocusable
+                            gridTemplateColumns='repeat(1, 1fr)'
+                            alignItems='flex-start'
+                            justifyContent='flex-start'>
                             <Resolution type={media?.resolution} />
-                        </FlexRow>
+                        </GridColFocusable>
 
-                        <FlexRowFocusable
+                        <GridColFocusable
                             focusKey='PLAYER'
-                            flexGrow={1}
+                            gridTemplateColumns='repeat(3, 1fr)'
                             alignItems='flex-start'
                             justifyContent='center'>
                             <IconButton
@@ -422,11 +431,11 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                                     selected={selectedButton === 'PLAYER-NEXT'}
                                 />
                             )}
-                        </FlexRowFocusable>
+                        </GridColFocusable>
 
-                        <FlexRowFocusable
+                        <GridColFocusable
                             focusKey='MEDIA'
-                            flexGrow={1}
+                            gridTemplateColumns='repeat(2, 1fr)'
                             alignItems='flex-start'
                             justifyContent='flex-end'>
                             <IconButton
@@ -447,7 +456,7 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                                 onBecameFocused={() => setSelectedButton('MEDIA-INFO')}
                                 selected={selectedButton === 'MEDIA-INFO'}
                             />
-                        </FlexRowFocusable>
+                        </GridColFocusable>
                     </FlexRow>
                 </FlexCol>
             </PlayerOverlay>

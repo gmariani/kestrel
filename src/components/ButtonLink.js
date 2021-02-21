@@ -10,7 +10,7 @@ const StyledLink = styled.button`
     font-style: normal;
     font-weight: normal;
     line-height: 2rem;
-    transition: all 0.3s;
+    transition: color 0.3s, background-color 0.3s;
     padding: 1rem;
     border-radius: 4px;
     border: none;
