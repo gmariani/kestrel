@@ -7,7 +7,7 @@ import {
     EpisodeTitle,
     FlexCol,
     FlexRow,
-    GridColFocusable,
+    GridFocusable,
     IconButton,
     Loading,
     Logo,
@@ -376,14 +376,14 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                     />
 
                     <FlexRow justifyContent='space-between'>
-                        <GridColFocusable
+                        <GridFocusable
                             gridTemplateColumns='repeat(1, 1fr)'
                             alignItems='flex-start'
                             justifyContent='flex-start'>
                             <Resolution type={media?.resolution} />
-                        </GridColFocusable>
+                        </GridFocusable>
 
-                        <GridColFocusable
+                        <GridFocusable
                             focusKey='PLAYER'
                             gridTemplateColumns='repeat(3, 1fr)'
                             alignItems='flex-start'
@@ -431,9 +431,9 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                                     selected={selectedButton === 'PLAYER-NEXT'}
                                 />
                             )}
-                        </GridColFocusable>
+                        </GridFocusable>
 
-                        <GridColFocusable
+                        <GridFocusable
                             focusKey='MEDIA'
                             gridTemplateColumns='repeat(2, 1fr)'
                             alignItems='flex-start'
@@ -456,7 +456,7 @@ function PlayerContainer({ media, folder, setFocus, hasFocusedChild, onEnded }) 
                                 onBecameFocused={() => setSelectedButton('MEDIA-INFO')}
                                 selected={selectedButton === 'MEDIA-INFO'}
                             />
-                        </GridColFocusable>
+                        </GridFocusable>
                     </FlexRow>
                 </FlexCol>
             </PlayerOverlay>

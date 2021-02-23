@@ -15,8 +15,16 @@ const StyledLink = styled(ReachRouterLink)`
     border-radius: 4px;
     display: flex;
     align-items: center;
-    column-gap: 1rem;
     max-width: 500px;
+
+    /* Safari Fix: It can't handle column-gap with Flex */
+    /*column-gap: 1rem;*/
+    & > * {
+        margin-right: 1rem;
+    }
+    & > :last-child {
+        margin-right: 0;
+    }
 
     & svg {
         margin-left: 1rem;

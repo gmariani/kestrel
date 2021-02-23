@@ -3,16 +3,24 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 
 const InputGroup = styled.div`
-    /*display: flex;*/
-    column-gap: 10px;
+    display: flex;
     margin-bottom: 5rem;
     justify-content: center;
     width: 100%;
 
     /* Safari Fix: It can't handle column-gap with Flex */
-    display: grid;
+    /*display: grid;
     grid-template-columns: repeat(auto-fit, 50px);
-    grid-column-gap: 10px;
+    grid-column-gap: 10px;*/
+
+    /* Safari Fix: It can't handle column-gap with Flex */
+    /*column-gap: 10px;*/
+    & > * {
+        margin-right: 10px;
+    }
+    & > :last-child {
+        margin-right: 0;
+    }
 `;
 
 const Input = styled.input`

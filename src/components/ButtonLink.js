@@ -16,8 +16,16 @@ const StyledLink = styled.button`
     border: none;
     display: flex;
     align-items: center;
-    column-gap: 1rem;
     max-width: 500px;
+
+    /* Safari Fix: It can't handle column-gap with Flex */
+    /*column-gap: 1rem;*/
+    & > * {
+        margin-right: 1rem;
+    }
+    & > :last-child {
+        margin-right: 0;
+    }
 
     /* 960x x 540px for TV */
     @media screen and (max-width: 970px) {

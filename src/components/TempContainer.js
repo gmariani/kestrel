@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 
 const Container = styled.div`
-    /*height: 100%;*/
     padding: 6.25rem;
-    position: relative;
+    position: absolute;
     z-index: 10;
     top: 0;
     left: 0;
@@ -13,7 +12,6 @@ const Container = styled.div`
     right: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     max-height: 100vh;
 `;
 

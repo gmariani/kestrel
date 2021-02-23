@@ -6,7 +6,16 @@ import FlexItem from './FlexItem';
 const Container = styled(FlexItem)`
     display: flex;
     flex-direction: row;
-    column-gap: ${(props) => props.columnGap};
+
+    /* Safari Fix: It can't handle column-gap with Flex */
+    /*column-gap: ${(props) => props.columnGap};*/
+    & > * {
+        margin-right: ${(props) => props.columnGap};
+    }
+    & > :last-child {
+        margin-right: 0;
+    }
+
     /* Safari Fix: Improperly displays height */
     flex-shrink: 0;
 `;

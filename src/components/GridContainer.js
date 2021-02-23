@@ -4,6 +4,8 @@ import styled from 'styled-components/macro';
 
 const Container = styled.div`
     display: grid;
+    grid-row-gap: ${(props) => props.gridRowGap};
+    grid-column-gap: ${(props) => props.gridColumnGap};
 
     ${(props) => props.gridArea && `grid-area:${props.gridArea};`}
     ${(props) => props.gridAutoFlow && `grid-auto-flow:${props.gridAutoFlow};`}
@@ -18,6 +20,18 @@ const Container = styled.div`
 
     ${(props) => props.alignSelf && `align-self:${props.alignSelf};`}
     ${(props) => props.justifySelf && `justify-self:${props.justifySelf};`}
+
+    ${(props) => props.gridAutoRows && `grid-auto-rows:${props.gridAutoRows};`}
+    ${(props) => props.gridRowEnd && `grid-row-end:${props.gridRowEnd};`}
+    ${(props) => props.gridRowStart && `grid-row-start:${props.gridRowStart};`}
+    ${(props) => props.gridRow && `grid-row:${props.gridRow};`}
+    ${(props) => props.gridTemplateRows && `grid-template-rows:${props.gridTemplateRows};`}
+
+    ${(props) => props.gridAutoColumns && `grid-auto-columns:${props.gridAutoColumns};`}
+    ${(props) => props.gridColumnEnd && `grid-column-end:${props.gridColumnEnd};`}
+    ${(props) => props.gridColumnStart && `grid-column-start:${props.gridColumnStart};`}
+    ${(props) => props.gridColumn && `grid-column:${props.gridColumn};`}
+    ${(props) => props.gridTemplateColumns && `grid-template-columns:${props.gridTemplateColumns};`}
 `;
 
 const propTypes = {
@@ -29,6 +43,21 @@ const propTypes = {
     gridAutoFlow: PropTypes.string,
     gridTemplateAreas: PropTypes.string,
     gridTemplate: PropTypes.string,
+
+    gridColumnGap: PropTypes.string,
+    gridAutoColumns: PropTypes.string,
+    gridColumnEnd: PropTypes.string,
+    gridColumnStart: PropTypes.string,
+    gridColumn: PropTypes.string,
+    gridTemplateColumns: PropTypes.string,
+
+    gridRowGap: PropTypes.string,
+    gridAutoRows: PropTypes.string,
+    gridRowEnd: PropTypes.string,
+    gridRowStart: PropTypes.string,
+    gridRow: PropTypes.string,
+    gridTemplateRows: PropTypes.string,
+
     alignContent: PropTypes.string,
     alignItems: PropTypes.string,
     alignSelf: PropTypes.string,
@@ -40,7 +69,7 @@ const propTypes = {
     onClickCapture: PropTypes.func,
 };
 
-const GridItem = React.forwardRef(
+const GridContainer = React.forwardRef(
     (
         {
             children,
@@ -50,6 +79,21 @@ const GridItem = React.forwardRef(
             gridAutoFlow,
             gridTemplateAreas,
             gridTemplate,
+
+            gridColumnGap,
+            gridAutoColumns,
+            gridColumnEnd,
+            gridColumnStart,
+            gridColumn,
+            gridTemplateColumns,
+
+            gridRowGap,
+            gridAutoRows,
+            gridRowEnd,
+            gridRowStart,
+            gridRow,
+            gridTemplateRows,
+
             alignContent,
             alignItems,
             alignSelf,
@@ -71,6 +115,18 @@ const GridItem = React.forwardRef(
                 gridAutoFlow={gridAutoFlow}
                 gridTemplateAreas={gridTemplateAreas}
                 gridTemplate={gridTemplate}
+                gridRowGap={gridRowGap}
+                gridAutoRows={gridAutoRows}
+                gridRowEnd={gridRowEnd}
+                gridRowStart={gridRowStart}
+                gridRow={gridRow}
+                gridTemplateRows={gridTemplateRows}
+                gridColumnGap={gridColumnGap}
+                gridAutoColumns={gridAutoColumns}
+                gridColumnEnd={gridColumnEnd}
+                gridColumnStart={gridColumnStart}
+                gridColumn={gridColumn}
+                gridTemplateColumns={gridTemplateColumns}
                 alignContent={alignContent}
                 alignItems={alignItems}
                 alignSelf={alignSelf}
@@ -86,5 +142,5 @@ const GridItem = React.forwardRef(
     }
 );
 
-GridItem.propTypes = propTypes;
-export default GridItem;
+GridContainer.propTypes = propTypes;
+export default GridContainer;

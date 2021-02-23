@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { useHistory } from 'react-router-dom';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
-import { Poster, Loading, FlexRow } from '../components';
+import { Poster, Loading, FlexRow, GridFocusable } from '../components';
 import { toName } from '../utils';
 
 const Container = styled.div`
@@ -30,18 +30,9 @@ const Container = styled.div`
     }
 `;
 
-const Row = styled(FlexRow)`
+const Row = styled(GridFocusable)`
     position: relative;
-    /* Fixes rounding error in spatial-navigation */
-    row-gap: 20px;
     padding: 2.25rem;
-
-    /* Safari Fix: It can't handle column-gap with Flex */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 20rem);
-    grid-column-gap: 20px;
-    /* Fixes rounding error in spatial-navigation */
-    grid-row-gap: 20px;
 `;
 
 const propTypes = {
@@ -98,15 +89,19 @@ function PosterContainer({ navigateByDirection, media, mediaCategory, selectedCa
     // If switching categories, wait until 'media' has loaded and matches the selected category
     if (mediaCategory !== null && mediaCategory !== selectedCategory) {
         return (
-            <Row>
+            <FlexRow>
                 <Loading />
-            </Row>
+            </FlexRow>
         );
     }
 
     return (
         <Container>
-            <Row flexWrap='wrap' focusKey='POSTERS' columnGap='20px'>
+            <Row
+                focusKey='POSTERS'
+                gridTemplateColumns='repeat(auto-fit, 20rem)'
+                gridRowGap='20px'
+                gridColumnGap='20px'>
                 {media.map((mediaSlug, i) => {
                     const route = `/${selectedCategory}/${mediaSlug}`;
                     return (
