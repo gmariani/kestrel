@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, TempContainer, Gradient, SignInForm, SecurityCode, Footer } from '../components';
+import { Button, DefaultContainer, Gradient, SignInForm, SecurityCode, Footer } from '../components';
 import FirebaseContext from '../context/firebase';
 
 export default function SignIn() {
@@ -57,7 +57,7 @@ export default function SignIn() {
 
     return (
         <>
-            <TempContainer style={{ height: '100%' }}>
+            <DefaultContainer style={{ height: '100%' }}>
                 <SignInForm onSubmit={onSubmit} method='POST'>
                     <SignInForm.Title>Passcode</SignInForm.Title>
                     {error && <SignInForm.Error>{error}</SignInForm.Error>}
@@ -67,7 +67,7 @@ export default function SignIn() {
                     </Button>
                 </SignInForm>
                 <Footer />
-            </TempContainer>
+            </DefaultContainer>
             <Gradient opacity={0.8} startColor='#EE6B4D' endColor='#551C0F' />
         </>
     );

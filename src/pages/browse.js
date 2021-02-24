@@ -2,10 +2,10 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { useAWSCategoryMedia, useAWSCategories } from '../hooks';
-import { TempContainer, FadeBackground } from '../components';
+import { DefaultContainer, FadeBackground } from '../components';
 import { HeaderContainer, PosterContainer } from '../containers';
 
-const Container = styled(TempContainer)`
+const Container = styled(DefaultContainer)`
     padding-top: 2.25rem;
     padding-bottom: 0 !important;
     padding-left: 4.25rem;

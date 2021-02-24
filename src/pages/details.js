@@ -4,12 +4,12 @@ import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 // import throttle from 'lodash/throttle';
-import { Loading, TempContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
+import { Loading, DefaultContainer, Shadow, ScrimBackground, FlexRow, EpisodeDetail } from '../components';
 import { SeasonContainer, ExtraContainer, EpisodeContainer, HeaderContainer } from '../containers';
 import { useMedia, useLocalStorage } from '../hooks';
 import { getEpisodeProgress, toSlug, getAWSBaseURL } from '../utils';
 
-const Container = styled(TempContainer)`
+const Container = styled(DefaultContainer)`
     height: 100%;
     padding-top: 2.25rem;
     padding-bottom: 2.25rem;

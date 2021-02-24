@@ -44,7 +44,7 @@ export { default as SecurityCode } from './SecurityCode';
 export { default as Shadow } from './Shadow';
 export { default as SignInForm } from './SignInForm';
 export { default as SubOverlay } from './SubOverlay';
-export { default as TempContainer } from './TempContainer';
+export { default as DefaultContainer } from './DefaultContainer';
 export { default as Timer } from './Timer';
 export { default as TimerButtonLink } from './TimerButtonLink';
 export { default as ToggleFocusable } from './ToggleFocusable';

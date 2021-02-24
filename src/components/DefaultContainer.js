@@ -22,12 +22,12 @@ const propTypes = {
     style: PropTypes.object,
 };
 
-const TempContainer = ({ children, className, style }) => {
+const DefaultContainer = ({ children, className, style }) => {
     return (
         <Container className={className} style={style}>
             {children}
         </Container>
     );
 };
-TempContainer.propTypes = propTypes;
-export default TempContainer;
+DefaultContainer.propTypes = propTypes;
+export default DefaultContainer;

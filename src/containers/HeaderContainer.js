@@ -25,7 +25,7 @@ function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
             justifyContent={hideMenu ? 'flex-end' : 'space-between'}>
             {!hideMenu && (
                 <Menu focusKey='MENU'>
-                    <MenuLink>
+                    <MenuLink to='/search' selected={selectedCategory === 'search'}>
                         <FaSearch />
                     </MenuLink>
                     {categories.map((category) => {

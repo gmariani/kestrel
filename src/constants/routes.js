@@ -5,3 +5,4 @@ export const WATCH_TV = '/:categorySlug/:mediaSlug/:seasonSlug/:episodeSlug/watc
 export const DETAILS = '/:categorySlug/:mediaSlug/:seasonSlug?';
 export const SIGN_UP = '/signup';
 export const SIGN_IN = '/signin';
+export const SEARCH = '/search';
