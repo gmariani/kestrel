@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components/macro';
 import S3 from 'aws-sdk/clients/s3';
 import { useAWSCategories } from '../hooks';
-import { DefaultContainer, FadeBackground, Loading } from '../components';
+import { DefaultContainer, FadeBackground, Loading, Keyboard, Input } from '../components';
 import { HeaderContainer } from '../containers';
 
 const Container = styled(DefaultContainer)`
@@ -17,19 +17,37 @@ export default function Search() {
     const [isReady, setIsReady] = useState(false);
     const [searchResult, setSearchResults] = useState([]);
     const { categories } = useAWSCategories();
+    const inputRef = useRef();
 
-    const searchHandler = (event) => {
-        // TODO: throttle event handler
-        const query = event.target.value;
-        console.log(`query ${query}`);
+    const refreshSearch = () => {
+        const input = inputRef.current;
+        const query = input.value.toLowerCase();
+
+        // Flatten the associative array
         const list = Object.keys(data.current).reduce((r, k) => {
             return r.concat(data.current[k]);
         }, []);
-        console.log(list, data.current);
+
         // TODO: use fuse.js for fuzzy search
-        const result = list.filter((item) => item.replace('-', ' ').indexOf(query) > -1);
-        console.log(`result`, result);
+        const result = list.filter((item) => item.indexOf(query) > -1);
         setSearchResults(result);
+    };
+
+    const searchHandler = () => {
+        // TODO: throttle event handler
+        refreshSearch();
+    };
+
+    const keyHandler = (value) => {
+        const input = inputRef.current;
+        input.value += value;
+        refreshSearch();
+    };
+
+    const deleteHandler = () => {
+        const input = inputRef.current;
+        input.value = input.value.slice(0, -1);
+        refreshSearch();
     };
 
     const s3Client = useMemo(
@@ -46,7 +64,7 @@ export default function Search() {
         []
     );
 
-    // Grab the media from each category
+    // Grab the media list from each category
     useEffect(() => {
         categories.forEach((category) => {
             if (!data.current[category]) {
@@ -87,8 +105,8 @@ export default function Search() {
                 <HeaderContainer categories={categories} selectedCategory='search' />
                 {isReady ? (
                     <>
-                        <input onChange={searchHandler} />
-                        <p>Ready!</p>
+                        <Input ref={inputRef} onChange={searchHandler} style={{ marginBottom: '4rem' }} />
+                        <Keyboard onType={(letter) => keyHandler(letter)} onDelete={deleteHandler} />
                         {searchResult.length > 0 ? searchResult.map((result) => <li>{result}</li>) : <p>No results</p>}
                     </>
                 ) : (

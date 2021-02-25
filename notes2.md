@@ -2,8 +2,9 @@ https://www.youtube.com/watch?v=x_EEwGe-a9o
 
 Amazon Fire TV runs Chrome 84
 https://www.whatismybrowser.com/w/235N8D3
-
+https://developer.amazon.com/docs/fire-tv/webapp-debug-app.html#install-chrome-devtools
 https://developer.amazon.com/docs/fire-tv/supporting-controllers-in-web-apps.html
+adb connect 192.168.1.133
 
 Install create-react-app
 Install firebase
