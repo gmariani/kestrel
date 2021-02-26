@@ -32,6 +32,11 @@ const StyledLink = styled.button`
         max-width: 200px;
     }
 
+    /* Landscape mobile */
+    @media screen and (max-width: 800px) {
+        max-width: 100%;
+    }
+
     & svg {
         margin-left: 1rem;
     }

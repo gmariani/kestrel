@@ -1,66 +1,84 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components/macro';
-import PropTypes from 'prop-types';
-import { Keyboard, Input, FlexContainer } from '../components';
+import S3 from 'aws-sdk/clients/s3';
+import { useAWSCategories } from '../hooks';
+import { Loading, FlexContainer, SearchControls, SearchResults } from '../components';
 
-const Container = styled(FlexContainer)`
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    flex: 1;
-    width: 33.333%;
-    align-items: center;
+const Row = styled(FlexContainer)`
+    max-height: 100%;
+    padding-bottom: 4rem;
 `;
+// BUG: Can't navigate to results via keyboard
 
-const propTypes = {
-    data: PropTypes.shape({ current: PropTypes.obj }),
-    onRefresh: PropTypes.func,
-};
+const propTypes = {};
 
-function SearchContainer({ data, onRefresh }) {
-    const inputRef = useRef();
+function SearchContainer() {
+    const data = useRef([]);
+    const [isReady, setIsReady] = useState(false);
+    const [searchResult, setSearchResults] = useState([]);
+    const { categories } = useAWSCategories();
 
-    const refreshSearch = () => {
-        const input = inputRef.current;
-        const query = input.value.toLowerCase();
+    const s3Client = useMemo(
+        () =>
+            new S3({
+                apiVersion: '2006-03-01',
+                region: process.env.REACT_APP_AWS_DEFAULT_REGION,
+                credentials: {
+                    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+                    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+                },
+                params: { Bucket: process.env.REACT_APP_AWS_BUCKET },
+            }),
+        []
+    );
 
-        // Flatten the associative array
-        const list = Object.keys(data.current).reduce((r, category) => {
-            const categoryArray = data.current[category].map((mediaSlug) => `${category}/${mediaSlug}`);
-            return r.concat(categoryArray);
-        }, []);
+    // Grab the media list from each category
+    useEffect(() => {
+        categories.forEach((category) => {
+            if (!data.current[category]) {
+                // console.log(`grab data for ${category}`, data.current);
+                data.current[category] = 'pending';
+                s3Client
+                    .listObjectsV2({ Delimiter: '/', Prefix: `${category}/` })
+                    .promise()
+                    .then((results) => {
+                        data.current[category] = results.CommonPrefixes.map((item) =>
+                            item.Prefix.replace(category, '').slice(0, -1).slice(1)
+                        );
 
-        // TODO: use fuse.js for fuzzy search
+                        // If all data is not pending
+                        if (!data.current.includes('pending')) {
+                            // console.log('All done!', data.current);
+                            setIsReady(true);
+                        }
+                    })
+                    .catch((error) => {
+                        data.current[category] = 'error';
+                        // eslint-disable-next-line no-console
+                        console.error(error, error.stack);
 
-        // Don't search for anything until we hit 3 characters
-        const result = query.length > 2 ? list.filter((item) => item.indexOf(query) > -1) : [];
-        onRefresh(result);
-    };
-
-    const searchHandler = () => {
-        // TODO: throttle event handler
-        refreshSearch();
-    };
-
-    const keyHandler = (value) => {
-        const input = inputRef.current;
-        input.value += value;
-        refreshSearch();
-    };
-
-    const deleteHandler = () => {
-        const input = inputRef.current;
-        input.value = input.value.slice(0, -1);
-        refreshSearch();
-    };
+                        // If all data is not pending
+                        if (!data.current.includes('pending')) {
+                            // console.log('All done (with errors)!');
+                            setIsReady(true);
+                        }
+                    });
+            }
+        });
+    }, [s3Client, categories, data]);
 
     return (
-        <Container flexDirection='column'>
-            <Input ref={inputRef} onChange={searchHandler} value='ind' style={{ marginBottom: '3rem' }} />
-            <Keyboard autoRestoreFocus onType={(letter) => keyHandler(letter)} onDelete={deleteHandler} />
-        </Container>
+        <>
+            {isReady ? (
+                <Row flexDirection='row'>
+                    <SearchControls data={data} onRefresh={setSearchResults} />
+                    <SearchResults results={searchResult} />
+                </Row>
+            ) : (
+                <Loading />
+            )}
+        </>
     );
 }
-
 SearchContainer.propTypes = propTypes;
 export default SearchContainer;

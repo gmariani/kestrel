@@ -82,6 +82,10 @@ const ThumbnailContainer = styled.div`
 
     /* Safari Fix: Overflow hidden doesn't do jack */
     -webkit-mask-image: -webkit-radial-gradient(white, black);
+
+    @media screen and (max-width: 800px) and (orientation: landscape) {
+        display: none;
+    }
 `;
 const ThumbnailImage = styled.img`
     height: 100%;

@@ -17,6 +17,12 @@ const Container = styled.div`
     position: relative;
     opacity: 0.75;
 
+    @media screen and (max-width: 800px) and (orientation: landscape) {
+        padding: 0.1rem 0.5rem;
+        font-size: 2rem;
+        height: 3rem;
+    }
+
     & span {
         position: relative;
         display: block;

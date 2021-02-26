@@ -45,6 +45,8 @@ export { default as Resolution } from './Resolution';
 export { default as Row } from './Row';
 export { default as ScrimBackground } from './ScrimBackground';
 export { default as Season } from './Season';
+export { default as SearchControls } from './SearchControls';
+export { default as SearchResults } from './SearchResults';
 export { default as SecurityCode } from './SecurityCode';
 export { default as Shadow } from './Shadow';
 export { default as SignInForm } from './SignInForm';

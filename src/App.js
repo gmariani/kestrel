@@ -9,11 +9,9 @@ const SignIn = lazy(() => import('./pages/signin.js'));
 const Browse = lazy(() => import('./pages/browse.js'));
 const Details = lazy(() => import('./pages/details.js'));
 const Watch = lazy(() => import('./pages/watch.js'));
-const Search = lazy(() => import('./pages/search.js'));
 const renderLoader = () => <Loading visible />;
 
 // TODO: Used signed urls for generating meta and loading posters
-// TODO: Add search button like hulu
 // TODO: Add edit screen to modify the meta.json
 // If meta.json is incomplete, populate from TMDB
 // if (metadata.loaded && metadata.data.tmdb) {
@@ -39,12 +37,6 @@ export default function App() {
         <Router basename='/kestrel/'>
             <Switch>
                 <Redirect from={`${ROUTES.SIGN_IN}`} to='/' />
-
-                <Route exact path={`${ROUTES.SEARCH}`}>
-                    <Suspense fallback={renderLoader()}>
-                        <Search />
-                    </Suspense>
-                </Route>
 
                 <Route exact path={[`${ROUTES.WATCH_MOVIE}`, `${ROUTES.WATCH_TV}`]}>
                     <Suspense fallback={renderLoader()}>

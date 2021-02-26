@@ -35,6 +35,10 @@ const Title = styled.div`
     font-size: 6rem;
     line-height: 6rem;
     margin-bottom: 1rem;
+
+    @media screen and (max-width: 800px) and (orientation: landscape) {
+        font-size: 3rem;
+    }
 `;
 
 const Description = styled.p`

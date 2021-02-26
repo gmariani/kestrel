@@ -3,7 +3,7 @@ import { useParams, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { useAWSCategoryMedia, useAWSCategories } from '../hooks';
 import { DefaultContainer, FadeBackground } from '../components';
-import { HeaderContainer, PosterContainer } from '../containers';
+import { HeaderContainer, PosterContainer, SearchContainer } from '../containers';
 
 const Container = styled(DefaultContainer)`
     padding-top: 2.25rem;
@@ -11,7 +11,7 @@ const Container = styled(DefaultContainer)`
     padding-left: 4.25rem;
     padding-right: 4.25rem;
 `;
-
+// BUG: Can't navigate to results via keyboard
 export default function Browse() {
     const { categorySlug } = useParams();
     const { categories } = useAWSCategories();
@@ -20,7 +20,7 @@ export default function Browse() {
     const { media, category: mediaCategory } = useAWSCategoryMedia(`${selectedCategory}/`);
 
     // If no category is selected, redirect to first category
-    if (!categorySlug) {
+    if (!categorySlug && selectedCategory) {
         // eslint-disable-next-line no-console
         console.log('Redirect to', `/${selectedCategory}/`);
         return <Redirect to={`/${selectedCategory}/`} />;
@@ -30,7 +30,11 @@ export default function Browse() {
         <>
             <Container>
                 <HeaderContainer categories={categories} selectedCategory={selectedCategory} />
-                <PosterContainer media={media} mediaCategory={mediaCategory} selectedCategory={selectedCategory} />
+                {selectedCategory === 'search' ? (
+                    <SearchContainer />
+                ) : (
+                    <PosterContainer media={media} mediaCategory={mediaCategory} selectedCategory={selectedCategory} />
+                )}
             </Container>
             <FadeBackground hue={11.2} base='#182848' split={100} />
         </>

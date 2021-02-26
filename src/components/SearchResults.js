@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 import { useHistory } from 'react-router-dom';
-import { Poster, GridFocusable } from '../components';
+import Poster from './Poster';
+import GridFocusable from './GridFocusable';
 import { toName } from '../utils';
 
 const Container = styled.div`
@@ -38,7 +39,7 @@ const propTypes = {
     results: PropTypes.arrayOf(PropTypes.string),
 };
 
-function SearchResultsContainer({ results }) {
+function SearchResults({ results }) {
     const [selectedPoster, setSelectedPoster] = useState(null);
     const history = useHistory();
 
@@ -86,5 +87,5 @@ function SearchResultsContainer({ results }) {
     );
 }
 
-SearchResultsContainer.propTypes = propTypes;
-export default SearchResultsContainer;
+SearchResults.propTypes = propTypes;
+export default SearchResults;
