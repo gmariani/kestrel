@@ -25,7 +25,16 @@ function HeaderContainer({ hideMenu = false, categories, selectedCategory }) {
             justifyContent={hideMenu ? 'flex-end' : 'space-between'}>
             {!hideMenu && (
                 <Menu focusKey='MENU'>
-                    <MenuLink to='/search' selected={selectedCategory === 'search'}>
+                    <MenuLink
+                        onBecameFocused={() => {
+                            // console.log('MenuLinkFocusable.onBecameFocused', route);
+                            // Avoid loop by only pushing if not already same category
+                            if (selectedCategory !== 'search') history.push(`/search`);
+                        }}
+                        focusKey='MENU-SEARCH'
+                        key='search'
+                        to='/search'
+                        selected={selectedCategory === 'search'}>
                         <FaSearch />
                     </MenuLink>
                     {categories.map((category) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { useAWSCategoryMedia, useAWSCategories } from '../hooks';
 import { DefaultContainer, FadeBackground } from '../components';
@@ -16,7 +16,15 @@ export default function Browse() {
     const { categorySlug } = useParams();
     const { categories } = useAWSCategories();
     const selectedCategory = categorySlug ?? (categories.length ? categories[0] : '');
+
     const { media, category: mediaCategory } = useAWSCategoryMedia(`${selectedCategory}/`);
+
+    // If no category is selected, redirect to first category
+    if (!categorySlug) {
+        // eslint-disable-next-line no-console
+        console.log('Redirect to', `/${selectedCategory}/`);
+        return <Redirect to={`/${selectedCategory}/`} />;
+    }
 
     return (
         <>

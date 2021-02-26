@@ -2,8 +2,8 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components/macro';
 import S3 from 'aws-sdk/clients/s3';
 import { useAWSCategories } from '../hooks';
-import { DefaultContainer, FadeBackground, Loading, Keyboard, Input } from '../components';
-import { HeaderContainer } from '../containers';
+import { DefaultContainer, FadeBackground, Loading, FlexContainer } from '../components';
+import { HeaderContainer, SearchContainer, SearchResultsContainer } from '../containers';
 
 const Container = styled(DefaultContainer)`
     padding-top: 2.25rem;
@@ -12,43 +12,16 @@ const Container = styled(DefaultContainer)`
     padding-right: 4.25rem;
 `;
 
+const Row = styled(FlexContainer)`
+    max-height: 100%;
+    padding-bottom: 4rem;
+`;
+// BUG: Can't navigate to results via keyboard
 export default function Search() {
     const data = useRef([]);
     const [isReady, setIsReady] = useState(false);
     const [searchResult, setSearchResults] = useState([]);
     const { categories } = useAWSCategories();
-    const inputRef = useRef();
-
-    const refreshSearch = () => {
-        const input = inputRef.current;
-        const query = input.value.toLowerCase();
-
-        // Flatten the associative array
-        const list = Object.keys(data.current).reduce((r, k) => {
-            return r.concat(data.current[k]);
-        }, []);
-
-        // TODO: use fuse.js for fuzzy search
-        const result = list.filter((item) => item.indexOf(query) > -1);
-        setSearchResults(result);
-    };
-
-    const searchHandler = () => {
-        // TODO: throttle event handler
-        refreshSearch();
-    };
-
-    const keyHandler = (value) => {
-        const input = inputRef.current;
-        input.value += value;
-        refreshSearch();
-    };
-
-    const deleteHandler = () => {
-        const input = inputRef.current;
-        input.value = input.value.slice(0, -1);
-        refreshSearch();
-    };
 
     const s3Client = useMemo(
         () =>
@@ -104,11 +77,10 @@ export default function Search() {
             <Container>
                 <HeaderContainer categories={categories} selectedCategory='search' />
                 {isReady ? (
-                    <>
-                        <Input ref={inputRef} onChange={searchHandler} style={{ marginBottom: '4rem' }} />
-                        <Keyboard onType={(letter) => keyHandler(letter)} onDelete={deleteHandler} />
-                        {searchResult.length > 0 ? searchResult.map((result) => <li>{result}</li>) : <p>No results</p>}
-                    </>
+                    <Row flexDirection='row'>
+                        <SearchContainer data={data} onRefresh={setSearchResults} />
+                        <SearchResultsContainer results={searchResult} />
+                    </Row>
                 ) : (
                     <Loading />
                 )}

@@ -4,9 +4,15 @@ import styled from 'styled-components/macro';
 import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 import Letter from './Letter';
 import FlexContainer from './FlexContainer';
+import { ReactComponent as DeleteSVG } from '../images/delete-icon.svg';
 
 const Container = styled(FlexContainer)`
     max-width: 30rem;
+
+    & svg {
+        fill: white;
+        height: 2rem;
+    }
 `;
 
 const propTypes = {
@@ -14,10 +20,9 @@ const propTypes = {
     onDelete: PropTypes.func,
     setFocus: PropTypes.func,
     hasFocusedChild: PropTypes.bool,
-    initialFocus: PropTypes.string,
 };
 
-function Keyboard({ onType, onDelete, setFocus, hasFocusedChild, initialFocus }) {
+function Keyboard({ onType, onDelete, setFocus, hasFocusedChild }) {
     const [keyMode, setKeyMode] = useState('alpha');
     const [selectedButton, setSelectedButton] = useState('ACTION-NEXT');
     const toggleKeys = () => {
@@ -541,8 +546,9 @@ function Keyboard({ onType, onDelete, setFocus, hasFocusedChild, initialFocus })
                         onBecameFocused={() => {
                             setSelectedButton('LETTER-DELETE');
                         }}
-                        selected={selectedButton === 'LETTER-DELETE'}
-                    />
+                        selected={selectedButton === 'LETTER-DELETE'}>
+                        <DeleteSVG />
+                    </Letter>
                 </>
             ) : (
                 <>
@@ -738,8 +744,9 @@ function Keyboard({ onType, onDelete, setFocus, hasFocusedChild, initialFocus })
                         onBecameFocused={() => {
                             setSelectedButton('LETTER-DELETE');
                         }}
-                        selected={selectedButton === 'LETTER-DELETE'}
-                    />
+                        selected={selectedButton === 'LETTER-DELETE'}>
+                        <DeleteSVG />
+                    </Letter>
                 </>
             )}
         </Container>

@@ -3,3 +3,5 @@ export { default as PosterContainer } from './PosterContainer';
 export { default as EpisodeContainer } from './EpisodeContainer';
 export { default as SeasonContainer } from './SeasonContainer';
 export { default as ExtraContainer } from './ExtraContainer';
+export { default as SearchContainer } from './SearchContainer';
+export { default as SearchResultsContainer } from './SearchResultsContainer';

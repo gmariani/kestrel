@@ -4,12 +4,13 @@ import styled from 'styled-components/macro';
 
 const StyledInput = styled.input`
     text-transform: uppercase;
-    font-size: 3rem;
+    font-size: 4rem;
     padding: 0.5rem;
     font-weight: 400;
     background-color: transparent;
     border: none;
     letter-spacing: 1rem;
+    width: 100%;
     color: white;
     &:focus {
         outline: none;
@@ -24,7 +25,6 @@ const propTypes = {
 };
 
 const Input = React.forwardRef(({ value, onChange, style }, ref) => {
-    console.log(style);
     return <StyledInput ref={ref} value={value} onChange={onChange} style={style} />;
 });
 

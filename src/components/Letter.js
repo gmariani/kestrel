@@ -5,7 +5,7 @@ import { withFocusable } from '@noriginmedia/react-spatial-navigation';
 
 const Container = styled.div`
     text-transform: uppercase;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
     font-size: 3rem;
     padding: 0.5rem;
     font-weight: 400;
@@ -15,6 +15,7 @@ const Container = styled.div`
     cursor: pointer;
     /*border: 1px solid red;*/
     position: relative;
+    opacity: 0.75;
 
     & span {
         position: relative;
@@ -28,6 +29,7 @@ const Container = styled.div`
     &.selected,
     &:hover {
         transform: scale(1.25, 1.25);
+        opacity: 1;
     }
 `;
 
@@ -37,9 +39,10 @@ const propTypes = {
     value: PropTypes.string,
     onClick: PropTypes.func,
     selected: PropTypes.bool,
+    children: PropTypes.node,
 };
 
-function Letter({ key, label, value, onClick, selected }) {
+function Letter({ key, label, children, value, onClick, selected }) {
     const returnValue = value ?? label;
     return (
         <Container
@@ -48,7 +51,7 @@ function Letter({ key, label, value, onClick, selected }) {
             onClick={() => {
                 onClick(returnValue);
             }}>
-            <span>{label}</span>
+            <span>{children ?? label}</span>
         </Container>
     );
 }
